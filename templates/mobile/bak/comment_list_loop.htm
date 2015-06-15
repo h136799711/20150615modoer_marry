@@ -1,0 +1,31 @@
+<!--{if !$total}-->
+<div class="list-group-item center">Sorry，暂时没有评论信息。</div>
+<!--{/if}-->
+<!--{loop $comment_list $cmmt}-->
+    <a class="list-group-item" href="javascript:;" data-name="reply_comment" data-id="$cmmt[cid]" data-username="$cmmt[username]">
+        <div class="richtxt-comm">
+            <div class="fl">
+                <img src="{print get_face($cmmt[uid])}" alt="$cmmt[username]" class="richtxt-img">
+            </div>
+            <div class="richtxt-body">
+                <div class="fr">
+                    <span class="txt-grey txt-small">{date $cmmt[dateline],'w2style'}</span>
+                </div>
+                <span class="txt-small">$cmmt[username]{if !$cmmt[uid]}(游客){/if}</span>
+                <p class="txt-comm">$cmmt[content]</p>
+                <!--{eval $reply_cid=$cmmt[reply_cid];}-->
+                <!--{if $reply_cid > 0}-->
+                <div class="comment-reply-content txt-grey txt-small">
+                    <!--{if $reply_list[$reply_cid]}-->
+                    回应：$reply_list[$reply_cid][username]
+                    <p class="txt-comm">$reply_list[$reply_cid][content]</p>
+                    <!--{else}-->
+                    <i>原评论已删除</i>
+                    <!--{/if}-->
+                </div>
+                <!--{/if}-->
+            </div>
+        </div>
+    </a>
+<!--{/loop}-->
+{if $multipage}$multipage{/if}

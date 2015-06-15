@@ -1,0 +1,35 @@
+{if !$list}
+<div class="list-group-item center">Sorry，没有找到相关数据。</div>
+{/if}
+{eval $i=0;}
+{dbres $list $val}
+    <a class="list-group-item" href="{url product/mobile/do/myorder/orderid/$val[orderid]}">
+        {eval 
+            $goods=$_G['db']->from('dbpre_product_ordergoods')->where('orderid',$val['orderid'])->get_one();
+            $image = $goods['goods_image']?$goods['goods_image']:'/static/images/noimg.gif';
+        }
+        <div>
+            <div class="fr right">
+                {eval $color=array(1=>'mycolor',2=>'primary',3=>'primary',4=>'info',5=>'success',6=>'grey');}
+                <span class="label-comm label-{print $color[$val[status]]}">{print lang('product_status_'.$val['status'])}</span>
+            </div>
+            <p class="txt-comm">商户：$val[name]{if $val[subname]}($val[subname]){/if}</p>
+        </div>
+        <div class="txt-comm txt-small txt-grey mt10">
+            <div class="fr">
+                <span class="arrow"></span>
+            </div>
+            <div class="richtxt-comm richtxt-img-defaultsize">
+                <div class="fl">
+                    <img src="{img $image}" alt="$goods[pname]" class="richtxt-img">
+                </div>
+                <div class="richtxt-body">
+                    <h4>$goods[pname]</h4>
+                    实付款：<span class="txt-red">&yen;$val[order_amount]</span>{if $val[is_cod]} (货到付款){/if}<br>
+                    {date $val[addtime]}
+                </div>
+            </div>
+        </div>
+    </a>
+{/dbres}
+{if $multipage}$multipage{/if}

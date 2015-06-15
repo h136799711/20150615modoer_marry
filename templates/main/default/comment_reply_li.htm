@@ -1,0 +1,17 @@
+<!--{loop $reply_list $reply}-->
+<li class="reply-data" id="comment_$reply[cid]">
+    <div class="reply-face"><img src="{print get_face($reply[uid])}" alt="$reply[username]"></div>
+    <div class="reply-main">
+        <div class="reply-title"><a href="{url space/index/uid/$reply[uid]}">$reply[username]</a> 回应 <a href="{url space/index/uid/$reply[reply_user][0]}">$reply[reply_user][1]</a></div>
+        <div class="reply-content">$reply[content]</div>
+        <div class="reply-operation">
+            <span>{date $reply[dateline],'w2style'}</span>
+            <span class="J_opt"><span class="icomoon icon-bubble-dots2"></span><a href="javascript:;"onclick="mo.comment.reply.show($reply[cid]);">回应</a></span>
+            <!--{if $user->isLogin && $reply[uid]==$user->uid}-->
+                <span class="J_opt"><span class="icomoon icon-remove"></span><a href="javascript:;"onclick="mo.comment.del($reply[cid]);">删除</a></span>
+            <!--{/if}-->
+        </div>
+        <div id="reply_comment_form_$reply[cid]"></div>
+    </div>
+</li>
+<!--{/loop}-->

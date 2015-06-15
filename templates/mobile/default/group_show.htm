@@ -1,0 +1,45 @@
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize group-show">
+    <div class="panel-heading">
+        <div class="richtxt-comm">
+        <div class="fl">
+            {eval if(!$group[icon]) $group['icon']='static/images/z_noimg.gif';}
+            <img src="{URLROOT}/$group[icon]" alt="$group[groupname]" class="richtxt-img">
+        </div>
+        <div class="richtxt-body">
+            <h2>$group[groupname]</h2>
+            <p class="txt-comm txt-small txt-grey">$group[des]</p>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="list-group list-group-insertmod group-topic-list" id="data_container">
+    <!--{if ($readaccess && $gmember[status])||!$readaccess}-->
+        {include mobile_template('group_show_loop')}
+    <!--{else}-->
+        <div class="list-group-item center" id="loadingmessage">只有小组成员才能浏览，请先加入小组。</div>
+    <!--{/if}-->
+</div>
+<div id="page_container" class="mb10"></div>
+<div class="fixed-bottom group-topic-fixed">
+    <div class="panel-comm panel-default">
+        <div class="panel-heading">
+            <a class="btn btn-mycolor" href="{url group/mobile/do/post/op/add_topic/gid/$group[gid]}">发布话题</a>
+            {if !$gmember}
+            <a class="btn btn-default" href="{url group/mobile/do/post/op/join_group/gid/$group[gid]}">加入小组</a>
+            {/if}
+            <div class="fl">
+                <span class="txt-grey">共有 $total 个话题</span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(function() {
+    $(document.body).css("margin-bottom",$('div.fixed-bottom').height());
+    $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+});
+</script>
+{include mobile_template('footer')}

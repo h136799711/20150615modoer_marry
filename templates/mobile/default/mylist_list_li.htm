@@ -1,0 +1,22 @@
+{dbres $list $val}
+<a class="list-group-item" href="{url mylist/mobile/do/detail/id/$val[id]}">
+    <div class="richtxt-comm richtxt-img-defaultsize">
+        <div class="fl">
+            <!--{eval $thumb = $val[thumb]?$val[thumb]:'static/images/s_noimg.gif';}-->
+            <img src="{URLROOT}/$thumb" alt="$val[subject]" class="richtxt-img">
+        </div>
+        <div class="richtxt-body">
+            <h4>$val[title]{if $val[digest]}<img src="{URLROOT}/static/images/common/digest.gif" alt="精华" />{/if}</h4>
+            <div class="txt-small txt-grey">
+                <p class="txt-comm">
+                    <!--{sublen strip_tags($val[intro]),40,'...'}-->
+                </p>
+                $val[username] @ {date $val[modifytime],'w2style'}
+                <span>{$val[flowers]}</span> 鲜花
+                <span>{$val[num]}</span> 主题
+            </div>
+        </div>
+    </div>
+</a>
+{/dbres}
+{if $multipage}$multipage{/if}

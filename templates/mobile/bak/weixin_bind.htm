@@ -1,0 +1,24 @@
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+	<div class="panel-body">
+		<div class="form-box">
+			<form action="{url weixin/bind}" method="POST">
+				<input type="hidden" name="openid" value="$bind_obj->openid">
+				<input type="hidden" name="sign" value="$bind_obj->sign">
+				<div class="form-item">
+					<label for="username">绑定会员名:</label>
+					<input name="username" id="username" placeholder="请输入用户名" value="$user->username" type="text" required>
+				</div>
+				<div class="form-item">
+					<label for="password">登录密码:</label>
+					<input name="password" id="password" placeholder="请输入密码" value="" type="password" required>
+				</div>
+				<div class="form-item">
+					<input type="submit" value="提交绑定" name="dosubmit" class="sub_btn">
+					<span style="margin-left:10px;"><a href="{url member/mobile/do/reg}">没有帐号？请先注册。</a></span>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{include mobile_template('footer')}

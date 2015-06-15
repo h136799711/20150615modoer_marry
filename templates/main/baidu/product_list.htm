@@ -1,0 +1,183 @@
+<!--{eval 
+	$_HEAD['title'] = $category[$catid]['title']?$category[$catid]['title']:$category[$catid]['name'];
+	$_HEAD['keywords'] = $category[$catid]['keywords'];
+	$_HEAD['description'] = $category[$catid]['description'];
+}-->
+{template modoer_header}
+	<script type="text/javascript">
+	loadscript('item');
+</script>
+<div id="body">
+
+	<div class="link_path">
+		<em>筛选结果(<i class="font_1">$total</i>)</em>
+		<a href="{url modoer/index}">首页</a><span>&gt;</span>{print implode('<span>&gt;</span>', $urlpath)}
+	</div>
+
+	<div id="left_box">
+		<div class="p_title category_side">
+			<!--{eval $xpid = $category[$catid]['pid'] ? $category[$catid]['pid'] : $catid;}-->
+			<!--{get:product val=gcategory(pid/$pid)}-->
+			<!--{eval if($category_level==3 && $xpid != $val['catid']) continue;}-->
+			<!--{eval if(!$val[modelid] && !$val['subcats']) continue;}-->
+			<h3><a href="{url product/list/catid/$val[catid]}">$val[name]</a></h3>
+			<ul>
+				<!--{if $val['modelid']>0 && !$val['subcats']}-->
+					<li><span {if $val[catid]==$catid}class="selected"{/if}><a href="{url product/list/catid/$val[catid]}">$val[name]</a></span></li>
+				<!--{else}-->
+					<!--{get:product _val=gcategory(pid/$val[catid])}-->
+					<li><span {if $_val[catid]==$catid}class="selected"{/if}><a href="{url product/list/catid/$_val[catid]}">$_val[name]</a></span></li>
+					<!--{/get}-->
+				<!--{/if}-->
+			</ul>
+			<div class="clear"></div>
+			<!--{/get}-->
+		</div>
+		<div class="p_title" style="margin-top:10px;">
+			<h2>热销商品排行榜</h2>
+			<div class="hot_p">
+				<!--{eval $i=1;}-->
+				<!--{get:modoer val=sql(sql/SELECT pid,subject,picture,thumb,price,promote,promote_start,promote_end FROM dbpre_product WHERE status=1 AND is_on_sale=1 AND $w_gcatid AND city_id IN (0,$_CITY[aid]) ORDER BY sales DESC/rows/10)}-->
+				<dl>
+					<dt><a href="{url product/detail/pid/$val[pid]}" title="$val[subject]">$val[subject]</a></dt>
+					<dd class="pic">
+						<a href="{url product/detail/pid/$val[pid]}">
+							{eval $image=$val[thumb]?$val[thumb]:'static/images/noimg.gif';}
+							<img src="{img $image}" alt="$val[subject]" />
+						</a>
+						<sup {if $i>=4}class="gray"{/if}>$i</sup>
+					</dd>
+					<dd class="price">
+						<strong>&yen;{print mc_product_cart::calc_myprice($val)}</strong>
+					</dd>
+				</dl>
+				<!--{eval $i++;}-->
+				<!--{/get}-->
+			</div>
+		</div>
+	</div>
+
+	<div class="list_right_box">
+		<!--{if $attcats[0]}-->
+		<div class="list-filter">
+			<!--{eval $att_cats = _G('loader')->variable('att_cat','item');}-->
+			<!--{loop $attcats $att_catid}-->
+			<!--{if $att_cats[$att_catid]}-->
+			<div class="list-filter-item">
+				<dl>
+					<dt>{$att_cats[$att_catid][name]}<b>:</b></dt>
+					<dd>
+						<!--{eval $att_url = product_att_url($att_catid,0,1);}-->
+						<ul {if !$MOD[list_filter_li_collapse_num]}style="width:auto;"{/if}>
+							<li>
+								<span {if !$atts[$att_catid]}class="selected"{/if}><a href="{url product/list/catid/$catid/aid/$aid/att/$att_url/orderby/$orderby/sort/$sort/filter/$filter/num/$num/keyword/$keyword}">不限</a></span>
+							</li>
+							<!--{eval $ix=0;!$MOD[list_filter_li_collapse_num]&&$MOD[list_filter_li_collapse_num]=1000;}-->
+							<!--{get:item val=attlist(catid/$att_catid)}-->
+							<!--{eval $att_url = product_att_url($att_catid,$val_k);}-->
+							<li{if ++$ix>$MOD[list_filter_li_collapse_num]} hide="Y" style="display:none;"{/if} {if $val[icon]}class="att_icon"{/if}>
+								{if $val[icon]}<img src="{URLROOT}/static/images/att/$val[icon]" />{/if}
+								<span {if $atts[$att_catid]==$val_k}class="selected"{/if}><a href="{url product/list/catid/$catid/att/$att_url/orderby/$orderby/sort/$sort/filter/$filter/num/$num/keyword/$keyword}">$val[name]</a></span>
+							</li>
+							<!--{/get}-->
+						</ul>
+						{if $ix>$MOD[list_filter_li_collapse_num]}<a href="#" hidefocus="Y" class="more close">更多</a>{/if}
+					</dd>
+					<div class="clear"></div>
+				</dl>
+			</div>
+			<!--{/if}-->
+			<!--{/loop}-->
+		</div>
+		<!--{/if}-->
+
+		<div class="rankop clear">
+			<ul class="rank clear">
+				<!-- 排序方式 -->
+				<li{if $orderby=='sales'} class="down"{else} class="default"{/if}><a href='{url product/list/catid/$catid/att/$atturl/orderby/sales/filter/$filter/num/$num/keyword/$keyword}'><span>销量</span></a></li>
+				<!--{if !$sort}-->
+				<li class="defaultprice"><a href='{url product/list/catid/$catid/att/$atturl/orderby/price/sort/asc/filter/$filter/num/$num/keyword/$keyword}'> <span>价格</span></a></li>
+				<!--{elseif $orderby=="price" && $sort=="asc"}-->
+				<li class="defaultprice priceup"><a href='{url product/list/catid/$catid/att/$atturl/orderby/price/sort/desc/filter/$filter/num/$num/keyword/$keyword}'> <span>价格</span></a></li>
+				<!--{elseif $orderby=="price" && $sort=="desc"}-->
+				<li{if $orderby==price} class="defaultprice pricedown"{/if}><a href='{url product/list/catid/$catid/att/$atturl/orderby/price/sort/asc/filter/$filter/num/$num/keyword/$keyword}'> <span>价格</span></a></li>
+				<!--{/if}-->
+				<li{if $orderby==comments} class="down"{else} class="default"{/if}><a href='{url product/list/catid/$catid/att/$atturl/orderby/comments/filter/$filter/num/$num/keyword/$keyword}'><span>评价</span></a></li>
+				<li{if $orderby==last_update} class="down"{else} class="default"{/if}><a href='{url product/list/catid/$catid/att/$atturl/orderby/last_update/filter/$filter/num/$num/keyword/$keyword}'><span>上架时间</span></a></li>
+				{if $filter}
+				<li class="filter">
+				<input type="checkbox" name="filter" checked="checked" id="list_filter" value="" onClick="location.href='{url product/list/catid/$catid/att/$atturl/orderby/$orderby/sort/$sort/num/$num/keyword/$keyword}'"/><label for="list_filter">促销商品</label></li>
+				{else}
+				<li class="filter"><input type="checkbox" name="filter" id="list_filter" value="1" onClick="location.href='{url product/list/catid/$catid/att/$atturl/orderby/$orderby/sort/$sort/filter/1/num/$num/keyword/$keyword}'"/><label for="list_filter">促销商品</label></li>
+				{/if}
+			</ul>
+			<ul class="page ">
+				<li>每页显示数量：</li>
+				<li><a {if !$num}class="cur"{else} href="{url product/list/catid/$catid/att/$atturl/orderby/$orderby/sort/$sort/filter/$filter/keyword/$keyword}"{/if}>24</a></li>
+				<li><a {if $num=="36"}class="cur"{else} href="{url product/list/catid/$catid/att/$atturl/orderby/$orderby/sort/$sort/filter/$filter/num/36/keyword/$keyword}"{/if}>36</a></li>
+				<li><a {if $num=="64"}class="cur"{else} href="{url product/list/catid/$catid/att/$atturl/orderby/$orderby/sort/$sort/filter/$filter/num/64/keyword/$keyword}"{/if}>64</a></li>
+			</ul>
+		</div>
+
+		<!--{if $total}-->
+		<div class="productresult">
+			<ul>
+				<!--{eval $i=1;}-->
+				<!--{loop $data $val}-->
+				<li>
+					<a href="{url product/detail/pid/$val[pid]}">
+						{eval $image=$val[thumb]?$val[thumb]:'static/images/noimg.gif';}
+						<img src="{img $image}" title="$val[subject]" />
+					</a>
+					<a class="title" href="{url product/detail/pid/$val[pid]}" title="$val[subject]">$val[subject]</a>
+					<p class="price"><strong>&yen;{print mc_product_cart::calc_myprice($val)}</strong></p>
+					<p>
+						<span class="start start{print get_star($val[grade],5)}"></span>
+						<a class="grade_s" href="{url product/detail/pid/$val[pid]}#commentend">&nbsp;$val[comments]条评论</a>
+					</p>
+					<p>
+						<a href="{url product/member/ac/order/pid/$val[pid]}" class="buy" data-name="once_order_btn" data-pid="$val[pid]">立即购买</a>
+						<a href="{url product/detail/pid/$val[pid]}" class="fav">查看</a>
+					</p>
+					<!--{if in_expiry_date(_G('timestamp'), $val['promote_start'], $val['promote_end'])}-->
+					<sup>促销</sup>
+					<!--{/if}-->
+				</li>
+				<!--{if $i++%4==0}-->
+			</ul>
+		</div>
+		<div class="productresult">
+			<ul>
+				<!--{/if}-->
+				<!--{/loop}-->
+			</ul>
+		</div>
+		<!--{else}-->
+		<div class="messageborder">
+			<span class="msg-ico">暂时没有相关产品信息，<a href="{url product/index}">点此返回重新查找您喜欢的商品</a>。</span>
+		</div>
+		<!--{/if}-->
+		<!--{if $multipage}-->
+		<div class="multipage">$multipage</div>
+		<!--{/if}-->
+	</div>
+	<div class="clear"></div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	//分类之更多链接
+	$("a[hidefocus]").each(function(i) {
+		$(this).attr('hidefocus','Y').click(function() {
+			var a = $(this);
+			var hf = a.attr('hidefocus')=='Y' ? 'N' : 'Y';;
+			a.attr('hidefocus',hf).removeClass(hf=='N'?'close':'open').addClass(hf=='N'?'open':'close');
+			a.parent().find("ul li").each(function(j) {
+				if($(this).attr('hide')=='Y') $(this).css('display',hf=='N'?'':'none');
+			});
+			return false;
+		});
+	})
+});
+</script>
+<!--{eval footer();}-->

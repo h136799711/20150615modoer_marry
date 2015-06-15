@@ -1,0 +1,37 @@
+<form method="post" action="{url member/index/ac/myset/op/forget_paypw/in_ajax/1}" name="frm" id="frm">
+<table class="table" width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td width="80"  height="30" align="right">获取验证码：</td>
+        <td width="*">
+            <!--{if check_module('sms') && $user->mobile}-->
+            <button type="button" class="J_send_btn button" onclick="forget_paypw_seccode_send('mobile');">手机短信接收</button>
+            <!--{/if}-->
+            <!--{if $user->email}-->
+            <button type="button" class="J_send_btn button" onclick="forget_paypw_seccode_send('email');">注册邮箱接收</button>
+            <!--{/if}-->
+        </td>
+    </tr>
+    <tr>
+        <td height="30" align="right">输入验证码：</td>
+        <td>
+            <input type="text" name="seccode" id="seccode" class="t_input" style="width:100px;" />
+        </td>
+    </tr>
+    <tr>
+        <td width="80"  height="30" align="right">新支付密码：</td>
+        <td width="*"><input type="password" name="new" id="new" class="t_input" style="width:170px;" /></td>
+    </tr>
+    <tr>
+        <td height="30" align="right">再次输入：</td>
+        <td><input type="password" name="new2" id="new2" class="t_input" style="width:170px;" /></td>
+    </tr>
+    <tr>
+        <td height="30"></td>
+        <td>
+            <input type="hidden" name="dosubmit" value="yes" />
+            <button type="button" class="button" onclick="ajaxPost('frm','',null);">确定</button>&nbsp;
+            <button type="button" class="button" onclick="dlgClose();">关闭</button>
+        </td>
+    </tr>
+</table>
+</form>

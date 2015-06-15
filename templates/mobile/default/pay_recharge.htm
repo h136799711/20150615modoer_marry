@@ -1,0 +1,29 @@
+{include mobile_template('header')}
+<div class="panel-common">
+
+    <form action="{url pay/mobile/do/recharge/rand/$_G[random]}" method="POST">
+        <input type="hidden" name="pay[cztype]" value="rmb">
+        <div class="list-group list-group-insertmod">
+            <div class="list-group-heading">在线充值</div>
+            <a class="list-group-item">
+                <div class="fr">
+                    <input type="text" size="15" name="pay[czprice]" value="0.01"> 元
+                </div>
+                请输入充值数额
+            </a>
+            <div class="list-group-heading">支付方式</div>
+            <a class="list-group-item">
+                <div class="fr">
+                    <input type="radio" name="payment" value="alipay_mobile" checked="checked">
+                </div>
+                支付宝
+            </a>
+        </div>
+
+        <div class="panel-body">
+            <button type="submit" name="dosubmit" value="Y" class="btn btn-mycolor full-width">在线支付</button>
+        </div>
+    </form>
+</div>
+
+{include mobile_template('footer')}

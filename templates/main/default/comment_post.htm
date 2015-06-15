@@ -1,0 +1,92 @@
+{eval 
+    if(!$nextjsfun) $nextjsfun='mo.comment.post_after';
+    _G('loader')->helper('form');
+}
+<form method="post" action="{url comment/member/ac/comment_add/rand/$_G[random]}" class="post" id="frm_comment" name="frm_comment" target="ajaxiframe" onsubmit="return false;">
+    <input type="hidden" name="idtype" value="$idtype" />
+    <input type="hidden" name="id" value="$id" />
+    <input type="hidden" name="extra_id" value="$extra_id" />
+    <input type="hidden" name="in_ajax" value="1" />
+    <input type="hidden" name="dosubmit" value="yes" />
+    <input type="hidden" name="title" value="$title" />
+    <table class="table" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <!--{if !$user->isLogin}-->
+        <tr>
+            <td align="right"><span class="font_1">*</span>昵称：</td>
+            <td><input type="text" name="username" class="t_input" /></td>
+        </tr>
+        <!--{/if}-->
+        <!--{if $enable_grade}-->
+        <tr>
+            <td align="right"><span class="font_1">*</span>评分：</td>
+            <td>{print form_radio('grade',array('0分','1分','2分','3分','4分','5分'),4)}</td>
+        </tr>
+        <!--{/if}-->
+        <tr>
+            <td align="right" valign="top" width="70"><span class="font_1">*</span>评论：</td>
+            <td width="*">
+                <textarea name="content" style="width:95%;height:80px;" onkeyup="record_charlen(this,$cfg[content_max],'comment_content');" validator="{'empty':'N','errmsg':'请输入评论内容。'}"></textarea>
+                <div style="margin:5px 0;">请将内容限制在 $cfg[content_min] - $cfg[content_max] 个字符以内，当前输入：<span id="comment_content" class="font_1">0</span></div>
+            </td>
+        </tr>
+        <!--{if ($user->isLogin && $cfg[member_seccode]) || (!$user->isLogin && $cfg[guest_seccode])}-->
+        <tr>
+            <td align="right"><span class="font_1">*</span>验证码：</td>
+            <td>
+                <div id="seccode" class="seccode none"></div>
+                <input type="text" name="seccode" class="t_input" onfocus="show_seccode();" validator="{'empty':'N','errmsg':'请输入验证码。'}" />
+            </td>
+        </tr>
+        <!--{/if}-->
+        <tr>
+            <td></td>
+            <td>
+                <input type="hidden" id="comment_time" value="{if $cfg[comment_interval]>=5}$cfg[comment_interval]{else}10{/if}" />
+                <button id="comment_button" type="button" onclick="ajaxPost('frm_comment', '$idtype-$id', '$nextjsfun');" class="button">提交</button>
+            </td>
+        </tr>
+    </table>
+</form>
+<div class="J_reply_comment_form none">
+<form method="post" action="{url comment/member/ac/comment_add/op/reply/rand/$_G[random]}" target="ajaxiframe" onsubmit="return false;">
+    <input type="hidden" name="reply_cid" value="" />
+    <input type="hidden" name="dosubmit" value="yes" />
+    <input type="hidden" name="title" value="$title" />
+    <table class="table" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <!--{if !$user->isLogin}-->
+        <tr>
+            <td>
+                <label>昵称<span class="font_3">(必填)</span>：</label>
+                <input type="text" name="username" class="t_input" />
+            </td>
+        </tr>
+        <!--{/if}-->
+        <tr>
+            <td>
+                <em><span class="font_3"><span class="J_charlen font_1">0</span>/{$cfg[content_max]}</span></em>
+                <label>回应<span class="font_3">(必填)</span>：</label>
+                <textarea name="content" validator="{'empty':'N','errmsg':'请输入评论内容。'}"></textarea>
+            </td>
+        </tr>
+        <!--{if ($user->isLogin && $cfg[member_seccode]) || (!$user->isLogin && $cfg[guest_seccode])}-->
+        <tr>
+            <td>
+                <label>验证码<span class="font_3">(必填)</span>：</label>
+                <div>
+                    <div class="reply_seccode">
+                        <input type="text" name="seccode" class="t_input" validator="{'empty':'N','errmsg':'请输入验证码。'}" />
+                        <div class="J_seccode_d none"></div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <!--{/if}-->
+        <tr>
+            <td>
+                <button name="reply_submit_btn" type="button" class="button">回应</button>
+                <button name="reply_cancel_btn" type="button" class="button">取消</button>
+            </td>
+        </tr>
+    </table>
+</form>
+</div>

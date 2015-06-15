@@ -1,0 +1,30 @@
+<form method="post" name="frm_sendsms" id="frm_sendsms" action="{url coupon/detail/id/$couponid/do/sendsms/in_ajax/1/rand/$_G[random]}">
+    <table class="maintable" cellspacing="0" cellpadding="0">
+        <tr>
+            <td align="right" width="70">优惠券：</td>
+            <td width="*">$detail[subject]</td>
+        </tr>
+        <tr>
+            <td align="right">手机号：</td>
+            <td width="*"><input type="text" name="mobile" class="t_input" style="width:200px;" value="$user->mobile" /></td>
+        </tr>
+        <tr>
+            <td align="right" valign="top">验证码：</td>
+            <td>
+                <div style="float:left;margin-right:5px;">
+                    <input type="text" name="seccode" class="t_input" style="width:118px;" onfocus="show_seccode('seccode9');" />
+                </div>
+                <div id="seccode9" class="none" style="float:left;width:80px;position:relative;top:-3px;"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="hidden" name="dosubmit" value="yes" />
+            </td>
+            <td>
+                <button type="button" onclick="ajaxPost('frm_sendsms','','');">发送</button>&nbsp;&nbsp;
+                <button type="button" onclick="dlgClose();">关闭</button>
+            </td>
+        </tr>
+    </table>
+</form>

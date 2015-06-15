@@ -1,0 +1,34 @@
+<!--{eval 
+    if(isset($object)) $subject =& $object;
+    if(isset($object_field_table_tr)) $subject_field_table_tr =& $object_field_table_tr;
+}-->
+<script type="text/javascript">loadscript('item');</script>
+<style type="text/css">
+.subject { width:92%; margin:5px auto; line-height:18px; }
+.subject h3 { font-size:14px; margin:10px 0 0; padding:0; }
+.subject h3 a{ color:red;  }
+.subject .start { margin:0; padding:0; height:15px; width:100%;  }
+.subject_field_list { color:#808080; margin:5px 0 10px; }
+</style>
+<!--{eval $reviewcfg = $_G['loader']->variable('config','review');}-->
+<h3 class="rail-h-2">
+    <a href="{url item/detail/id/$subject[sid]}">$subject[name]{if $subject[subname]}($subject[subname]){/if}</a>
+</h3>
+<div class="subject">
+    <p class="start start{print get_star($subject[avgsort],$reviewcfg[scoretype])}">
+        <span class="comm-p" style="margin-left:65px;">
+            <span class="icomoon icon-eye" title="浏览"></span>$subject[pageviews]&nbsp;
+            <span class="icomoon icon-pencil2" title="点评"></span>$subject[reviews]&nbsp;
+            <span class="icomoon icon-bubble-dots2" title="留言"></span>$subject[guestbooks]
+        </span>
+    </p>
+    <table class="subject_field_list" border="0" cellspacing="0" cellpadding="0">
+        $subject_field_table_tr
+    </table>
+    <div class="mb10">
+        <a class="abtn1" href="{url review/member/ac/add/type/item_subject/id/$subject[sid]}"><span class="icomoon icon-pencil2 ic-white"></span>我要点评</a>
+        <span class="icomoon icon-star"></span><a href="javascript:add_favorite($subject[sid]);">关注</a>
+        <span class="xsplit">|</span>
+        <span class="icomoon icon-bubble-dots2"></span><a href="{url item/guestbook/sid/$subject[sid]}">留言</a>
+    </div>
+</div>

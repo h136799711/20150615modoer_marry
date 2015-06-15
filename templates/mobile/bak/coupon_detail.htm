@@ -1,0 +1,43 @@
+{eval 
+	$_HEAD[title] = $detail[subject];
+	$_HEAD[description] = $detail[des];
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-mycolor panel-fullsize">
+	<div class="panel-heading">
+		<h3>$detail[subject]</h3>
+		<p class="txt-small">
+			$detail[des]
+		</p>
+	</div>
+	<div class="bg-color">
+		<div class="list-group list-group-insertmod">
+			<div class="list-group-item">
+				<div class="txt-richtxt center">
+					<img src="{URLROOT}/$detail[picture]" alt="$detail[subject]">
+				</div>
+			</div>
+			<div class="list-group-item">
+				ID编号：$couponid
+				<br>有效期：{date $detail[starttime], 'Y-m-d'} ~ {date $detail[endtime], 'Y-m-d'}
+				<br>消费时向商户展示本页面即可享受优惠
+			</div>
+			{if $detail[sms_text] && $MOD[sendsms] && check_module('sms')}
+				<a class="list-group-item" href="{url coupon/mobile/do/detail/op/sendsms/id/$couponid}">
+					<div class="fr"><span class="arrow"></span></div>
+					<span class="label-comm label-mycolor label-big">发送优惠券手机短信</span>
+				</a>
+			{/if}
+			<a href="{url item/mobile/do/detail/id/$detail[sid]}" class="list-group-item">
+				<div class="fr"><span class="arrow"></span></div>
+				<p class="txt-comm">
+					商家: $subject[name]{if $subject[subname]}($subject[subname]){/if}
+				</p>
+			</a>	
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="txt-comm txt-richtxt">$detail[content]</div>
+	</div>
+</div>
+{include mobile_template('footer')}

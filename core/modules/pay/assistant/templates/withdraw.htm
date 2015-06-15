@@ -1,0 +1,62 @@
+{template modoer_header}
+<div id="body">
+<div class="myhead"></div>
+<div class="mymiddle">
+    <div class="myleft">
+        <!--{template 'menu','member','member'}-->
+    </div>
+    <div class="myright">
+        <div class="myright_top"></div>
+        <div class="myright_middle">
+        	<em class="myright_middle_link"><a href="{url member/index/ac/myset}">设置支付宝帐号</a>|<a href="{url pay/member/ac/withdraw/op/log}">提现记录</a></em>
+            <h3>申请提现</h3>
+			<div class="mainrail">
+				<!--{if !$MOD[withdraw]}-->
+				<span class="font_2">管理员未打开提现功能。</span>
+                <!--{elseif !$allow_count}-->
+                <span class="font_2">今日提现次数已满。</span>
+                <!--{elseif $allow_price <=0}-->
+                <span class="font_2">本月提现金额已满。</span>
+				<!--{elseif $user->realname && $user->alipay}-->
+                <form method="post" action="{url pay/member/ac/$ac/rand/$_G[random]}" name="mysetfrm" id="frm_pay">
+                    <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                        <tr>
+                            <td align="right">支付宝帐号：</td>
+                            <td>$user->realname&nbsp;$user->alipay&nbsp;<span class="font_3">(提现姓名和帐号必须一致。)</span></td>
+                        </tr>
+                        <tr>
+                            <td align="right">可用余额：</td>
+                            <td>$user->rmb&nbsp;元&nbsp;<span class="font_3">(今天还可以提现 $allow_count 次，本月可提现 $allow_price 元。)</span></td>
+                        </tr>
+                        <tr>
+                            <td align="right">提现金额：</td>
+                            <td><input type="text" name="price" size="10" class="t_input" value="" />&nbsp;元</td>
+                        </tr>
+                        <tr>
+                            <td align="right" width="80">支付密码：</td>
+                            <td width="*"><input type="password" name="password" size="25" class="t_input"  /></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                                <button type="submit" name="paysubmit" value="yes"> 提交充值 </button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+                <!--{else}-->
+                <span class="font_2">未设置真实姓名或支付宝帐号，请先设置支付宝帐号，真实姓名必须和支付宝帐号内一致。</span>
+                <!--{/if}-->
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="mybottom"></div>
+</div>
+<script type="text/javascript">
+var total_price = $user->rmb;
+var allow_price = $allow_price;
+var allow_count = $allow_count;
+</script>
+<!--{eval footer();}-->

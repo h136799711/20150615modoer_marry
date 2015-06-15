@@ -1,0 +1,24 @@
+{eval $_HEAD[title] = $title; }
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <div class="fr">
+            <a href="{url item/mobile/do/list/op/filter/catid/$pid}" id="filter_btn">
+                <span class="label-comm label-mycolor label-big">筛选</span>
+            </a>
+        </div>
+        {$title}
+    </div>
+    <div class="list-group list-group-insertmod item-subject-list" id="data_container">
+        {include mobile_template('item_list_li')}
+    </div>
+    <div id="page_container" class="mb10"></div>
+</div>
+<script>
+$(document).ready(function() {
+    page = $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+});
+</script>
+{include mobile_template('footer')}

@@ -1,0 +1,133 @@
+<!--{eval 
+    $_HEAD['title'] = $subject[name] ? $subject[name].'的商铺' : '';
+}-->
+
+{template modoer_header} 
+<script type="text/javascript">
+loadscript('item');
+function set_num(){
+	set_cookie('product_num','1');
+}
+</script>
+<DIV id="body_wrap">
+	<DIV class="fm960 clearfix" id="body">
+		<DIV id="content_top">
+			<DIV class="piece1 mb20">
+				<DIV class="piece1_hd"></DIV>
+				<DIV class="piece1_bd user_info">
+					<DIV class="user_info_left fl">
+						<DIV class="user_profile fl"><SPAN class=uname>$subject[name]</SPAN> <BR>
+							<DIV class="home_follow">
+								<DIV class="followdiv fl" type="all"><A class=addfo href="javascript:add_favorite($sid);">关注该店铺</A> </DIV>
+							</DIV>
+						</DIV>
+					</DIV>
+					<DIV class="user_collect_info fr">
+						<DIV class="collect_list"><A class="ft18 color52">$subject[favorites]</A><BR>
+							<SPAN class=color52>关注</SPAN> </DIV>
+						<DIV class="collect_list bd_none"></DIV>
+					</DIV>
+				</DIV>
+				<DIV class="piece1_home_ft home_nav"> 
+					<!--{loop $links $i $link}--> 
+					{if $i} {/if}<a href="$link[url]"{if $link[flag]=='item/shop'}  style="background:url({URLROOT}/{$_G[tplurl]}images/site_home_bg.png) 0 -209px #ff97bf; color:#fff;" {/if}>$link[title]</a> 
+					<!--{/loop}--> 
+				</div>
+			</div>
+		</div>
+		<div class="piece piece_w960">
+			<div class="piece_hd"><b class=hl></b><b class=hr></b></div>
+			<div class="piece_bd clearfix">
+				<div class="fl" id="content_body2">
+					<div class="show_body clear_in pt10"><!--商品或图片 -->
+						<div class="module_special">
+							<h2 class="common_title">热销商品</h2>
+							<div class="major">
+								<ul class="shoplist">
+									{get:modoer val=table(table/dbpre_product/select/pid,subject,picture,thumb,price/where/sid=$sid AND status=1 AND is_on_sale=1/orderby/sales DESC/rows/4)}
+									<li>
+										<div class="pic"><a href="{url product/detail/pid/$val[pid]}" target="_blank"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" width="150" height="150" /></a></div>
+										<h3><a href="{url product/detail/pid/$val[pid]}" target="_blank">$val[subject]</a></h3>
+										<p>&yen;$val[price]</p>
+									</li>
+									{/get}
+								</ul>
+							</div>
+						</div>
+						<div class="module_special">
+							<h2 class="common_title">所有商品</h2>
+							<div class="major"> 
+								<!--{if $total}-->
+								<ul class="shoplist">
+									<!--{dbres $list $val}-->
+									<li>
+										<div class="pic"><a href="{url product/detail/pid/$val[pid]}" target="_blank"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" width="150" height="150" /></a></div>
+										<h3><a href="{url product/detail/pid/$val[pid]}" target="_blank">$val[subject]</a></h3>
+										<p>&yen;$val[price]</p>
+									</li>
+									<!--{/dbres}-->
+								</ul>
+								<!--{else}-->
+								<div class="messageborder"> <span class="msg-ico">暂时没有相关产品信息。</span> </div>
+								<!--{/if}--> 
+							</div>
+							<!--{if $multipage}-->
+							<div class="multipage">$multipage</div>
+							<!--{/if}--> 
+						</div>
+					</div>
+				</div>
+				<div class="fr" id="right_side1">
+					<div class="side_subject">
+						<h2><a href="{url item/detail/id/$sid}" src="$subject[thumb]" onmouseover="tip_start(this,1);" style="color:#87B32E">$subject[name].$subject[subname]</a></h2>
+						<!--{eval $reviewcfg = $_G['loader']->variable('config','review');}-->
+						<p class="start start{print get_star($subject[avgsort],$reviewcfg[scoretype]);}"></p>
+						<table class="side_subject_field_list" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td colspan="2"> 店主: <span class="font_2">$subject[owner]</span><a href="javascript:send_message($ownerid[uid]);"><img src="{URLROOT}/{$_G[tplurl]}images/product/web_mail.gif" alt="发站内信" /></a> </td>
+							</tr>
+							<tr>
+								<td> <!--{eval $reviewcfg = $_G['loader']->variable('config','review');}--> 
+									<span>综合评分: </span><span class="fontColor1">{print get_star($subject[avgsort],$reviewcfg[scoretype])}</span> <img src="{URLROOT}/{$_G[tplurl]}images/product/shop/heart_{print get_star($subject[avgsort],$reviewcfg[scoretype])}.gif" alt="" /></td>
+							</tr>
+							<tr>
+								<td> 商品数量: $total</td>
+							</tr>
+							<tr>
+								<td>创店时间: {date $subject[addtime],'Y-m-d'}</td>
+							</tr>
+							<tr>
+								<td>所在地区: $_CITY[name] {print:modoer area(aid/$subject[aid])}</td>
+							</tr>
+						</table>
+						<div class="module_common">
+							<h2 class="common_title">店内搜索</h2>
+							<div class="web_search">
+								<form name="keyword" method="get" action="{URLROOT}/index.php">
+									<input type="hidden" name="m" value="product" />
+									<input type="hidden" name="act" value="shop" />
+									<input type="hidden" name="sid" value="$sid" />
+									<input type="hidden" name="catid" value="$catid" />
+									<input class="text width4" type="text" name="keyword" value="$keyword" />
+									<input class="btn" type="submit" value="" />
+								</form>
+							</div>
+						</div>
+						<div class="module_common">
+							<h2 class="common_title">商品分类</h2>
+							<ul class="submenu">
+								<li><a class="none_ico" href="{url product/shop/sid/$sid}">全部商品</a></li>
+								{get:product val=category(sid/$sid)}
+								<li><a class="none_ico" href="{url product/shop/sid/$sid/catid/$val[catid]}">$val[name]</a></li>
+								{/get}
+							</ul>
+						</div>
+						<div class="clear"></div>
+					</div>
+				</DIV>
+			</DIV>
+			<DIV class="piece_ft"><B class=fl></B><B class=fr></B></DIV>
+		</DIV>
+	</DIV>
+</DIV>
+<!--{eval footer();}-->

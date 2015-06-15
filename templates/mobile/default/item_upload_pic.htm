@@ -1,0 +1,78 @@
+{include mobile_template('header')}
+<div class="panel-comm panel-fullsize">
+    <div class="panel-body">
+        <div class="form-box">
+            <form id="postform" name="postform" action="{url item/mobile/do/upload_pic}" method="POST" 
+            enctype="multipart/form-data" onsubmit="return checkPost(this);">
+                <input type="hidden" name="sid" value="$sid">
+                <div class="form-item">
+                    <label for="review_content">上传对象:</label>
+                    <span><a href="{url item/detail/id/$subject[sid]}" target="_blank">$subject[name]&nbsp;$subject[subname]</a></span>
+                </div>
+                <div class="form-item">
+                    <!--{eval 
+                        $_G['loader']->helper('form','item');
+                        $album_option = form_item_alubm($_GET['sid'],$albumid);
+                    }-->
+                    <label for="review_content">上传相册<span class="txt-warning">(必填)</span>:</label>
+                    <select id="albumid" name="albumid">{print $album_option}</select>
+                </div>
+                <div class="form-item">
+                    <fieldset>
+                        <legend>上传图片<span class="txt-warning">(必传)</span>:</legend>
+                        <div>
+                            <span class="abtn" id="fileSelect"><a href="javascript:;">选择图片</a></span>
+                            <span class="abtn" id="fileSubmit"><a href="javascript:;">上传图片</a></span>
+                            <input type="file" id="fileImage" name="fileselect[]" multiple  style="visibility:hidden;">
+                        </div>
+                        <div id="uploadMessage" class="upload_message"></div>
+                        <ul id="uploadPreview" class="upload_preview"></ul>
+                        <div class="uploaded_box">
+                            <h3>已上传</h3>
+                            <ul id="uploaded" class="upload_preview">
+                            </ul>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="form-submit">
+                    <div class="btn-group-vertical full-width">
+                        <button type="submit" name="dosubmit" value="Y" class="btn btn-mycolor">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/upfile.js"></script>
+<script>
+var Upimg = null;
+$(document).ready(function() {
+    $('#fileSelect').click(function() {
+        $("#fileImage").click();
+    });
+    //上传图片组件
+    Upimg = mUpImage({
+        fileInput:  'fileImage',
+        upButton:   'fileSubmit',
+        message:    'uploadMessage',
+        preview:    'uploadPreview',
+        uploaded:   'uploaded',
+        postUrl:    '{url index/upload/in_ajax/1}',
+        postName:   'pictures',
+        maxSize:    {print (int)S('picture_upload_size')*1024},
+        maxNum:     10,
+        onClick:    null
+    })
+});
+
+function checkPost(form) {
+    if(Upimg.getQueueCount() > 0) {
+        if(!window.confirm("图片上传内还有未上传的图片？\n\n需要处理未上传图片，请选择“取消”。\n\n不处理未上传图片，提交表单，请点击“确定”。")) {
+            return false;
+        }
+    }
+    return true;
+}
+</script>
+{include mobile_template('footer')}

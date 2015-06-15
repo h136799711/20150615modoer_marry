@@ -1,0 +1,61 @@
+<div class="content1">
+<form method="post" action="{url product/member/ac/g_order/op/change_amount/in_ajax/1}" class="post" id="frm_changeamount" name="frm_changeamount" target="ajaxiframe">
+    <input type="hidden" name="orderid" value="$orderid" />
+    <input type="hidden" name="dosubmit" value="yes" />
+    <p>买&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;家：<span>$detail[buyername]</span></p>
+    <p>订 单 号：<span>$detail[ordersn]</span></p>
+    <p>商品总价：<b class="font_2 f14">&yen;$detail[goods_amount]</b> <input type="text" name="goods_amount" class="t_input" onkeyup="change_price()" value="$detail[goods_amount]" /> 输入要修改的金额。</p>
+    <p>配送费用：<b class="font_2 f14">&yen;$detail[shipfee]</b> <input type="text" name="shipfee" class="t_input" onkeyup="change_price()" value="$detail[shipfee]" /> 输入要修改的金额。</p>
+    {if $detail[integral]}<p>消费积分抵价：<b class="font_2 f14">&yen;$detail[integral_amount]</b></p>{/if}
+    <p>订单总价：<b class="font_2 f14" id="order_amount">&yen;$detail[order_amount]</b></p>
+    <div class="btn">
+        <input type="hidden" name="order_amount" value="$detail[order_amount]" />
+        <button type="button" class="btn1" onclick="ajaxPost('frm_changeamount', '','document_reload');">提交</button>&nbsp;
+        <button type="button" class="btn1" onclick="dlgClose();">关闭</button>
+    </div>
+</form>
+</div>
+<script type="text/javascript">
+function change_price(){
+    var gm = parseInt($('input[name="goods_amount"]').val()*100)/100;
+    var shipfee = parseInt($('input[name="shipfee"]').val()*100)/100;
+    var newprice = fixMath(Number(gm), Number(shipfee), '+');
+    newprice = fixMath(Number(newprice), Number($detail[integral_amount]), '-');
+    $('#order_amount').html("&yen;" + newprice);
+    $('input[name="order_amount"]').val(newprice);
+}
+
+function fixMath(m, n, op) {
+  var a = (m+"");
+  var b = (n+"");
+  var x = 1;
+  var y = 1;
+  var c = 1;
+  if(a.indexOf(".") > 0) {
+    x = Math.pow(10, a.length - a.indexOf(".") - 1);
+  }
+  if(b.indexOf(".") > 0) {
+    y = Math.pow(10, b.length - b.indexOf(".") - 1);
+  }
+  switch(op) {
+    case '+':
+    case '-':
+      c = Math.max(x,y);
+      m = Math.round(m*c);
+      n = Math.round(n*c);
+      break;
+    case '*':
+      c = x*y
+      m = Math.round(m*x);
+      n = Math.round(n*y);
+      break;
+    case '/':
+      c = Math.max(x,y);
+      m = Math.round(m*c);
+      n = Math.round(n*c);
+      c = 1;
+      break;
+  }
+  return eval("("+m+op+n+")/"+c);
+}
+</script>

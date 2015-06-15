@@ -1,0 +1,35 @@
+<!--{if !$_G[in_ajax]}-->
+<div class="mainrail rail-border-3 subject forums">
+
+    <ul class="subtab" id="subtab">
+        <li id="tab_review"><a href="{url item/detail/id/$sid}#review" onfocus="this.blur()" onclick="return get_review('item_subject',$detail[sid]);">会员点评</a></li>
+        <li id="tab_guestbook"><a href="{url item/guestbook/sid/$subject[sid]}" onfocus="this.blur()">会员留言</a></li>
+        <script type="text/javascript" src="{URLROOT}/static/javascript/group.js"></script>
+        <li id="tab_group"><a href="{url group/item/sid/$sid}#group" onfocus="this.blur()" onclick="return group_topics_subject($detail[sid]);">小组话题</a></li>
+        <!--{if $catcfg[forum] && $detail['forumid'] > 0}-->
+        <li id="tab_forum"><a href="{url group/item/sid/$sid/view/forum}#forum" onfocus="this.blur()" onclick="return get_forum_threads($detail[forumid],1,$sid);">论坛讨论</a></li>
+        <!--{/if}-->
+        <li style="float:right;"><a href="{url group/$gid}">全部话题</a></li>
+    </ul>
+    <div class="clear"></div>
+
+    <div id="display" style="margin-top:10px">
+<!--{/if}-->
+
+    <!--{if $list}-->
+		<ul class="forum">
+			<li class="title"><cite>作者/回复</cite><a href="{url group/item/sid/$detail[sid]}">全部话题</a></li>
+        <!--{dbres $list $val}-->
+			<li><cite>$val[username]/$val[replies]</cite><a href="{url group/topic/id/$val[tpid]}">$val[subject]</a></li>
+        <!--{/dbres}-->
+		</ul>
+
+    <!--{else}-->
+        <div class="messageborder"><span class="msg-ico">暂无话题，<a href="{url group/sid/$detail[sid]}">发表您的话题</a>！</span></div>
+    <!--{/if}-->
+
+<!--{if !$_G[in_ajax]}-->
+    </div>
+
+</div>
+<!--{/if}-->

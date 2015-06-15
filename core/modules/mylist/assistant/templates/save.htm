@@ -1,0 +1,118 @@
+<!--{if !defined('IN_AJAX')}-->
+{template modoer_header}
+</script>
+<div id="body">
+<div class="myhead"></div>
+<div class="mymiddle">
+    <div class="myleft">
+        <!--{template 'menu','member','member'}-->
+    </div>
+    <div class="myright">
+        <div class="myright_top"></div>
+        <div class="myright_middle">
+            <h3>创建/编辑榜单</h3>
+<!--{/if}-->
+            <div class="mainrail">
+                <form method="post" name="frm_apply" id="frm_apply" action="{url mylist/member/ac/$ac/op/save/in_ajax/$_G[in_ajax]/rand/$_G[random]}">
+                <!--{if $op=='edit'}-->
+                <input type="hidden" name="do" value="edit" />
+                <input type="hidden" name="id" value="$detail[id]" />
+                <!--{/if}-->
+                <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                    <tr>
+                        <td width="100" align="right">榜单名：</td>
+                        <td width="*"><input type="text" name="title" class="t_input" size="60" value="$detail[title]" /></td>
+                    </tr>
+                    <tr>
+                        <td align="right">城市：</td>
+                        <td>
+                            {eval 
+                                $_G['loader']->helper('form');
+                                $city_id = $detail['city_id'];
+                                if(!$city_id) $city_id = $_CITY['aid'];
+                            }
+                            <select name="city_id">
+                                {print form_city($city_id)}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">分类：</td>
+                        <td>
+                            {eval 
+                                $_G['loader']->helper('form','mylist');
+                            }
+                            <select name="catid">
+                                {print form_mylist_category($detail['catid'])}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" valign="top">简介：</td>
+                        <td><textarea name="intro" style="width:500px;height:100px;">$detail[intro]</textarea></td>
+                    </tr>
+                    <tr>
+                        <td align="right">标签：</td>
+                        <td><input type="text" name="tags" class="t_input" size="60" value="{if is_array($detail[tags])}{print implode(S('tag_split')=='comma'?',':' ',$detail['tags'])}{else}{/if}" /></td>
+                    </tr>
+                    <!--{if $list}-->
+                    <tr>
+                        <td align="right" valign="top">入榜商户：</td>
+                        <td>
+                            <ul class="ass-item-list">
+                            <!--{dbres $list $val}-->
+                                <li data='{"id":"{$val[id]}"}'>
+                                    <cite><a class="item-list-delete" href="javascript:;">删除</a></cite>
+                                    <input type="text" name="items[{$val[id]}][listorder]" class="t_input" size="5" value="$val[listorder]" />
+                                    <a href="{url item/detail/id/$val[sid]}" target="_blank">$val[name]{if $val[subname]}($val[subname]){/if}</a>
+                                </li>
+                            <!--{/dbres}-->
+                            </ul>
+                            <div>$multipage</div>
+                        </td>
+                    </tr>
+                    <!--{/if}-->
+                    <tr>
+                        <td></td>
+                        <td>
+                            <!--{if defined('IN_AJAX')}-->
+                            <input type="hidden" name="dosubmit" value="yes" />
+                            <button type="button" class="button" onclick="ajaxPost('frm_apply', '', 'document_reload');">提交</button>&nbsp;
+                            <button type="button" class="button" onclick="dlgClose();">关闭</button>
+                            <!--{else}-->
+                            <input type="hidden" name="forward" value="{print get_forward()}" />
+                            <button type="submit" name="dosubmit" value="yes">提交</button>&nbsp;
+                            <button type="button" onclick="history.go(-1);">返回</button>
+                            <!--{/if}-->
+                        </td>
+                    </tr>
+                </table>
+                </form>
+            </div>
+<!--{if !defined('IN_AJAX')}-->
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="mybottom"></div>
+</div>
+<style>
+.ass-item-list { margin:0;padding:0; }
+.ass-item-list li { width:500px; background:#fff0f0; padding:2px 5px; margin:3px 0; }
+.ass-item-list li cite {float:right; font-style:normal;}
+</style>
+<script>
+$(document).ready(function() {
+    $('.item-list-li').each(function(index, el) {
+        var li = $(this);
+        var data = jQuery.parseJSON($(this).attr('data'));
+        $(this).find('.item-list-delete').click(function(event) {
+            mylist_delete_item(data.id, function(){
+                li.remove();
+            });
+        });
+    });
+});
+</script>
+<!--{eval footer();}-->
+<!--{/if}-->

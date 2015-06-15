@@ -1,0 +1,127 @@
+<!--{eval
+    if(SCRIPTNAV != 'index' && $_G[show_sitename]):
+        $_HEAD[title] .= $_G['cfg']['titlesplit'] . $_G['cfg']['sitename'];
+    endif;
+}-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<avalon ms-skip="1" class="avalonHide">X<style id="avalonStyle">.avalonHide{ display: none!important }.ui-helper-global-drag *{ -webkit-touch-callout: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}.ui-helper-global-drag img{-webkit-user-drag:none; pointer-events:none;}</style></avalon>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=$_G[charset]" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<title>$_HEAD[title] - Powered by Modoer</title>
+{if $_HEAD[keywords]}<meta name="keywords" content="$_HEAD[keywords],Modoer点评系统" />{/if}
+{if $_HEAD[description]}<meta name="description" content="$_HEAD[description]" />{/if}
+
+<link rel="shortcut icon" type="image/x-icon" href="{URLROOT}/static/images/favicon.ico">
+<!-- bootstarp -->
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/bootstrap.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/widget/scroll.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/dropdown.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/v3_css/user.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/cards/cardbase.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/cards/theme-set.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/progress.css?{$_G[modoer][build]}" />
+
+
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/widget/bootstrap-datetimepicker.min.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/table.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/widget/notice.css?{$_G[modoer][build]}" />
+
+
+<link rel="alternate" type="application/rss+xml" title="婚礼时光RSS Feed" href="{URLROOT}/{$_G[tplurl]}rss.xml">
+
+
+<!--[if lt IE 9]>
+<script src="http://s.lovewith.me/static/js/??lib/html5shiv/dist/html5shiv.min.js,lib/respondJs/dest/respond.min.js"></script>
+<script src="http://cdn.bootcss.com/placeholders/3.0.2/placeholders.min.js"></script>
+
+<link href="http://s.lovewith.me/static/js/lib/respondJs/cross-domain/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
+<link href="/static/src_js/lib/respondJs/cross-domain/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
+<script src="/static/src_js/lib/respondJs/cross-domain/respond.proxy.js"></script>
+<script>
+    window.onload = function () {
+        document.body.className = 'ie8';
+    }
+</script>
+<![endif]-->
+
+
+
+
+<link rel="stylesheet" type="text/css" href="{URLROOT}/static/images/icons.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css_common.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/static/images/mdialog.css?{$_G[modoer][build]}" />
+<script type="text/javascript" src="{URLROOT}/data/cachefiles/config.js?{$_G[cfg][js_cache_flag]}"></script>
+<script type="text/javascript">
+<!--{if !empty($MOD)}-->
+var mod = modules['{$MOD[flag]}'];
+website.module.flag = '{$MOD[flag]}';
+website.module.page = '{$_GET['act']}';
+<!--{/if}-->
+</script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/jquery.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/jquery.plugin.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/common.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/mdialog.js?{$_G[modoer][build]}"></script>
+
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/v3_page/head.js"></script>
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/v3_page/user/set_space.js"></script>
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/v3_page/home/pageView.js"></script>
+
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/avalon/avalon.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/avalon/dialog/avalon.dialog.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/avalon/validation.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/plugins/lazyload.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/plugins/slideBack.js"></script>
+
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/avalon/mmRouter.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/avalon/scrollbar/avalon.scrollbar.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/avalon/notice/notice.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/artTemplate.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/plugins/upload.min.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/plugins/map.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/plugins/skrollr.js"></script>
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/join_wed.js"></script>
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/avalon/avalon.getModel.js"></script>
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/avalon/promise.js"></script>
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/avalon/mmHistory.js"></script>
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/avalon/draggable/avalon.draggable.js"></script>
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/sea2.3.js "></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/seajs-combo.js "></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/sea.config2.3.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/arale.js"></script>
+
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/moment/min/moment.min.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/bootstrap3-datetimepicker/src/js/bootstrap-datetimepicker.js "></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/collapse.js "></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/moment/locale/zh-cn.js"></script>
+
+<!--{if $_CFG[headhtml]}-->{LF}$_CFG[headhtml]{LF}<!--{/if}-->
+</head>
+<body>
+<!--{if SCRIPTNAV == 'index'}-->
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_index.css?{$_G[modoer][build]}");</style>
+<!--{elseif SCRIPTNAV == 'assistant'||SCRIPTNAV == 'manage'}-->
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_assistant.css?{$_G[modoer][build]}");</style>
+<!--{elseif !empty($MOD) && is_file(MUDDER_ROOT . $_G[tplurl] . 'css_' . $MOD['flag'] . '.css')}-->
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_{$MOD[flag]}.css?{$_G[modoer][build]}");</style>
+<!--{/if}-->
+<!--{if !empty($MOD) && $MOD['flag']!='member' && is_file(MUDDER_ROOT . 'static/javascript/' . $MOD['flag'] . '.js')}-->
+<script type="text/javascript" src="{URLROOT}/static/javascript/$MOD[flag].js?{$_G[modoer][build]}"></script>
+<!--{/if}-->

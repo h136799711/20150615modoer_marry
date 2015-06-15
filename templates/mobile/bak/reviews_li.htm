@@ -1,0 +1,45 @@
+<!--{dbres $reviews $val}-->
+<li class="list-group-item">
+    <div class="txt-comm">
+        <div class="fr">{date $val[posttime],'w2style'}</div>
+         {if $val[uid]}$val[username]
+         ({print:member group(groupid/$val[groupid]/color/0)}){else}游客{/if}
+        <!--{if $val[price] && $catcfg['useprice']}-->
+            &nbsp;<span>$catcfg[useprice_title]: $val[price]{$catcfg[useprice_unit]}</span>
+        <!--{/if}-->
+    </div>
+    <p class="txt-comm mt5">
+        <!--{get:review _val=reviewopt(catid/$val[pcatid])}-->
+        $_val[name]:<span class="sorce">{print cfloat($val[$_val[flag]])}</span>
+        <!--{/get}-->
+    </p>
+    <div class="txt-comm mt5">
+        <!--{if $val[voice_file]}-->
+        <audio src="{URLROOT}/$val[voice_file]" controls="controls">您的浏览器不支持语音播放</audio>
+        <!--{/if}-->
+        <!--{if $show_full}-->
+        <div class="review-list-content mt5">
+            <p>{print nl2br($val[content])}</p>
+        </div>
+        <!--{else}-->
+            <p class="mt5">{sublen $val[content],200,'...更多...'}</p>
+        <!--{/if}-->
+        <!--{eval $pictures = $val['pictures'] ? unserialize($val['pictures']) : array(); }-->
+        <!--{if $pictures}-->
+        <div class="review-list-pictures mt5" data-rid="$val[rid]">
+            {eval $i=0;}
+            {loop $pictures $pic}
+            <input type="hidden" data-name="pic-$val[rid]" data-url="{img $pic[picture]}">
+            {if $i++<2}
+                <a href="javascript:;"><img src="{img $pic[thumb]}"></a>
+            {/if}
+            {/loop}
+            {if count($pictures)>2}
+                <a href="javascript:;" class="more">共 {print count($pictures)} 张照片</a>
+            {/if}
+        </div>
+        <!--{/if}-->
+    </div>
+</li>
+<!--{/dbres}-->
+{if $multipage}$multipage{/if}

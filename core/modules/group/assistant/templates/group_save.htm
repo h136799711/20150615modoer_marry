@@ -1,0 +1,127 @@
+{eval 
+    $_G['loader']->helper('form','group');
+}
+{template modoer_header}
+<script type="text/javascript" src="{URLROOT}/static/javascript/item.js"></script>
+<script type="text/javascript">
+var g;
+function reload() {
+    var obj = document.getElementById('reload');
+    var btn = document.getElementById('switch');
+    if(obj.innerHTML.match(/^<.+src=.+>/)) {
+        g = obj.innerHTML;
+        obj.innerHTML = '<input type="file" name="icon" size="20">';
+        btn.innerHTML = '取消上传';
+    } else {
+        obj.innerHTML = g;
+        btn.innerHTML = '重新上传';
+    }
+}
+</script>
+<div id="body">
+<div class="myhead"></div>
+<div class="mymiddle">
+    <div class="myleft">
+        <!--{template 'menu','member','member'}-->
+    </div>
+    <div class="myright">
+        <div class="myright_top"></div>
+        <div class="myright_middle">
+            <h3>小组管理</h3>
+            <div class="mainrail">
+                {if $op=='edit'}
+                <ul class="optabs">
+                    <li class="active"><a href="{url group/member/ac/group/op/edit/gid/$gid}">编辑小组</a></li>
+                    <li><a href="{url group/member/ac/memberlist/gid/$gid}">成员管理</a></li>
+                    <li><a href="{url group/member/ac/type/gid/$gid}">话题分类</a></li>
+                    <li><a href="{url group/member/ac/setting/gid/$gid}">参数设置</a></li>
+                </ul>
+                <div class="clear"></div>
+                <div style="height:1px;*height:1px;_font-size:1px;border-top:2px solid #eee;margin-bottom:5px;"></div>
+                {/if}
+                <form method="post" name="myform" action="{url group/member/ac/$ac/op/save/rand/$_G[random]}" enctype="multipart/form-data">
+                <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                    <tr>
+                        <td align="right" width="80"><span class="font_1">*</span>名称:</td>
+                        <td width="*">
+                            <input type="text" name="groupname" class="t_input" size="60" value="$detail['groupname']" />
+                            <span class="font_3">小组名称不能重名</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" valign="top"><span class="font_1">*</span>分类:</td>
+                        <td>
+                            <div>
+                                <input type="txtbox" class="t_input" size="60" name="tags" id="tags" value="<?=$tags?>" readonly />&nbsp;<a href="javascript:"onclick="$('#tags').val('');">清空</a>
+                                <span class="font_3">请点击下方分类标签输入</span>
+                            </div>
+                            <div style="width:500px;">
+                                <select name="catid" id="catid" onchange="group_load_cattags($(this).val(),'cat_tags');">
+                                    {print form_group_category($detail['catid'])}
+                                </select>
+                                <span id="cat_tags"></span>
+                                <script type="text/javascript">
+                                    group_load_cattags($('#catid').val(), 'cat_tags');
+                                </script>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">图标:</td>
+                        <td>
+                            {if !$detail['icon']}
+                            <input type="file" name="icon" size="20" />
+                            <span class="font_3">图标长宽必须为 {$MOD[group_icon_size]}X{$MOD[group_icon_size]}</span>
+                            {else}
+                            <span id="reload"><img src="{URLROOT}/$detail[icon]" /></span>&nbsp;
+                            [<a href="javascript:reload();" id="switch">重新上传</a>]
+                            {/if}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" valign="top">关联主题:</td>
+                        <td>
+                            <select name="sid" style="max-width:300px;">
+                                <option value="">==关联我管理的主题==</option>
+                                <!--{eval  $_G['loader']->helper('form','item');}-->
+                                <!--{print form_item_mysubject($user->uid, $detail[sid])}-->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">地区:</td>
+                        <td>
+                            {eval $_G['loader']->helper('form')}
+                            <select name="city_id">
+                                {print form_city($detail['city_id'], true)}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" valign="top"><span class="font_1">*</span>简介:</td>
+                        <td>
+                            <textarea name="des" style="height:80px;width:400px;display:block;margin-bottom:5px;"><?=$detail['des']?></textarea>
+                            <span class="font_3">小组简介内容限<span class="font_1">20-500</span>个字以内</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            {if $op=='edit'}
+                            <input type="hidden" name="edit" value="Y" />
+                            <input type="hidden" name="gid" value="$gid" />
+                            {/if}
+                            <button type="submit" name="onsubmit" value="yes">{if $detail[status]<0}重新提交审核{else}提交{/if}</button>&nbsp;
+                            <button type="button" onclick="history.go(-1);">返回</button>
+                        </td>
+                    </tr>
+                </table>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="mybottom"></div>
+</div>
+<!--{eval footer();}-->

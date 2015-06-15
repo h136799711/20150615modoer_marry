@@ -1,0 +1,131 @@
+{eval $header_title="发表点评";}
+{include mobile_template('header')}
+{if $_G['in_dlg']}
+<script type="text/javascript">
+jslocation("{url review/mobile/do/review/op/add/sid/$sid}");
+</script>
+{/if}
+<div class="panel-comm panel-fullsize">
+    <div class="panel-body">
+        <div class="form-box">
+            <form id="postform" name="postform" action="{url review/mobile/do/review/op/save}" method="POST" 
+            enctype="multipart/form-data" onsubmit="return checkPostReview(this);">
+                <input type="hidden" name="review[idtype]" value="item_subject">
+                <input type="hidden" name="review[id]" value="$sid">
+                <input type="hidden" name="review[subject]" value="$subject">
+                <div class="form-item">
+                    <fieldset>
+                        <legend>总评<span class="txt-warning">(必填)</span>:</legend>
+                        <div class="item-inline">
+                            <label for="review_best_2">
+                                <input type="radio" name="review[best]" id="review_best_2" value="2" checked="checked">好
+                            </label>
+                            <label for="review_best_1">
+                                <input type="radio" name="review[best]" id="review_best_1" value="1">一般
+                            </label>
+                            <label for="review_best_0">
+                                <input type="radio" name="review[best]" id="review_best_0" value="0">不好
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="form-item">
+                    <fieldset>
+                        <legend>打分<span class="txt-warning">(必填)</span>:</legend>
+                        <!--{loop $review_opts $key $val}-->
+                        <div class="item-inline">
+                            <label for="review_$key" style="float:left;width:100px;">$val[name]:</label>
+                            <select name="review[$key]" id="review_$key">
+                                <option value="5">非常好(5)</option>
+                                <option value="4">很好(4)</option>
+                                <option value="3" selected="selected">好(3)</option>
+                                <option value="2">中(2)</option>
+                                <option value="1">差(1)</option>
+                            </select>
+                            <div class="clear"></div>
+                        </div>
+                        <!--{/loop}-->
+                    </fieldset>
+                </div>
+                <div class="form-item">
+                    <fieldset>
+                        <legend>上传图片:</legend>
+                        <div>
+                            <span class="abtn" id="fileSelect"><a href="javascript:;">选择图片</a></span>
+                            <span class="abtn" id="fileSubmit"><a href="javascript:;">上传图片</a></span>
+                            <input type="file" id="fileImage" name="fileselect[]" multiple  style="visibility:hidden;">
+                        </div>
+                        <div id="uploadMessage" class="upload_message"></div>
+                        <ul id="uploadPreview" class="upload_preview"></ul>
+                        <div class="uploaded_box">
+                            <h3>已上传</h3>
+                            <ul id="uploaded" class="upload_preview">
+                            </ul>
+                        </div>
+                    </fieldset>
+                </div>
+                <!--{if $config['useprice']}-->
+                <div class="form-item">
+                    <label for="review_price">$config[useprice_title]{if $config[useprice_required]}<span class="txt-warning">(必填)</span>{/if}:</label>
+                    <input name="review[price]" id="review_price" placeholder="请填写价格数字" type="text"{if $config[useprice_required]} required{/if}>
+                </div>
+                <!--{/if}-->
+                <div class="form-item">
+                    <label for="review_content">点评内容<span class="txt-warning">(必填)</span>:</label>
+                    <textarea name="review[content]" id="review_content" placeholder="填写您的点评内容" required></textarea>
+                </div>
+                <!--{if (!$user->isLogin && $MOD[seccode_review_guest]) || ($user->isLogin && $MOD[seccode_review])}-->
+                <div class="form-item">
+                    <label>验证码:</label>
+                    <input name="seccode" id="seccode" placeholder="请输入右侧验证码" type="text" style="width:200px">
+                    <span data-name="seccode"></span>
+                </div>
+                <!--{/if}-->
+                <div class="form-submit">
+                    <div class="btn-group-vertical full-width">
+                        <button type="submit" name="dosubmit" value="Y" class="btn btn-mycolor">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/upfile.js"></script>
+<script>
+var Upimg = null;
+$(document).ready(function() {
+
+    $('span.[data-name="seccode"]').m_seccode();
+    
+    $('#fileSelect').click(function() {
+        $("#fileImage").click();
+    });
+    //上传图片组件
+    Upimg = mUpImage({
+        fileInput:  'fileImage',
+        upButton:   'fileSubmit',
+        message:    'uploadMessage',
+        preview:    'uploadPreview',
+        uploaded:   'uploaded',
+        postUrl:    '{url index/upload/in_ajax/1}',
+        postName:   'review[pictures]',
+        maxSize:    {print (int)S('picture_upload_size')*1024},
+        maxNum:     10,
+        onClick:    null
+    })
+});
+
+function checkPostReview(form) {
+    if(Upimg.getQueueCount() > 0) {
+        if(!window.confirm("图片上传内还有未上传的图片？\n\n需要处理未上传图片，请选择“取消”。\n\n不处理未上传图片，提交表单，请点击“确定”。")) {
+            return false;
+        }
+    }
+    if($('#review_content').val().trim()=='') {
+        alert('未填写点评内容！');
+        return false;
+    }
+    return true;
+}
+</script>
+{include mobile_template('footer')}

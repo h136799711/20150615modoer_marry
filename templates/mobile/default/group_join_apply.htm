@@ -1,0 +1,28 @@
+{eval
+    $_HEAD[title] = "加入小组";
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-fullsize panel-default">
+    <div class="panel-body">
+        <div class="form-box">
+            <form action="{url group/mobile/do/post/op/join_group}" method="POST">
+                <input type="hidden" name="gid" value="$gid">
+                <input name="tpid" type="hidden" value="$tpid">
+                <div class="form-item">
+                    <label>小组管理员需要验证你的身份，请输入你的请求信息。</label>
+                </div>
+                <div class="form-item">
+                    <label>申请说明：</label>
+                    <textarea name="message" id="message" placeholder="请输入申请说明"></textarea>
+                </div>
+                <div class="form-submit">
+                    <div class="btn-group-vertical btn-comm">
+                        <button type="submit" value="Y" name="dosubmit" class="color1">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>        
+    </div>
+</div>
+
+{include mobile_template('footer')}

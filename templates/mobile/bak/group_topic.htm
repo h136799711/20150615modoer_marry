@@ -1,0 +1,95 @@
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <h3>{if $topic[status]<1}<span>[未审核]</span>{/if}$topic[subject]</h3>
+        <p class="txt-comm txt-small">
+            <span class="J_TOTAL">点击：$topic[pageview]</span>
+            <span class="J_TOTAL">回复：$topic[replies]</span>
+        </p>
+    </div>
+    <ul class="list-group list-group-insertmod group-topic-reply-list" id="data_container">
+        {if $_GET[page] <= 1}
+        <li class="list-group-item">
+            <div class="richtxt-comm">
+                <div class="fl">
+                    <img src="{print get_face($topic[uid])}" alt="$topic[username]" class="richtxt-img">
+                </div>
+                <div class="richtxt-body">
+                    <div class="fr txt-small">楼主</div>
+                    <div class="txt-small">
+                        <p>
+                            $topic[username]
+                            {if $topic[source]}<img src="{URLROOT}/static/images/common/mobile.gif" alt="手机发布">{/if}
+                        </p>
+                        {date $topic[dateline],w2style}
+                    </div>
+                </div>
+            </div>
+            <div class="txt-comm txt-richtxt">
+                {print msubb::pares($topic[content], $topic)}
+            </div>
+        </li>
+        {/if}
+        {include mobile_template('group_topic_loop')}
+    </ul>
+</div>
+<div id="page_container" class="mb10"></div>
+<div class="fixed-bottom group-topic-fixed">
+    <div class="panel-comm panel-default">
+        <div class="panel-heading">
+            {if !$topic[closed]}
+                <a class="btn btn-mycolor" id="reply_btn" data-tpid="$topic[tpid]" href="{url group/mobile/do/post/op/reply/tpid/$topic[tpid]}">回复话题</a>
+            {else}
+                <a class="btn" href="javascript:">回复已关闭</a>
+            {/if}
+            <div class="fl">
+                <span class="txt-grey">{$total} 回复</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="{URLROOT}/static/javascript/swfobject.js"></script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe.js"></script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe_srceen.js"></script>
+<script>
+$(document).ready(function() {
+
+    $(document.body).css("margin-bottom",$('div.fixed-bottom').height());
+    $('#page_container').m_ajaxpage({
+        container:'#data_container',
+        onInit:function(page, container) {
+            showVideoPlayer();
+            bindSwipe();
+        }
+    });
+
+});
+//显示视频播放器
+function showVideoPlayer() {
+    $('.show_video').each(function(i){
+        var id = $(this).attr('id');
+        var json = eval('(' + $(this).attr('params') + ')');
+        if(typeof(json)=='undefined') return;
+        if(!json.video) return;
+        var width = Math.min(500, $(document.body).width()-20);
+        if(!json.width) json.width = Math.min(500, width);
+        if(!json.height) json.height = width*0.65;
+        var so = new SWFObject(json.video, id, json.width, json.height, 7, '#FFF');
+        so.addParam("allowScriptAccess", "always");
+        so.addParam("allowFullScreen", "true");
+        so.addParam("wmode", "transparent");
+        so.write(id);
+    });
+}
+//图片划屏浏览
+function bindSwipe() {
+    $('img.ubb_show_image').each(function(index, val) {
+        $(this).click(function() {
+            swipe_srceen('#mobile_body', '.ubb_show_image', index);
+        });
+    });
+}
+
+</script>
+{include mobile_template('footer')}

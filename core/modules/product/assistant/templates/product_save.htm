@@ -1,0 +1,319 @@
+{template modoer_header}
+<script type="text/javascript" src="{URLROOT}/static/javascript/validator.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="{URLROOT}/data/cachefiles/product_gcategory.js?r=$MOD[jscache_flag]"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+    $("#subbtn").click(function(){
+        if($("#promote").val()>0){
+            if($("#promote_start").val()=="" || $("#promote_end").val()==""){
+                alert("您开启了本商品的促销价，请填写促销日期！");
+                if($("#promote_start").val()=="") $("#promote_start").focus();
+                if($("#promote_end").val()=="") $("#promote_end").focus();
+                return false;
+            }
+        }
+        var gcatid=$("[name=gcatid]").val();
+        if(!gcatid||gcatid<1){
+            alert('未选择所属商品分类，请选择。');
+            return false;
+        }
+    });
+});
+$("document").ready(function() {
+
+    $('[name=usd_subject_city_id]').click(function(event) {
+        $('#city_id').attr('disabled',$(this).attr('checked'));
+    });
+
+    //产品分类
+    $('#product_gcategory').mselect({
+        'data':_product_cate,'name':'gcatid','value':'$gcatid',
+        onchange:function(obj){
+            get_product_attrs();
+        }
+    });
+
+    //获取筛选属性
+    function get_product_attrs() {
+        var pid = $("[name=pid]").val();
+        var gcatid = $("[name=gcatid]").val();
+        var pgcatid = product_gcatgory_parent_id(gcatid);
+        if(pgcatid == 0) {
+            $('#product_att_td').empty();
+            $('#product_att_tr').hide();
+            return;
+        }
+        $.post(Url('product/member/ac/g_product/op/get_att'), {'pid':pid, 'catid':gcatid, 'in_ajax':1 }, 
+            function(result) {
+                $('#product_att_box').empty();
+                if (is_message(result)) {
+                    myAlert(result);
+                } else if(result !='') {
+                    $('#product_att_td').html(result);
+                    $('#product_att_tr').show();
+                } else {
+                    $('#product_att_tr').hide();
+                }
+            }
+        );
+    }
+
+    //产品类型
+    p_style();
+
+});
+
+//产品类型
+var p_style = function() {
+
+    var change = function(sort) {
+        $('tr[data-sort]').each(function() {
+            var _this = $(this);
+            if(_this.data('sort') == sort) {
+                _this.show();
+            } else {
+                _this.hide();
+            }
+        });
+    }
+
+    $('[name="p_style"]').click(function(event) {
+        change(this.value);
+    });
+
+    change($('[name="p_style"]:checked').val());
+
+}
+
+</script>
+<style type="text/css">
+.uploadimgs .upimg { float:left; text-align:center; width:90px; height:90px; }
+    .uploadimgs .upimg img{ display:block; max-width:80px; max-height:80px; padding:1px; border:1px solid #ccc;
+        _width:expression(this.width > 80 ? 80 : true); _height:expression(this.height > 80 ? 80 : true); }
+.uploadimgs .imgthumb img{border:2px solid red;}
+</style>
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+        <!--{eval !$mymenu && $mymenu = 'mmenu';}-->
+        <!--{template $mymenu,'member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3>添加/编辑产品</h3>
+                <div class="mainrail">
+                    <form method="post" name="myform" action="{url product/member/ac/$ac/op/post/rand/$_G[random]}" enctype="multipart/form-data" onsubmit="return validator(this);">
+                    <table width="95%" cellspacing="0" cellpadding="0" class="maintable">
+                        <tr>
+                            <td width="100" align="right"><span class="font_1">*</span>所属主题：</td>
+                            <td width="*">
+                                $_G[manage_subject][name]{if $_G[manage_subject][subname]}($_G[manage_subject][subname]){/if}
+                            </td>
+                        </tr>
+			            <tr>
+				            <td class="altbg1" align="right"><span class="font_1">*</span>商品分类：</td>
+				            <td>
+                                <div id="product_gcategory"></div>
+				            </td>
+			            </tr>
+                        <tr>
+                            <td align="right"><span class="font_1">*</span>店内分类：</td>
+                            <td><select name="catid" id="catid" validator="{'empty':'N','errmsg':'请选择店内分类。'}">
+                                    <option value="" style="color:#CC0000">==选择店内分类==</option>
+                                    <!--{print form_product_category($sid, $detail[catid])}-->
+                                </select>
+                                <button type="button" onclick="create_product_category($sid);">新建类别</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="altbg1" align="right"><span class="font_1">*</span>产品类别：</td>
+                            <!--{eval $sort_arr = array(1=>'实物产品',2=>'虚拟产品');}-->
+                            <td>
+                                <!--{print form_radio('p_style',$sort_arr, $sort, ($op=='add'?'':'disabled'))}-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right"><span class="font_1">*</span>所属城市：</td>
+                            <td>
+                                <select name="city_id" id="city_id">
+                                    {print form_city($detail['city_id'], true)}
+                                </select>
+                                <label><input type="checkbox" name="usd_subject_city_id" value="1" />与主题所属城市相同</label>
+                            </td>
+                        </tr>
+                        <tr id="product_att_tr">
+                            <td align="right" valign="top">筛选属性：</td>
+                            <td id="product_att_td"></td>
+                        </tr>
+                        <tr>
+                            <td align="right"><span class="font_1">*</span>产品名称：</td>
+                            <td><input type="text" name="subject" class="t_input" size="60" value="$detail[subject]" validator="{'empty':'N','errmsg':'请填写产品名称。'}" /></td>
+                        </tr>
+                        <tr data-sort="1">
+                            <td width="100" class="altbg1" align="right"><span class="font_1">*</span>产品库存：</td>
+                            <td width="*"><input type="text" name="stock" class="t_input" value="{if $detail['stock']}$detail['stock']{else}1{/if}" validator="{'empty':'N','errmsg':'未完成 产品库存 的设置，请返回设置。'}" /> 件</td>
+                        </tr>
+                        <tr data-sort="1">
+                            <td width="100" class="altbg1" align="right">单件重量：</td>
+                            <td width="*"><input type="text" name="weight" class="t_input" value="$detail['weight']" /> 克</td>
+                        </tr>
+                        <tr data-sort="2">
+                            <td width="100" class="altbg1" align="right" valign="top"><span class="font_1">*</span>卡密数据：</td>
+                            <td width="*">
+                                <!--{if $op=='add'}-->
+                	            <textarea name="serial" style="width:425px;height:100px;"></textarea>
+					            <div class="font_1">一行一条卡密信息;例如：卡号:12345678 密码:123456</div>
+                                <!--{elseif $op=='edit'}-->
+                                <a href="{url product/member/ac/serial/op/list/pid/$detail['pid']}">管理卡密数据</a>&nbsp;(库存：$detail[stock])
+                                <!--{/if}-->
+				            </td>
+                        </tr>
+                        <tr>
+                            <td class="altbg1" align="right"><span class="font_1">*</span>销售价格：</td>
+                            <td><input type="text" name="price" class="t_input" size="20" value="$detail['price']" validator="{'empty':'N','errmsg':'未填写产品销售价格。'}" /> 元</td>
+                        </tr>
+                        <tr>
+                            <td class="altbg1" align="right" valign="top">会员价格：</td>
+                            <td>
+                                <!--{dbres $usergroup $val}-->
+                                <!--{if $op == 'edit'}-->
+                                {eval $arrkeys = array_keys($arruser,$val[groupid]); $arrkey=$arrkeys[0];}
+                                <!--{/if}-->
+                                <label for="user_price_$val['groupid']">$val['groupname']</label> <input type="text" class="t_input" name="user_price[]" id="user_price_$val['groupid']" value="{if $arrkey}$arruserprice[$arrkey]{else}-1{/if}" onkeyup="if(parseInt(this.value)<-1){this.value='-1';};" size="6" /> 元&nbsp;&nbsp;<input type="hidden" name="usergroup[]" id="usergroup_$val['groupid']" value="$val['groupid']" />
+                                <!--{/dbres}-->
+                                <br /><span class="font_3">会员折扣价格为-1时表示会员价格按默认价格计算，你也可以为每个会员组指定一个价格；如果您设置了产品促销价格，则会员价失效。</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="100" class="altbg1" align="right">促销价格：</td>
+                            <td width="*">
+                                <input type="text" id="promote" name="promote" class="t_input" size="20" value="{if $detail['promote']>0}$detail['promote']{/if}" /> 元，
+                                促销时间：<input name="promote_start" id="promote_start" type="text" class="t_input" readonly="true" value="{if $detail['promote_start']}{date $detail['promote_start'],'Y-m-d'}{/if}" onfocus="WdatePicker({doubleCalendar:true,dateFmt:'yyyy-MM-dd'})" />
+                                ~
+                                <input name="promote_end" id="promote_end" type="text" class="t_input" readonly="true" value="{if $detail['promote_end']}{date $detail['promote_end'],'Y-m-d'}{/if}" onfocus="WdatePicker({doubleCalendar:true,minDate:'%y-%M-%d',dateFmt:'yyyy-MM-dd'})" />
+                            </td>
+                        </tr>
+                        {if $MOD[pointgroup]}
+                        {if $MOD['giveintegral_percent']>0}
+                        <tr>
+                            <td width="100" class="altbg1" align="right">赠送消费积分：</td>
+                            <td width="*">
+                                {print form_bool('giveintegral',(bool)$detail['giveintegral'])}
+                                <span class="font_3">购买该商品时赠送消费积分数。开启时，赠送数量是销售价格的 $MOD['giveintegral_percent']%</span>
+                            </td>
+                        </tr>
+                        {/if}
+                        <tr>
+                            <td width="100" class="altbg1" align="right">可使用积分：</td>
+                            <td width="*"><input type="text" name="integral" class="t_input" size="10" value="$detail[integral]" /> <span class="font_3">购买商品时积分可以抵消部分金额</span><span class="font_3">（计算公式：抵价金额=可使用积分/$MOD[cash_rate]）</span></td>
+                        </tr>
+                        {/if}
+                        <tr>
+                            <td align="right" valign="top">商品图片：</td>
+                            <td class="uploadimgs">
+                                <!--{eval if($detail[thumb]) $thumb_key = str_replace('thumb_','',pathinfo($detail[thumb], PATHINFO_FILENAME));}-->
+                                <input type="hidden" name="thumb" value="$thumb_key">
+                                <div id="topic_images_foo">
+                                    <span class="update-img-ico"><a href="javascript:;" onclick="product_upimg('topic_content','$MOD[upimages]');">上传图片</a></span>
+                                </div>
+                                <!--{eval $pictures = is_serialized($detail[pictures]) ? unserialize($detail[pictures]) : array();}-->
+                                <!--{loop $pictures $key $val}-->
+                                <div class="upimg{if $key==$thumb_key} imgthumb{/if}" id="upimg_$key">
+                                    <img src="{URLROOT}/$val" />
+                                    <input type="hidden" name="pictures[$key]" value="$val" />
+                                    <a href="javascript:void(0);" onclick="product_setthumb('$key');return false;">设为封面</a> | <a href="javascript:void(0);" onclick="product_delimg('$key');return false;">删除</a>
+                                </div>
+                                <!--{/loop}-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="100" class="altbg1" align="right">产品条形码：</td>
+                            <td width="*">
+                                <input type="text" name="shape_code" class="t_input" value="$detail['shape_code']" /> <span class="font_3">纯数字，</span>
+                                产品简码：<input type="text" name="brief_code" class="t_input" value="$detail['brief_code']" /> <span class="font_3">纯数字</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">商品标签：</td>
+                            <td>
+                                {eval $tags=trim(str_replace('|', ',', $detail['tag_keyword']), ',');}
+                                <input type="text" id="tag_keyword" name="tag_keyword" class="t_input" value="$tags" style="width:98%;" />
+                                <span class="font_3">多个标签用空格分隔或逗号分隔，留空时系统会自动生成标签</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">产品简介：</td>
+                            <td><textarea name="description" style="width:98%;height:60px;">$detail['description']</textarea></td>
+                        </tr>
+                        $custom_form
+                        <!--{if $sort!='2'}-->
+                        <tr data-sort="1">
+                            <td align="right" valign="top">物流运费：</td>
+                            <td>
+                                <div>
+                                    <label><input type="radio" name="freight" value="0" {if !$detail[freight]}checked="checked"{/if}/>卖家承担运费</label>
+                                </div>
+                                <div>
+                                    <label><input type="radio" name="freight" value="1" {if $detail[freight]=='1'}checked="checked"{/if}/>使用物流方式管理</label>
+                                </div>
+                                <div>
+                                    <input type="radio" name="freight" name="freight" value="2" {if $detail[freight]=='2'}checked="checked"{/if}/>
+                                    <label>平邮：<input type="text" name="freight_price_snail" value="{if $detail[freight_price_snail]>0}$detail[freight_price_snail]{/if}" class="t_input" size="15">元</label>
+                                    <label>快递：<input type="text" name="freight_price_exp" value="{if $detail[freight_price_exp]>0}$detail[freight_price_exp]{/if}" class="t_input" size="15">元</label>
+                                    <label>EMS：<input type="text" name="freight_price_ems" value="{if $detail[freight_price_ems]>0}$detail[freight_price_ems]{/if}" class="t_input" size="15">元</label>
+                                </div>
+                                <div>
+                                    <label><input type="checkbox" name="is_cod" value="1" {if $detail[is_cod]}checked="checked"{/if}/>支持货到付款
+                                    <input type="text" name="cod_price" value="{if $detail[cod_price]>0}$detail[cod_price]{/if}" class="t_input" size="15">元</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <!--{/if}-->
+                        <tr data-sort="1">
+                            <td class="altbg1" align="right" valign="top">购买属性：</td>
+                            <td>
+                                <!--{if $op=='add'}-->
+                                <textarea name="buyattr" style="width:425px;height:50px;"></textarea>
+                                <div class="font_3">一行一条购买属性。格式：属性名=属性值1,属性值2,属性值3&nbsp;&nbsp;例如：颜色=红色,蓝色,白色,黑色</div>
+                                <!--{elseif $op=='edit'}-->
+                                <a href="{url product/member/ac/buyattr/op/list/pid/$detail['pid']}">管理购买属性</a>
+                                <!--{/if}-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="altbg1" align="right">上架：</td>
+                            <td><input type="radio" name="is_on_sale" value="1" id="radio_is_on_sale_1"{if $detail['is_on_sale']=='1'||!isset($detail['is_on_sale'])}  checked="checked"{/if} /><label for="radio_is_on_sale_1">是</label>&nbsp;<input type="radio" name="is_on_sale" value="0" id="radio_is_on_sale_0"{if $detail['is_on_sale']=='0'}  checked="checked"{/if} /><label for="radio_is_on_sale_0">否</label></td>
+                        </tr>
+                        <!--{if $MOD[seccode_product] && $op=='add'}-->
+                        <tr>
+                            <td align="right"><span class="font_1">*</span>验证码：</td>
+                            <td  colspan="2">
+                                <div id="seccode" class="seccode none"></div>
+                                <input type="text" name="seccode" onfocus="show_seccode();" class="t_input" onblur="check_seccode(this.value);" />
+                                <span id="msg_seccode" class="formmessage none"></span>
+                            </td>
+                        </tr>
+                        <!--{/if}-->
+                    </table>
+                    <div class="text_center">
+                        <!--{if $sid||$pid}-->
+                        <input type="hidden" name="do" value="$op" />
+                        {if $sid}<input type="hidden" name="sid" value="$sid" />{/if}
+                        {if $pid}<input type="hidden" name="pid" value="$pid" />{/if}
+                        <button type="submit" name="dosubmit" value="yes" id="subbtn">提交</button>&nbsp;
+                        <!--{/if}-->
+                        <button type="button" onclick="jslocation('{url product/member/ac/g_product}');">返回</button>&nbsp;
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="mybottom"></div>
+</div>
+
+<!--{eval footer();}-->

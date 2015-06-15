@@ -1,0 +1,36 @@
+{eval
+    $_HEAD[title] = "我的订单";
+}
+{include mobile_template('header')}
+{include mobile_template('product_common')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="atab-box">
+        <div class="atab-box-nav">
+            <a class="atab-box-nav-link{if !$status} atab-box-nav-current{/if}" href="{url product/mobile/do/myorder}"><span>全部订单</span></a>
+            <a class="atab-box-nav-link{if $status=='1'} atab-box-nav-current{/if}" href="{url product/mobile/do/myorder/status/1}"><span>待付款</span></a>
+            <a class="atab-box-nav-link{if $status=='2'} atab-box-nav-current{/if}" href="{url product/mobile/do/myorder/status/2}"><span>待收货</span></a>
+            <a class="atab-box-nav-link{if $status=='4'} atab-box-nav-current{/if}" href="{url product/mobile/do/myorder/status/4}"><span>已收货</span></a>
+        </div>
+    </div>
+</div>
+<div class="list-group list-group-insertmod product-myorder-list" id="data_container">
+    {include mobile_template('product_myorder_loop')}
+</div>
+<div id="page_container" class="mb10"></div>
+<script>
+$(function() {
+
+    $('.atab-box').m_nav();
+
+    //分页加载
+    ajaxpage = $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+
+});
+
+//ajax页面加载
+var ajaxpage;
+
+</script>
+{include mobile_template('footer')}

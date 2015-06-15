@@ -1,0 +1,122 @@
+<!--{eval 
+    $_HEAD['title'] = 我的购物车;
+}-->
+{template modoer_header}
+<script type="text/javascript">
+loadscript('item');
+$(document).ready(function(){
+	$('.list').each(function(){
+		var sid = $(this).attr('id');
+		var sum = 0;
+		$('.num_'+sid).each(function(i){
+			if(Number($('.num_'+sid).text()) >= 0){
+				sum = sum + parseInt($(this).text()*100)/100;
+			}
+		});
+		$('#totalprice_'+sid).html(sum);
+	});
+});
+</script>
+<div id="body">
+    <div class="link_path">
+        <a href="{url modoer/index}">首页</a><span>&gt;</span>{print implode('<span>&gt;</span>', $urlpath)}
+    </div>
+    <ul class="step clear mt">
+        <li class="on"><span>STEP 1.</span>查看购物车</li>
+        <li><span>STEP 2.</span>确认订单信息</li>
+        <li><span>STEP 3.</span>支付订单款项</li>
+        <li><span>STEP 4.</span>完成订单支付</li>
+    </ul>
+    <!--{if $total}-->
+    <form method="post" name="myform" action="{url product/cart/rand/$_G[random]}">
+    <!--{dbres $list $sval}-->
+    <div class="gray-box clear mt" id="shop_{$sval[sid]}" data-name="store" data-sid="$sval[sid]">
+        <div class="shop_name">
+            <h2>商家：$sval[name]</h2>
+        </div>
+        <table width="100%" cellspacing="0" cellpadding="0" class="list" id="$sval[sid]">
+            <tr>
+                <th width="30"></th>
+                <th width="80"></th>
+                <th width="*">商品名称</th>
+                <th width="150">商品价格</th>
+                <th width="80">赠送积分</th>
+                <th width="100">数 量</th>
+                <th width="170">商品合计</th>
+                <th width="60">操作</th>
+            </tr>
+            <!--{get:product val=getcartlist(cartid/$cartid/sid/$sval[sid])}-->
+            {eval $myprice = $_G['loader']->model('product')->myprice($val);}
+            <tr data-name="cart-item" id="product_{$val[cid]}" data-sid="{$val[sid]}" data-cid="{$val[cid]}" data-pid="{$val[pid]}" data-price="$myprice">
+                <td>
+                    <input type="checkbox" name="cids[]" value="$val[cid]" checked="checked" />
+                </td>
+                <td>
+                    <a href="{url product/detail/pid/$val[pid]}" target="_blank">
+                        {eval $image = $val[p_image]?$val[p_image]:'static/images/noimg.gif';}
+                        <img src="{img $image}" width="60" height="60">
+                    </a>
+                </td>
+                <td class="tl">
+                    <a href="{url product/detail/pid/$val[pid]}" target="_blank" class="tl">$val[pname]</a>
+                    {get:product attrs=get_buyattr(pid/$val[pid])}
+                    <div style="margin:3px 0;" data-name="buyattr">
+                        <label>{$attrs[name]}：</label>
+                        <select name="buyattr" data-id="{$attrs[id]}" data-name="{$attrs[name]}">
+                            <option value="-1">==未选择==</option>
+                            {loop $attrs[value] $index $attr_val}
+                            {eval $selected_index = $val['buyattr'][$attrs['id']];}
+                            <option value="$index"{if isset($selected_index)&&$index==$selected_index}selected="selected"{/if}>$attr_val</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    {/get}
+                </td>
+                <td>
+                    <span class="font_1">&yen;{$myprice}</span>
+                </td>
+                <td>
+                    <span class="font_1">$val[giveintegral]</span> {print:member point(point/$MOD[pointgroup])}
+                </td>
+                <td>
+                	<input type="button" class="reduce" data-name="quantity_dec" />
+					<input type="text" class="num" value="$val[quantity]" data-name="quantity_txt" data-cid="$val[cid]" data-pid="$val[pid]" data-stock="$val[stock]" />
+					<input type="button" class="add" data-name="quantity_add" />
+                </td>
+                <td><span class="font_1" >&yen;<span data-name="quantity_amount">-</span></span></td>
+                <td><a href="#" data-name="delete_item">删除</a></td>
+            </tr>
+            <!--{/get}-->
+        </table>
+        <p class="subtotal">
+            <span class="float_left">运费：(以结算时为准) &nbsp; 商品金额：<span class="red yh">&yen;<strong data-name="goods_amount">-</strong></span></span><a class="settlement" data-name="checkout" href="#">确认结账</a>
+        </p>
+    </div>
+    <!--{/dbres}-->
+    <div class="order-subbtn">
+        <div class="fix_btm_bar clear">
+            <div class="float_right">
+                <a href="{url product/index}" class="ctn_shopping">继续购物</a>
+            </div>
+            <div class="selectbox_btm">
+                <label><input type="checkbox" data-name="items_select_all" />全选</label>
+                <input type="hidden" name="dosubmit" value="yes" />
+                <input type="hidden" name="op" value="delete" />
+                <a href="javascript:" class="fblue" data-name="delete_items">批量删除</a>
+                <a href="javascript:" class="fblue" data-name="cart_clear">清空购物车</a>
+            </div>
+        </div>
+    </div>
+    </form>
+    <!--{else}-->
+    <div class="nogoodsbg clear">
+        <div class="nogoodsimg"><img src="{URLROOT}/{$_G[tplurl]}images/product/nogoods.jpg"/></div>
+        <div class="nogoodstxt">
+            <p class="empty">您的购物车还是空的。</p>
+            <p class="color_blue"> 您还没有添加任何商品。 马上去 [ <a href="{url product/index}">挑选商品</a> ]，或者点此 [ <a href="{url product/member/ac/m_order}">我的订单</a> ] 查看您的订单。 <BR/> 您可能还未登录，可能导致购物车的商品没有显示。马上 [ <a href="javascript:main_login();">登录</a> ] 。 </p>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <!--{/if}-->
+</div>
+<!--{eval footer();}-->

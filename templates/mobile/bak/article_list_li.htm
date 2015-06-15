@@ -1,0 +1,20 @@
+{if !$list}
+<div class="list-group-item center">Sorry，没有找到相关数据。</div>
+{/if}
+{eval $i=0;}
+{dbres $list $val}
+<a href="{url article/mobile/do/detail/id/$val[articleid]}" class="list-group-item">
+    <div class="richtxt-comm richtxt-img-defaultsize">
+        <div class="fl" style="min-width:80px;">
+            <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name]" class="richtxt-img">
+        </div>
+        <div class="richtxt-body">
+            <h4>$val[subject]</h4>
+            <p class="txt-comm txt-small txt grey">
+                {sublen $val[introduce], 40, '...'}
+            </p>
+        </div>
+    </div>
+</a>
+{/dbres}
+{if $multipage}$multipage{/if}

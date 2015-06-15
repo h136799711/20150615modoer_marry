@@ -1,0 +1,21 @@
+{eval
+    $_HEAD[title] = $detail[subject];
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-fullsize panel-default">
+	<div class="panel-heading">
+		<h1>$detail[subject]</h1>
+		<p class="txt-small">
+			<span>$detail[author]</span>
+			<span class="split"></span>
+			<span>{date $detail[dateline]}</span>
+		</p>
+	</div>
+	<div class="panel-body">
+		<div class="txt-comm txt-richtxt">
+			$detail[content]
+		</div>
+	</div>
+</div>
+<!--{hook 'load_comment', $comment_cfg}-->
+{include mobile_template('footer')}

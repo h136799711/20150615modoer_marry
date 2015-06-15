@@ -1,0 +1,33 @@
+{template modoer_header}
+<div id="body">
+    <div class="link_path">
+        <a href="{url modoer/index}">{lang global_index}</a>&raquo;&nbsp;{print implode('&nbsp;&raquo;&nbsp;', $urlpath)}&nbsp;&raquo;&nbsp;小组成员</span>
+    </div>
+    <div class="discussion_left">
+        <div class="mainrail rail-border-3">
+            <h2 class="rail-h-3 rail-h-bg-3">会员列表</h2>
+            <ul class="memberlist">
+            {dbres $list $val}
+                <li>
+                    <div class="face"><img src="{print get_face($val[uid])}" /></div>
+                    <div class="content">
+                        <span><a href="{url space/index/uid/$val[uid]}">$val[username]</a></span>
+                        <span>{date $val[jointime]} 加入</span>
+                        {eval $langtype='group_member_type_'.$val[usertype];}
+                        <span>{print lang($langtype)}</span>
+                    </div>
+                </li>
+            {/dbres}
+            </ul>
+            <div class="clear"></div>
+        </div>
+        <!--{if $multipage}--><div class="multipage">$multipage</div><!--{/if}-->
+    </div>
+    <div class="discussion_right">
+        <div class="mainrail rail-border-3">
+            {template group_side_info}
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--{eval footer();}-->

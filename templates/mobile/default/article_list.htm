@@ -1,0 +1,63 @@
+{eval
+    $_HEAD[title] = "新闻资讯列表";
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <div class="fr">
+            <a href="{url article/mobile/do/list/op/filter/catid/$pid/}" id="filter_btn">
+                <span class="label-comm label-mycolor label-big">筛选</span>
+            </a>
+        </div>
+        <h3>$MOD[name]</h3>
+    </div>
+</div>
+<div class="list-group list-group-insertmod" id="data_container">
+    {include mobile_template('article_list_li')}
+</div>
+<div id="page_container" class="mb10"></div>
+<div class="panel-comm panel-default" id="filter_box">
+    <div class="panel-heading">筛选</div>
+    <div class="panel-body">
+        <div class="form-box">
+            <form action="{print url('article/mobile','',0,1)}" method="GET">
+                <input type="hidden" name="act" value="mobile">
+                <input type="hidden" name="do" value="list">
+                <div class="form-item">
+                    <label for="catid">分类:</label>
+                    <select name="catid" id="catid">
+                        <option value="">文章分类</option>
+                        <!--{get:article val=category(pid/$catid)}-->
+                        <option value="$val[catid]">$val[name]</option>
+                        <!--{/get}-->
+                    </select>
+                    <div class="clear"></div>
+                </div>
+                <div class="form-item">
+                    <label for="keyword">搜索关键字:</label>
+                    <input type="text" name="keyword" id="keyword" x-webkit-speech="x-webkit-speech">
+                </div>
+                <div class="form-submit">
+                    <button type="submit" value="Y" name="dosubmit" class="btn btn-mycolor full-width">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+$(function() {
+    $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+    new $.m_drawer('#filter_box', {}, {
+        onInit:function(obj, workArea) {
+            $('#filter_btn').click(function() {
+                obj.open();
+                return false;
+            });         
+        }
+    });
+
+});
+</script>
+{include mobile_template('footer')}

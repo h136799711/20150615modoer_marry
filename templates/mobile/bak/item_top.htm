@@ -1,0 +1,46 @@
+{eval 
+    $_HEAD[title] = '排行榜';
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-fullsize panel-default">
+    <div class="panel-heading">
+        <div class="fr">
+            <select id="catid" name="catid">
+                {get:item val=category(pid/0)}
+                <option value="{url item/mobile/do/top/catid/$val[catid]}"{if $catid==$val[catid]} selected="selected"{/if}>$val[name]</option>
+                {/get}
+            </select>
+        </div>
+        <h4>排行榜&nbsp;<span id="ajax_loading"></span></h4>
+    </div>
+    <div class="list-group list-group-insertmod item-subject-list" id="data_container">
+        {include mobile_template('item_top_loop')}
+    </div>
+</div>
+<script>
+$(function() {
+    $('#catid').change(function() {
+        load_subject('#data_container',$(this).val());
+    });
+});
+
+var ajaxing = false;
+function load_subject(boxid, url) {
+    if(ajaxing) return;
+    ajaxing = true;
+    url = url.url();
+    $('#ajax_loading').text('加载中...');
+    $.post(url, { rand:Math.random(), in_ajax:1 }, function(result) {
+        $('#ajax_loading').empty();
+        ajaxing = false;
+        if(result == null) {
+            alert('信息读取失败，请稍后尝试。');
+        } else if (is_message(result)) {
+            myAlert(result);
+        } else if(result != '') {
+            $(boxid).empty().append(result);
+        }
+    });
+}
+</script>
+{include mobile_template('footer')}

@@ -1,0 +1,91 @@
+<!--{eval
+    $_HEAD['title'] = $_CITY[name] . (isset($catid)?$category[$catid][name]:'') . $MOD[name] . $_CFG['titlesplit'] . $MOD[subtitle];
+}-->
+{template modoer_header}
+<div id="body">
+
+    <div class="link_path">
+        <em>
+            现有<span class="font_2">$total</span>个加盟商
+        </em>
+        <a href="{url modoer/index}">{lang global_index}</a>
+        &raquo;
+        {print implode(' &raquo; ', $urlpath)}
+    </div>
+
+    <div id="card_left">
+
+		<div class="g-list-category">
+			<div class="g-list-category-type">
+				<h3>分类:</h3>
+				<ul class="g-list-category-class">
+					{get:item val=category(pid/0)}
+					<li$active[catid][$val[catid]]><a href="{url card/index/catid/$val[catid]}">$val[name]</a></li>
+					{/get}
+				</ul>
+				<div class="clear"></div>
+			</div>
+		</div>
+
+        <div class="mt10">
+            {eval $i=0;}
+            {dbres $list $val}
+            <div class="il_coupon" style="{if $i%2==1}border-left:0;{/if}{if $i>1}border-top:0;{/if}"{/if}>
+                {eval $i++}
+                <div class="thumb">
+                    <a href="{url item/detail/id/$val[sid]}"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name]" /></a>
+                </div>
+                <ul class="info">
+                    <li class="title"><a href="{url item/detail/id/$val[sid]}">$val[name].$val[subname]</a></li>
+                    {if $val[discount]}<li>会员专享<span class="font_2">$val[discount]</span>&nbsp;折</li>{/if}
+                    {if $val[largess]}<li>优惠：<span class="font_2" title="$val[largess]">{sublen $val[largess],10,'...'}</span></li>{/if}
+                    {if $val[exception]}<li class="full">说明：<span title="$val[exception]">{sublen $val[exception],10,'...'}</span></li>{/if}
+                </ul>
+                <div class="clear"></div>
+            </div>
+            {/dbres}
+        </div>
+        <div class="multipage">$multipage</div>
+
+    </div>
+
+    <div id="card_right">
+
+        <div class="mainrail rail-border-3">
+            <div class="mainrail rail-h-bm-3">
+                <p class="comm-p m10">
+                    是否也想与其他会员一样享受超值优惠，还等什么，赶紧申请一张吧！
+                </p>
+                <div class="text_center mb10">
+                    <a class="abtn1" href="{url card/member/ac/apply}"><span class="icomoon icon-credit ic-white"></span>申请会员卡</a>
+                </div>
+            </div>
+            <div class="mainrail rail-h-bm-3">
+                <h3 class="rail-h-2">推荐加盟</h3>
+                <ul class="rail-list">
+                    {get:card val=list_finer(city_id/$_CITY['aid']/row/10/cachetime/1000)}
+                    <li>
+                        <cite>$val[discount]&nbsp;折</cite>
+                        <a href="{url item/detail/id/$val[sid]}">{sublen trim($val[name].$val[subname]),12}</a>
+                    </li>
+                    {/get}
+                </ul>
+            </div>
+            <div class="mainrail">
+                <h3 class="rail-h-2">最新加盟</h3>
+                <ul class="rail-list">
+                    {get:card val=list_new(city_id/$_CITY['aid']/row/10/cachetime/1000)}
+                    <li>
+                        <cite>{date $val[addtime],'m-d'}</cite>
+                        <a href="{url item/detail/id/$val[sid]}">{sublen trim($val[name].$val[subname]),12}</a>
+                    </li>
+                    {/get}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="clear"></div>
+
+</div>
+<!--{eval footer();}-->

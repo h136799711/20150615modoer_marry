@@ -1,0 +1,115 @@
+{template modoer_header}
+<script type="text/javascript">
+mo.mylist.page.name         = 'index';
+mo.mylist.page.index_url    = "{url mylist/index}";
+</script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/item.js"></script>
+<div id="body" style="margin-top:10px;">
+
+    <div class="link_path">
+        <a href="{url modoer/index}">{lang global_index}</a>
+        &raquo;
+        {print implode(' &raquo; ', $urlpath)}
+    </div>
+
+    <div class="mylist-content-a">
+        <!--{if (!$k && !$tagid && !$uid) || $catid > 0}-->
+        <div class="g-list-category">
+            <div class="g-list-category-type">
+                <h3>分类:</h3>
+                <ul class="g-list-category-class">
+                    {get:mylist val=category(pid/0)}
+                    <li$active[catid][$val[catid]]><a href="{url mylist/index/catid/$val[catid]}">$val[name]</a></li>
+                    {/get}
+                </ul>
+                <div class="clear"></div>
+                <h3>排序:</h3>
+                <ul class="g-list-category-class">
+                    <li$active[lo][time]><a href="{url mylist/index/lo/time$params}">更新时间</a></li>
+                    <li$active[lo][pv]><a href="{url mylist/index/lo/pv$params}">人气</a></li>
+                </ul>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--{/if}-->
+        <div class="mylist-list-box">
+            <h5 class="rail-h-2 rail-h-bm-3">
+                <span class="icomoon icon-search"></span>找到 {$total} 个榜单
+            </h5>
+            <div class="mylist-list">
+                <ul>
+                    {dbres $list $val}
+                    <li>
+                        <div class="thumb">
+                            <a href="{url mylist/$val[id]}" target="_blank">{if $val[thumb]}<img src="{URLROOT}/$val[thumb]" alt="$val[title]" title="$val[title]" />{else}<img src="{URLROOT}/static/images/m_noimg.gif" />{/if}</a>
+                        </div>
+                        <div class="info">
+                            <h2>
+                                <a href="{url mylist/$val[id]}" target="_blank">$val[title]</a>
+                                <!--{if $val[digest]}-->
+                                <img src="{URLROOT}/static/images/common/digest.gif" title="精华">
+                                <!--{/if}-->
+                            </h2>
+                            <p>{sublen $val[intro],85,'...'}</p>
+                            <div>
+                                <a href="space/index/uid/$val[uid]" target="_blank">$val[username]</a>
+                                <span class="font_3">更新于 {date $val[modifytime],'w2style'}</span>
+                                <span class="xsplit">|</span>
+                                <a href="{url mylist/$val[id]}#respond">{$val[responds]}回应</a>
+                                <span class="xsplit">|</span>
+                                <a href="#" class="J_favorites" mylist_id="$val[id]"><span>{$val[favorites]}</span>收藏</a>
+                                <span class="xsplit">|</span>
+                                <a href="#" class="J_flowers" mylist_id="$val[id]"><span>{$val[flowers]}</span>鲜花</a>
+                                <span class="xsplit">|</span>
+                                <a href="{url mylist/$val[id]}" target="_blank">{$val[num]}主题</a>
+                            </div>
+                        </div>
+                    </li>
+                    {/dbres}
+                </ul>
+                <div class="multipage">$multipage</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mylist-aside-a">
+        <div class="mainrail rail-border-3">
+            <div class="mainrail">
+                <div class="aside-mylist-search">
+                    <form name="mylist-search" method="get" action="{URLROOT}/index.php">
+                        <input type="hidden" name="m" value="mylist" />
+                        <input type="hidden" name="act" value="index" />
+                        <input type="text" name="k" class="t_input" size="22" />&nbsp;
+                        <button type="submit" class="button">搜榜单</button>
+                    </form>
+                </div>
+            </div>
+            <div class="mainrail">
+                <div class="rail-h-bt-3"></div>
+                <p class="comm-p m10">榜单是特定主题的商户排行榜，榜单内的主题排行都由您来决定，榜单体现你的经验和品位。</p>
+                <!--{if !$MOD[add_closed]}-->
+                <div class="text_center mb10">
+                    <a href="{url mylist/member/ac/manage/op/add}" class="abtn1">
+                        <span class="icomoon icon-pencil2 ic-white"></span>创建我的榜单
+                    </a>
+                </div>
+                <!--{/if}-->
+            </div>
+            <div class="mainrail">
+                <h3 class="rail-h-2 rail-h-bt-3 fs14">最新创建的榜单</h3>
+                <ul class="rail-list aside_mylist">
+                    {get:mylist val=get_mylist(city_id/_CITYID_/orderby/m.modifytime desc/rows/10/cachetime/2150)}
+                    <li><a href="{url mylist/$val[id]}" title="$val[title]">$val[title]</a></li>
+                    {/get}
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="clear"></div>
+
+
+</div>
+<!--{eval footer();}-->

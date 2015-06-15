@@ -1,0 +1,58 @@
+{include mobile_template('header')}
+<div class="item-list">
+
+    <div class="atab-box">
+        <div class="atab-box-nav">
+            <a class="atab-box-nav-link{if !$isread} atab-box-nav-current{/if}" href="{url member/mobile/do/notice}"><span>未读</span></a>
+            <a class="atab-box-nav-link{if $isread} atab-box-nav-current{/if}" href="{url member/mobile/do/notice/isread/1}"><span>已读</span></a>
+        </div>
+    </div>
+
+    <ul class="list-group list-group-insertmod">
+        <!--{if !$list}-->
+        <li class="list-group-item center">暂无信息</li>
+        <!--{/if}-->
+        <!--{dbres $list $val}-->
+        <li class="list-group-item" id="notice_{$val[id]}">
+            <p class="txt-comm">
+                $val[note]
+                <!--{if !$isread}-->
+                <a href="javascript:"onclick="notice_set_read($val[id],this);">
+                    <span class="label-comm label-success">未读</span>
+                </a>
+                <!--{/if}-->
+                <span class="label-comm label-grey">{date $val[dateline],'w2style'}</span>
+            </p>
+        </li>
+        <!--{/dbres}-->
+    </ul>
+</div>
+<script>
+
+$(function()
+{
+
+    $('.atab-box').m_nav();
+});
+
+function notice_set_read(id,myself) {
+    var notice_box = $('#notice_'+id);
+    $.post(Url('member/mobile/do/notice/op/set_read'), { "id":id, "in_ajax":1 }, function(data) {
+        if(is_message(data)) {
+            myAlert(data);
+            return;
+        } else if(is_json(data)) {
+            data = parse_json(data);
+            if(data.code!=200) {
+                alert('error code:'+data.code+'message:'+data.message);
+            } else {
+                var span = $(myself).find('span');
+                span.text('已读').unbind('click').removeClass('label-success').addClass('label-grey');
+            }
+        } else {
+            alert('未知错误。');
+        }
+    });
+}
+</script>
+{include mobile_template('footer')}

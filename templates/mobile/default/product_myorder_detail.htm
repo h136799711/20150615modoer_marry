@@ -1,0 +1,185 @@
+{eval
+    $_HEAD[title] = "我的订单";
+}
+{include mobile_template('header')}
+{include mobile_template('product_common')}
+<div class="panel-comm panel-default panel-fullsize">
+
+    <div class="panel-body">
+        <ul class="list-group-list">
+            <li class="list-group-item">
+                <div class="fr">$orderid</div>
+                订单编号
+            </li>
+            <li class="list-group-item">
+                <div class="fr">&yen;$detail[order_amount]</div>
+                支付金额
+            </li>
+            <li class="list-group-item">
+                <div class="fr">{print lang('product_status_'.$detail['status'])}</div>
+                订单状态
+            </li>
+            <li class="list-group-item">
+                <div class="fr">{date $detail[addtime]}</div>
+                生成时间
+            </li>
+            {if $detail[status]>1 && $detail[paytime]}
+            <li class="list-group-item">
+                <div class="fr">{date $detail[paytime]}</div>
+                {if $detail[is_cod]}
+                发货通知
+                {else}
+                支付时间
+                {/if}
+            </li>
+            {/if}
+        </ul>
+
+        <!--{if $serial}-->
+        <ul class="list-group-list mt10">
+            <!--{dbres $serial $val}-->
+                <li class="list-group-item list-mycolor">$val['serial']</li>
+            <!--{/dbres}-->
+        </ul>
+        <!--{/if}-->
+
+        <div class="list-group-list mt10">
+            <div class="list-group-item">
+                <div>
+                    <div class="fr">
+                        <span class="txt-small txt-grey">Tel：$detail[mobile]</span>
+                    </div>
+                    <span data-name="name">$detail[username]</span>
+                </div>
+                <span class="txt-small txt-grey" data-name="addr">$detail[address]</span>
+            </div>
+            <div class="list-group-item">
+                <div>
+                    <div class="fr">$detail[kdcom]</div>
+                    $detail[shipname]                    
+                </div>
+            </div>
+            {if $detail['invoice_no']}
+            <a href="http://m.kuaidi100.com/result.jsp?nu=$detail[invoice_no]" class="list-group-item">
+                <div class="fr">
+                    $detail[invoice_no]
+                    <div class="arrow"></div>
+                </div>
+                物流单号
+            </a>
+            {/if}
+        </div>
+
+        <div class="list-group-list mt10">
+            <div class="list-group-item">
+                <div class="fr">
+                    {if $detail[paymentname]=='cod'}货到付款
+                    {elseif $detail[paymentname]=='offline'}线下支付({if $detail['is_offline_pay']=='admin'}网站收款{else}商家收款{/if})
+                    {elseif $detail[paymentname]}{print lang('pay_name_'.$detail[paymentname])}
+                    {else}-{/if}
+                </div>
+                支付方式
+            </div>
+            <div class="list-group-item">
+                <div class="fr"><span class="txt-small">&yen;$detail[goods_amount]</span></div>
+                商品金额
+            </div>
+            <div class="list-group-item">
+                <div class="fr"><span class="txt-small">&yen;$detail[shipfee]</span></div>
+                运费
+            </div>
+            <div class="list-group-item">
+                <div class="fr"><span class="txt-small">- &yen;$detail[integral_amount]</span></div>
+                积分抵换
+            </div>
+            <div class="list-group-item">
+                <div class="fr"><span class="txt-red">&yen;$detail[order_amount]</span></div>
+                应支付金额
+            </div>
+        </div>
+
+        {if $detail[status]=='1'}
+        <div class="mt10">
+            <a href="{url product/mobile/do/pay/orderid/$orderid}" class="btn btn-mycolor block">
+                {if $detail[is_cod]}
+                通知商家发货
+                {else}
+                支付订单
+                {/if}
+            </a>
+        </div>
+        {/if}
+
+        <div class="list-group-list mt10">
+            <!--{get:product _val=getproduct(orderid/$orderid)}-->
+            <a class="list-group-item" href="{url product/mobile/do/detail/id/$_val[pid]}">
+                <div class="fr"><span class="arrow"></span></div>
+                <div class="richtxt-comm richtxt-img-defaultsize">
+                    <div class="fl">
+                        <!--{eval $image = $_val['goods_image']?$_val['goods_image']:'/static/images/noimg.gif';}-->
+                        <img src="{img $image}" alt="$_val[pname]" class="richtxt-img">
+                    </div>
+                    <div class="richtxt-body">
+                        <h4>$_val[pname]</h4>
+                        <p class="txt-comm txt-small txt grey">
+                            <span class="txt-red">&yen;{$_val[price]}</span> × {$_val[quantity]} 件<br>
+                            {eval $buyattr = $_val['buyattr']?unserialize($_val['buyattr']):array();}
+                            {loop $buyattr $attr}
+                            <span>{$attr[name]}:{$attr[value]}</span>&nbsp;
+                            {/loop}
+                        </p>
+                    </div>
+                </div>
+            </a>
+            <!--{/get}-->
+        </div>
+
+        <div class="list-group-list mt10">
+            <a class="list-group-item" href="{url item/mobile/do/detail/id/$store[sid]}">
+                <div class="fr">
+                    $store[name]{if $store[subname]}($store[subname]){/if}
+                    <div class="arrow"></div>
+                </div>
+                商户
+            </a>
+            {if $store[tel]}
+            <a href="" class="list-group-item">
+                <div class="fr">$store[tel]</div>
+                电话
+            </a>
+            {/if}
+            {if $store[address]}
+            <a href="" class="list-group-item">
+                <div class="fr">$store[address]</div>
+                地址
+            </a>
+            {/if}
+            <div class="list-group-item mt10">
+                <div class="fr">$seller[username] <span class="txt-small txt-grey">(UID:$seller[uid])</span></div>
+                卖家
+            </div>
+            {if $seller[mobile]}
+            <a class="list-group-item" href="tel:{$seller[mobile]}">
+                <div class="fr">
+                    $seller[mobile]
+                    <div class="arrow"></div>
+                </div>
+                电话
+            </a>
+            {/if}
+        </div>
+
+    </div>
+
+
+</div>
+
+<script>
+$(function() {
+
+
+});
+
+
+</script>
+{include mobile_template('footer')}

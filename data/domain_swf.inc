@@ -1,0 +1,14 @@
+localhost
+youku.com
+tudou.com
+ku6.com
+sina.com.cn
+qq.com
+joy.cn
+youtube.com
+youtu.be
+56.com
+iqiyi.com
+baidu.com
+sohu.com
+letv.com

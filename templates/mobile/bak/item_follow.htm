@@ -1,0 +1,14 @@
+{eval $_HEAD[title] = $header_title = "我的关注";}
+{include mobile_template('header')}
+<div class="list-group list-group-insertmod item-subject-list" id="data_container">
+    {include mobile_template('item_follow_li')}
+	<div id="page_container" class="mb10"></div>
+</div>
+<script>
+$(document).ready(function() {
+    page = $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+});
+</script>
+{include mobile_template('footer')}

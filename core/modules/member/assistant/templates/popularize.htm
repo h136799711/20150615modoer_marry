@@ -1,0 +1,81 @@
+{template modoer_header}
+<div id="body">
+<div class="myhead"></div>
+<div class="mymiddle">
+    <div class="myleft">
+        <!--{template 'menu','member','member'}-->
+    </div>
+    <div class="myright">
+        <div class="myright_top"></div>
+        <div class="myright_middle">
+            <h3>推广注册</h3>
+            <div class="mainrail">
+                <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                    <tr>
+                        <td colspan="2">
+                            {eval $PT=$_G[loader]->model('member:point');}
+                            如果您的朋友访问并且注册成为会员，您将再获得积分奖励<span class="font_2">{loop $PT->point['inviter'] $key $val}{if $val>0}+$val{print:member point(point/$key)}{/if} {/loop}</span>.<br />
+                            同时被邀请者注册后亦可获得相应的积分奖励<span class="font_2">{loop $PT->point['invitee'] $key $val}{if $val>0}+$val{print:member point(point/$key)}{/if}{/loop}</span>.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="100">推广注册链接:</td>
+                        <td width="*">
+                            <input type="text" class="t_input" size="70" id="invite_url" value="{print url("member/invite/uid/$user->uid",'',1)}" />
+                            <button type="button" id="invite_btn">复制</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!--{if $total}-->
+        <div class="mainrail">
+            <table cellspacing="0" cellpadding="0" class="maintable" style="width:98%;margin:10px auto 0;">
+                <tr class="thbg">
+                    <th width="*">被邀请人</th>
+                    <th width="300">注册时间</th>
+                    <th width="300">已奖励</th>
+                </tr>
+                <!--{dbres $list $val}-->
+                <tr>
+                    <td><a href="{url space/index/uid/$val[invitee_uid]}">$val[invitee]</a></td>
+                    <td>{date $val[dateline]}</td>
+                    <td style="color:#808080;">{if $val[add_point]}是{else}否{/if}</td>
+                </tr>
+                <!--{/dbres}-->
+            </table>
+        </div>
+        <!--{/if}-->
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="mybottom"></div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var start, end, obj, data;
+        obj = $("#invite_url");
+        data = obj.val();
+        end = data.length;
+        $("#invite_btn").click(function() {
+            if(-[1,]) {
+                alert("您使用的浏览器不支持此复制功能，请使用Ctrl+C或鼠标右键进行复制。");
+                $(obj)[0].setSelectionRange(0,end);
+                $(obj)[0].focus();
+            } else {
+                var flag = window.clipboardData.setData("text",data);
+                if(flag == true) {
+                    alert("复制成功。现在您可以粘贴（Ctrl+v）到Blog或BBS中了。");
+                } else {
+                    alert("复制失败。");
+                }
+                var range = $(obj)[0].createTextRange();
+                range.moveEnd("character",end);
+                range.moveStart("character",0);
+                range.select();
+            }
+        });
+    });
+</script>
+<!--{eval footer();}-->

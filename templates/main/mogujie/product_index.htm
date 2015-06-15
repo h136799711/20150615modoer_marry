@@ -1,0 +1,105 @@
+<!--{eval
+    $_HEAD['title'] = (isset($catid)?$category[$catid][name]:'') . $MOD[name];
+}-->
+
+{template modoer_header}
+<div id="body">
+	<div class="piece piece_w960">
+		<div class="piece_hd"><b class=hl></b><b class=hr></b></div>
+		<div class="piece_bd clearfix">
+			<div class="product_box">
+				<div class="left_box_index">
+					<div class="menu_guide">
+						<ul class="menu_guide_list" id="menu_guide">
+							{get:product val=gcategory(pid/0)} 
+							<!--{eval if(!$val['subcats']) continue;}-->
+							<li class="cate_guide"> <a href="{url product/list/catid/$val[catid]}" class="guide_nav">$val[name]<b></b></a>
+								<div class="menu_guide_show">
+									<ul>
+										{get:product _val=gcategory(pid/$val[catid])} 
+										<!--{eval if(!$_val[modelid] && !$_val['subcats']) continue;}-->
+										<li> <a href="{url product/list/catid/$_val[catid]}"><span>$_val[name]</span></a> {get:product val2=gcategory(pid/$_val[catid])} <a href="{url product/list/catid/$val2[catid]}">$val2[name]</a> {/get} </li>
+										{/get}
+									</ul>
+								</div>
+							</li>
+							{/get}
+						</ul>
+					</div>
+				</div>
+				<script type="text/javascript">
+        $('#menu_guide li.cate_guide').each(function() {
+            $(this).mouseover(function() {
+                $('#menu_guide li.cate_guide').each(function() {
+                    $(this).css('z-index', 0);
+                });
+                $(this).css('z-index', 10);
+                if($.browser.msie && $.browser.version.substr(0,1)=='6') {
+                    $(this).find('.menu_guide_show').show();
+                }
+            });
+            if($.browser.msie && $.browser.version.substr(0,1)=='6') {
+                $(this).mouseout(function(event) {
+                    $(this).find('.menu_guide_show').hide();
+                });
+            }
+        });
+        </script>
+				<div id="c_box"> 
+					<script type="text/javascript" src="{URLROOT}/static/javascript/jquery.d.imagechange.js"></script>
+					<div class="l1_pics" id="l1_pics"> {get:modoer val=bcastr(groupname/product/city_id/_NULL_CITYID_/cachetime/1000)} <a href="$val[item_url]" title="$val[itemtitle]"><img src="{URLROOT}/$val[link]" height="250" width="480" /></a> {/get} </div>
+					<script type="text/javascript">
+                $('#l1_pics').d_imagechange({width:480,height:250,repeat:'draw'});
+            </script>
+					<div class="new_pr_out mt">
+						<h2>新产品</h2>
+						<ul class="num" id="menu0">
+							<li onmouseover="setTab(0,0)" class="on">1</li>
+							<li onmouseover="setTab(0,1)">2</li>
+							<li onmouseover="setTab(0,2)">3</li>
+						</ul>
+						<div class="new_pr" id="main0" style="height:170px;"> 
+							<!--{eval $newx=array(0,4,8);}--> 
+							<!--{loop $newx $start}-->
+							<ul {if !$start}class="show"{/if}>
+								<!--{get:modoer val=table(table/dbpre_product/select/pid,subject,picture,thumb,price,promote,promote_start,promote_end/where/status=1 AND is_on_sale=1 AND city_id IN (0,$_CITY[aid])/orderby/pid DESC/start/$start/rows/4)}-->
+								<li> <a href="{url product/detail/pid/$val[pid]}" title="$val[subject]"> <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" /></a> <span class="title"><a href="{url product/detail/pid/$val[pid]}" title="$val[subject]">$val[subject]</a></span> <em>&yen;{print:product price(product/$val)}</em> </li>
+								{/get}
+							</ul>
+							<!--{/loop}--> 
+						</div>
+					</div>
+				</div>
+				<div id="right_box">
+					<div class="product_title">
+						<h2>产品促销</h2>
+						<ul class="sales_pr" style="height:423px;">
+							<!--{get:modoer val=table(table/dbpre_product FORCE INDEX(promote)/select/pid,subject,picture,thumb,price,promote/where/promote>0 AND promote_start<$_G[timestamp] AND promote_end>$_G[timestamp] AND city_id IN (0,$_CITY[aid]) AND is_on_sale=1 AND status=1/orderby/dateline DESC/rows/3)}-->
+							<li> <a href="{url product/detail/pid/$val[pid]}" title="$val[subject]">
+								<div class="thumb"> <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" /></a> <em>&yen;{print $val[promote]}</em> </div>
+								<span><a href="{url product/detail/pid/$val[pid]}" title="$val[subject]">$val[subject]</a></span> </li>
+							{/get}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="piece_ft"> <b class="fl"></b> <b class="fr"></b> </div>
+	</div>
+	<div class="adv_960_60"> {include display('adv:show','name/商城_首页通栏')} </div>
+	{get:product cat=gcategory(pid/0)}
+	<div class="piece piece_w960 mt15">
+		<div class="piece_hd"><b class="hl"></b> <b class="hr"></b></div>
+		<div class="piece_bd index_p_sort clearfix">
+			<h2><a href="{url product/list/catid/$cat[catid]}">$cat[name]</a></h2>
+			<p class="more_link"> <a class="enter" href="{url product/list/catid/$cat[catid]}">进入频道</a> </p>
+			<ul class="pr_list clearfix">
+				<!--{get:modoer val=sql(sql/SELECT pid,subject,picture,thumb,price,promote,promote_start,promote_end FROM dbpre_product WHERE finer=1 AND pgcatid = $cat[catid] AND city_id IN (0,$_CITY[aid]) AND status=1 AND is_on_sale=1 ORDER BY rand()/rows/7/cachetime/500)}-->
+				<li> <a href="{url product/detail/pid/$val[pid]}" title="$val[subject]"> <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" /> <span>$val[subject]</span></a> <strong>&yen;{print:product price(product/$val)}</strong> </li>
+				<!--{/get}-->
+			</ul>
+		</div>
+		<div class="piece_ft"></div>
+	</div>
+	{/get} </div>
+<!--{eval footer();}-->

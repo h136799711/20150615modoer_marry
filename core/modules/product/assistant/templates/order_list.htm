@@ -1,0 +1,108 @@
+{template modoer_header}
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_product_mem.css");</style>
+<script type="text/javascript" src="{URLROOT}/static/javascript/My97DatePicker/WdatePicker.js"></script>
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+        <!--{template 'menu','member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3>我的商品订单</h3>
+                <div class="mainrail">
+                    <ul class="tab">
+                        <li{if !$status} class="active"{else} class="normal"{/if}><a href="{url product/member/ac/$ac/sid/$sid}">所有订单</a></li>
+                        <!--{loop $status_name $k $v}-->
+                        <li{if $status==$k} class="active"{else} class="normal"{/if}><a href="{url product/member/ac/$ac/sid/$sid/ordersn/$ordersn/starttime/$starttime/endtime/$endtime/buyername/$buyername/status/$k}">$v</a></li>
+                        <!--{/loop}-->
+                    </ul>
+                    <div class="scarch_order">
+                        <form name="form" method="get" action="{URLROOT}/index.php">
+                        <input type="hidden" name="m" value="product" />
+                        <input type="hidden" name="act" value="member" />
+                        <input type="hidden" name="ac" value="m_order" />
+                        <div style="float:left;">
+                            <span>订单号:</span>
+                            <input class="text_normal" size="25" name="ordersn" value="$ordersn" />
+                            <span>下单时间:</span>
+                            <input class="text_normal width2" type="text" name="starttime" id="starttime" value="$starttime" onfocus="WdatePicker({doubleCalendar:true,maxDate:'%y-%M-{%d-1}',dateFmt:'yyyyMMdd'})" /> – <input class="text_normal width2" id="endtime" type="text" name="endtime" value="$endtime" onfocus="WdatePicker({doubleCalendar:true,maxDate:'%y-%M-%d',dateFmt:'yyyyMMdd'})" />
+                            <input type="submit" class="btn" value="搜索" />
+                        </div>
+                        </form>
+                    </div>
+                    <div class="clear"></div>
+                    <!--{if $total}-->
+                    <!--{dbres $list $val}-->
+                    <div class="order_form" style="margin-top:10px;">
+                        <h2>
+                            <p class="num">订单号: $val[ordersn]</p>
+                            <p class="name">
+                                <span>店铺名: <a href="{url product/shop/sid/$val[sid]}" target="_blank">$val[name].$val[subname]</a></span>
+                                {if $val[sellerid]}<a href="javascript:send_message($val[sellerid]);" class="email"></a>{/if}
+                            </p>
+
+                            <p class="state">订单状态: <strong>{print lang('product_status_'.$val['status'])}</strong></p>
+                        </h2>
+                        <!--{get:product _val=getproduct(orderid/$val[orderid])}-->
+                        <div class="con">
+                            <p class="ware_pic">
+                                <a href="{url product/detail/pid/$_val['pid']}" target="_blank">
+                                    {eval $image=$_val[goods_image]?$_val[goods_image]:'static/images/noimg.gif';}
+                                    <img src="{img $image}" width="50" height="50"  />
+                                </a>
+                            </p>
+                            <p class="ware_text">
+                                <a href="{url product/detail/pid/$_val['pid']}" target="_blank">$_val['pname']</a><br />
+                                {eval $buyattr = $_val['buyattr']?unserialize($_val['buyattr']):array();}
+                                {loop $buyattr $attr}
+                                <span class="font_3">{$attr[name]}:{$attr[value]}</span>&nbsp;
+                                {/loop}
+                            </p>
+                            <p class="price">价格: <span>&yen;$_val[price]</span></p>
+                            <p class="amount">数量: <span>$_val[quantity]</span></p>
+                            <!--{if $val['status']==5 && !$O->check_comment_exists($val[orderid], $_val[pid],$user->uid)}-->
+                            <p class="comment"><a href="{url product/member/ac/m_order/op/comment/orderid/$val[orderid]/pid/$_val['pid']}" class="btn1">我要评论</a></p>
+                            <!--{/if}-->
+                        </div>
+                        <!--{/get}-->
+                        <div class="foot">
+                            <p class="time">
+                                下单时间: {date $val[addtime],'Y-m-d H:i:s'}
+                                {if $val[is_cod]}&nbsp;<span class="font_2">货到付款</span>{if $val[status]==1}尚未要求卖家发货{elseif $val[status]==3}已要求卖家发货{/if}{/if}
+                                {if $val[is_offline_pay]!='null'}&nbsp;<span class="font_2">已线下支付</span>{/if}
+                            </p>
+                            <div class="handle">
+                                <div style="float:left;">
+                                    订单总价: <b>&yen;$val[order_amount]</b>
+                                </div>
+                                {if $val[status]==1}
+                                <a href="{url product/member/ac/pay/orderid/$val[orderid]}" class="btn1">{if $val[is_cod]}让卖家发货{else}付款{/if}</a>
+                                {/if}
+                                {if $val[status]==4}
+                                <a href="javascript:order_confirm($val[orderid]);" class="btn1">确认收货</a>
+                                {/if}
+                                {if $val[status]<3}
+                                <a href="javascript:cancel_order($val[orderid]);" class="btn1">取消订单</a>
+                                {/if}
+                                <a href="{url product/member/ac/m_order/op/detail/orderid/$val[orderid]}" class="btn1">查看订单</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--{/dbres}-->
+                    <!--{else}-->
+                    <div class="messageborder"><span class="msg-ico">暂无订单！</span></div>
+                    <!--{/if}-->
+                    <!--{if $total}-->
+                    <div class="multipage">$multipage</div>
+                    <!--{/if}-->
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="mybottom"></div>
+</div>
+
+<!--{eval footer();}-->

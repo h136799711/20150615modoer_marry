@@ -1,0 +1,101 @@
+{template modoer_header}
+<div id="body">
+
+    <div class="link_path">
+        <em class="font_3">
+        <!--{if $access_post}-->
+            <span class="icomoon icon-pencil2"></span><a href="{url article/member/ac/article/op/add/role/$role}">投稿</a>
+            <span class="xsplit"> | </span>
+        <!--{/if}-->
+        <!--{if $MOD['rss']}-->
+            <span class="icomoon icon-feed2"></span><a href="{url article/rss/catid/$catid}">聚合</a>
+            <span class="xsplit"> | </span>
+        <!--{/if}-->
+        <!--{loop $links $i $link}-->
+        {if $i}<span class="xsplit"> | </span>{/if}
+        <a href="$link[url]"{if $link[flag]=='article'} style="color:#ff6600;"{/if}>$link[title]</a>
+        <!--{/loop}-->
+        </em>
+        <a href="{url modoer/index}">{lang global_index}</a>
+        &raquo;
+        <a href="{url article/index}">$MOD[name]</a>
+        &raquo;
+        $subtitle
+    </div>
+
+    <div class="mainrail rail-border-3">
+        <div id="article_left">
+            <div class="article_list">
+                <ul class="article_s">
+                    <!--{if $list}-->
+                    {dbres $list $val}
+                    <li class="article_s">
+                        <em>{date $val[dateline]}</em>
+                        <h4>{if !$catid}[{print:article category(catid/$val[catid])}] {/if}<a href="{url article/detail/id/$val[articleid]}">$val[subject]</a></h4>
+                        <p>$val[introduce]...<a href="{url article/detail/id/$val[articleid]}">[阅读全文]</a></p>
+                        <div><span>作者：$val[author]</span>&nbsp;<span>来源：$val[copyfrom]</span>&nbsp;<span>评论：$val[comments]</span></div>
+                    </li>
+                    {/dbres}
+                </ul>
+                <div class="multipage">$multipage</div>
+                <!--{else}-->
+                <div class="messageborder">没有找到任何信息。</div>
+                <!--{/if}-->
+            </div>
+        </div>
+
+        <div id="article_right">
+
+            <!--{if $sid}-->
+            <div class="mainrail">
+            <!--{template item_subject_side}-->
+            </div>
+            <!--{else}-->
+                <div class="mainrail">
+                    <div class="category_list">
+                        <h4 class="rail-h-1">文章分类</h4>
+                        <ul>
+                            <!--{if $catid}-->
+                            {get:article val=category(pid/$catid/parent/1)}
+                            <li><a href="{url article/list/catid/$val[catid]}">$val[name]</a></li>
+                            {/get}
+                            <!--{else}-->
+                            {get:article val=category(pid/0)}
+                            <li><a href="{url article/list/catid/$val[catid]}">$val[name]</a></li>
+                            {/get}
+                            <!--{/if}-->
+                            <div class="clear"></div>
+                        </ul>
+                    </div>
+                    <div class="mainrail">
+                        <h4 class="rail-h-2">推荐文章</h4>
+                        <ul class="rail-list">
+                            {get:article val=getlist(select/articleid,subject,dateline/city_id/_NULL_CITYID_/catid/$catid/att/2/orderby/dateline DESC/rows/5)}
+                            <li>
+                                <cite>{date $val[dateline],'m-d'}</cite>
+                                <a href="{url article/detail/id/$val[articleid]}" title="$val[subject]">{sublen $val[subject],12,'...'}</a>
+                            </li>
+                            {/get}
+                        </ul>
+                    </div>
+
+                    <div class="mainrail">
+                        <h4 class="rail-h-2">热门评论</h4>
+                        <ul class="rail-list">
+                            {get:article val=getlist(select/articleid,subject,comments/city_id/_NULL_CITYID_/catid/$catid/comments/1/orderby/comments DESC/rows/5)}
+                            <li>
+                                <cite>$val[comments] 评论</cite>
+                                <a href="{url article/detail/id/$val[articleid]}" title="$val[subject]">{sublen $val[subject],12,'...'}</a>
+                            </li>
+                            {/get}
+                        </ul>
+                    </div>
+                </div>
+            <!--{/if}-->
+        </div>
+
+        <div class="clear"></div>
+    </div>
+
+</div>
+<!--{eval footer();}-->

@@ -1,0 +1,151 @@
+{template modoer_header}
+<div id="body">
+<div class="myhead"></div>
+<div class="mymiddle">
+    <div class="myleft">
+        <!--{template 'menu','member','member'}-->
+    </div>
+    <div class="myright">
+        <div class="myright_top"></div>
+        <div class="myright_middle">
+            <h3>小组管理($group[groupname])</h3>
+            <div class="mainrail">
+                <ul class="optabs">
+                    <li><a href="{url group/member/ac/group/op/edit/gid/$gid}">编辑小组</a></li>
+                    <li><a href="{url group/member/ac/memberlist/gid/$gid}">成员管理</a></li>
+                    <li class="active"><a href="{url group/member/ac/type/gid/$gid}">话题分类</a></li>
+                    <li><a href="{url group/member/ac/setting/gid/$gid}">参数设置</a></li>
+                </ul>
+                <div class="clear"></div>
+                <form method="post" name="myform" action="{url group/member/ac/$ac/op/listorder/rand/$_G[random]}">
+                    <input type="hidden" name="gid" value="$gid" />
+                    <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                        <tr class="thbg">
+                            <th width="120">排序</th>
+                            <th width="200">名称</th>
+                            <th width="150">添加时间</th>
+                            <th width="*">操作</th>
+                        </tr>
+                        {dbres $list $val}
+                        <tr>
+                            <td><input type="text" name="types[{$val[typeid]}][listorder]" value="$val[listorder]" class="t_input" size="5" /></td>
+                            <td id="name_$val[typeid]">$val[name]</td>
+                            <td>{date $val[dateline]}</td>
+                            <td>
+                                <a href="javascript:;"onclick="group_topic_type_edit($val[gid],$val[typeid],'$val[name]');">编辑</a>&nbsp;
+                                <a href="javascript:;"onclick="group_topic_type_delete($val[gid],$val[typeid]);">删除</a>
+                            </td>
+                        </tr>
+                        {/dbres}
+                        {if !$list}
+                        <tr>
+                            <td colspan="5"><div style="padding:30px 0;text-align:center;">暂无信息.</div></td>
+                        </tr>
+                        {/if}
+                    </table>
+                    {if $multipage}<div class="multipage">$multipage</div>{/if}
+                    <div style="text-align:center;">
+                        {if $list}<button type="submit" name="onsubmit" value="yes">提交排序</button>&nbsp;{/if}
+                        <button type="button" onclick="group_add_type();">新增</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="mybottom"></div>
+</div>
+<div id="post_form" style="display:none;">
+    <input type="hidden" name="gid" value="$gid" />
+    <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+        <tr>
+
+            <td width="60">名称:</td>
+            <td width="*"><input typee="text" name="name" value="" class="t_input" size="30" /></td>
+        </tr>
+        <tr>
+
+            <td>排序:</td>
+            <td><input typee="text" name="listorder" value="" class="t_input" size="20" /></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><button type="submit" name="dosubmit" value="YES">提交</button></td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+function group_add_type() {
+    var form=$('<form method="post"></form>').attr('action',Url('group/member/ac/$ac/op/save/rand/$_G[random]')).submit(function(){
+        return form_submit_check(this);
+    });
+    dlgOpen ('新增分类',form.append($('#post_form').html()), 320);
+}
+function form_submit_check(form) {
+    var name = $(form).find('[name=name]').val().trim();
+    if(name=='') {
+        alert('未填写话题分类名称。');
+        return false;
+    }
+    return true;
+}
+function group_topic_type_edit(gid,typeid,name){
+    if (!is_numeric(gid)) {
+        alert('无效的小组ID'); 
+        return;
+    }
+    if (!is_numeric(typeid)) {
+        alert('无效的话题分类ID'); 
+        return;
+    }
+    var name = window.prompt('请输入需要编辑话题分类名称：',name);
+    if(name == null) return;
+    name = name.trim();
+    if(!name) {
+        alert('对不起，您未填写话题分类名称。');
+        return;
+    }
+    $.post(Url('group/member/ac/$ac/op/edit'), 
+    { 'gid':gid,'typeid':typeid,'name':encodeURIComponent(name),'in_ajax':1,'empty':getRandom() },
+    function(result) {
+        if(result == null) {
+            alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+        } else if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+            myAlert(result);
+        } else if(result == 'OK') {
+            document_reload();
+        } else {
+            alert('操作失败。');
+        }
+    });
+}
+function group_topic_type_delete(gid,typeid){
+    if (!is_numeric(gid)) {
+        alert('无效的小组ID'); 
+        return;
+    }
+    if (!is_numeric(typeid)) {
+        alert('无效的话题分类ID'); 
+        return;
+    }
+    if(!window.confirm('您确定要删除分类吗？删除后原所属分类的话题将还原无所属分类。')) {
+        return;
+    }
+    $.post(Url('group/member/ac/$ac/op/delete'), 
+    { 'gid':gid,'typeid':typeid, 'in_ajax':1,'empty':getRandom() },
+    function(result) {
+        if(result == null) {
+            alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+        } else if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+            myAlert(result);
+        } else if(result == 'OK') {
+            document_reload();
+        } else {
+            alert('操作失败。');
+        }
+    });
+}
+</script>
+<!--{eval footer();}-->

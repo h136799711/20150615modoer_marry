@@ -1,0 +1,104 @@
+html, body { 
+    background: #E6EFF7; font:0.75em Tahoma,'Microsoft YaHei',Verdana,sans-serif; color:#333;
+}
+
+h1,h2,h3,h4,h5,h6,ul,li,button,input {
+  margin:0;
+  padding:0;
+  font-family: Tahoma,'Microsoft YaHei',Verdana,sans-serif;
+}
+
+a {
+    text-decoration: none;color: #888;
+}
+
+a:hover {
+    text-decoration: underline;color: #333;
+}
+
+.powered, .panel {
+  width:500px;
+  margin:10px auto 0;
+}
+.powered {
+  padding:10px;
+  text-align: center;
+  color:#888;
+}
+.panel {
+  margin:80px auto 0;
+  background: #fafafa;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Shadow(Strength=4,Direction=135, Color='#cccccc')";
+  box-shadow:0px 3px 10px #bbb;
+}
+.panel-heading {
+  padding:15px 10px;
+  background:#4884B5;
+  background-image:-webkit-linear-gradient(to top,#3C6C95,#4884B5);
+  background-image:-ms-linear-gradient(to top,#3C6C95,#4884B5);
+  background-image:linear-gradient(to top,#3C6C95,#4884B5);
+}
+.panel-heading > h1 {
+  color:#fafafa;
+}
+.panel-body {
+  padding:25px;
+}
+
+.form-item {
+  width:350px;
+  margin:5px auto;
+  padding:5px 0;
+  position: relative;
+}
+.form-item > .loginname {
+  line-height:2.0em;
+  font-size:1.8em !important;
+}
+
+.form-item > .loginname a {
+  font-size:0.75em;
+}
+
+.form-item label {
+  font-size:1.8em;
+  display:block;
+  margin-bottom: 8px;
+  color:#666;
+}
+
+.form-item input {
+  width:100%;
+  border:1px solid #ddd;
+  padding:8px 2px;
+  border-radius: 2px;
+  background:#f4f4f4;
+  font-size:1.6em;
+  color:#555;
+}
+.form-item #seccode {
+  position: absolute;
+  right:0;
+  bottom:10px;
+}
+
+.button {
+  cursor:pointer; 
+  font-size:1.6em;
+  color: #FFF;
+  border:0px;
+  padding:10px 30px;
+  margin-top:10px;
+  vertical-align:middle;
+  border-radius: 2px;
+  background:#4884B5; 
+  background-image:-webkit-linear-gradient(to top,#3C6C95,#4884B5);
+  background-image:-ms-linear-gradient(to top,#3C6C95,#4884B5);
+  background-image:linear-gradient(to top,#3C6C95,#4884B5);
+  box-shadow:1px 3px 3px #ccc;
+}
+
+.button:hover, .button:active { 
+  background:#4278A4; 
+  box-shadow:0 2px 3px #ddd;
+}

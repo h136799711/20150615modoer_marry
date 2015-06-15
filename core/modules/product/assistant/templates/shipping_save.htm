@@ -1,0 +1,66 @@
+{template modoer_header}
+<script type="text/javascript" src="{URLROOT}/static/javascript/validator.js"></script>
+<script type="text/javascript">
+loadscript("mdialog");
+function checkform(obj) {
+    return true;
+}
+</script>
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+        <!--{eval !$mymenu && $mymenu = 'mmenu';}-->
+        <!--{template $mymenu,'member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3>添加/编辑物流方式</h3>
+                <div class="mainrail">
+                    <form method="post" name="myform" action="{url product/member/ac/$ac/op/post/rand/$_G[random]}" onsubmit="return validator(this);">
+                    <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                        <tr>
+                            <td align="right">店铺：</td>
+                            <td>$_G[manage_subject][name]{if $_G[manage_subject][subname]}($_G[manage_subject][subname]){/if}</td>
+                        </tr>
+                        <tr>
+                            <td width="100" align="right"><span class="font_1">*</span>&nbsp;名称：</td>
+                            <td width="*"><input type="text" name="shipname" class="t_input" value="$detail['shipname']" validator="{'empty':'N','errmsg':'名称必须填写!'}" />&nbsp;<span id="validator_shipname"></span></td>
+                        </tr>
+                        <tr>
+                            <td align="right"><span class="font_1">*</span>&nbsp;邮费：</td>
+                            <td><input type="text" name="price" class="t_input" value="$detail['price']" validator="{'empty':'N','errmsg':'邮费必须填写!'}" /> 元&nbsp;<span id="validator_price"></span></td>
+                        </tr>
+                        <tr>
+                            <td align="right">启用：</td>
+                            <td><input type="radio" name="enabled" value="1" id="radio_enabled_1"{if $detail['enabled']==1} checked="checked"{/if} /><label for="radio_enabled_1">是</label>&nbsp;<input type="radio" name="enabled" value="0" id="radio_enabled_0"{if $detail['enabled']==0} checked="checked"{/if} /><label for="radio_enabled_0">否</label></td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">简介：</td>
+                            <td><textarea name="shipdesc" rows="8" cols="40" class="txtarea">$detail['shipdesc']</textarea></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>注：<span class="font_1">*</span>为必填</td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                                <input type="hidden" name="do" value="$op" />
+                                {if $shipid}<input type="hidden" name="shipid" value="$shipid" />{/if}
+                                <button type="submit" name="dosubmit" value="yes" id="subbtn">提交</button>&nbsp;
+                                <button type="button" onclick="history.go(-1);">返回</button>
+                            </td>
+                        </tr>
+                    </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="mybottom"></div>
+</div>
+
+<!--{eval footer();}-->

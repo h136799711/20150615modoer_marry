@@ -1,0 +1,38 @@
+{eval 
+    $_HEAD[title] = $album[name];
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <div class="fr">
+            <a href="{url item/mobile/do/detail/id/$album[sid]}"><span class="label-comm label-mycolor">访问主题</span></a>
+        </div>
+        <h4>$album[name]</h4>
+    </div>
+    <ul class="list-thumb list-thumb-row2 item-picture-list">
+        <!--{dbres $list $val}-->
+        <li class="list-thumb-item">
+            <div class="border">
+                <div class="list-thumb-img">
+                    <!--{eval $des=$val['username'].'@'.newdate($val['addtime'],'w2style');}-->
+                    <p><img  src="{URLROOT}/$val[thumb]" alt="$val[title]" title="$val[title]" data-des="$des" data-url="{URLROOT}/$val[filename]"></p>
+                </div>
+            </div>
+        </li>
+        <!--{/dbres}-->
+    </ul>
+</div>
+<!--{hook 'load_comment', $comment_cfg}-->
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe.js"></script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe_srceen.js"></script>
+<script>
+$(document).ready(function() {
+    //图片划屏浏览
+    $('ul.item-picture-list').find('.list-thumb-img img').each(function(index, val) {
+        $(this).click(function() {
+            swipe_srceen('ul.item-picture-list', '.list-thumb-img>p>img', index);
+        });
+    });
+});
+</script>
+{include mobile_template('footer')}

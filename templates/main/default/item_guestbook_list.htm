@@ -1,0 +1,60 @@
+<!--{eval 
+    $_HEAD['title'] = $fullname . '的' . $filter_arr_lng[$filter] . '留言列表';
+}-->
+{template modoer_header}
+<div id="body">
+    <div class="link_path">
+        <em>
+            <!--{loop $links $i $link}-->
+            {if $i}<span class="xsplit"> | </span>{/if}
+            <a href="$link[url]"{if $link[flag]=='item/guestbook'} style="color:#ff6600;"{/if}>$link[title]</a>
+            <!--{/loop}-->
+        </em>
+        <a href="{url modoer/index}">{lang global_index}</a>
+        &raquo;
+        {print implode(' &raquo; ', $urlpath)}
+    </div>
+    <div id="item_left">
+        <div class="mainrail rail-border-3">
+            <em>
+                <a href="javascript:;" onclick="post_guestbook($sid);"><span class="icomoon icon-bubble-dots2 ic-yellow"></span>我要留言</a>
+            </em>
+            <h3 class="rail-h-2 rail-h-bm-3">留言列表</h3>
+            <div>
+                <!--{dbres $list $val}-->
+                <div class="guestbook" id="guestbook_$val[guestbookid]">
+                    <div class="title">
+                        <em>
+                            <!--{if $is_owner}-->
+                            <a href="javascript:reply_guestbook($val[guestbookid]);">回复</a>&nbsp;
+                            <a href="javascript:delete_guestbook($val[guestbookid]);">删除</a>
+                            <!--{elseif $user->isLogin && $user->uid==$val[uid]}-->
+                            <a href="javascript:edit_guestbook($val[guestbookid]);">编辑</a>&nbsp;
+                            <a href="javascript:delete_guestbook($val[guestbookid]);">删除</a>
+                            <!--{/if}-->
+                        </em>
+                        <h4><span class="member-ico"><a href="{url space/index/uid/$val[uid]}">$val[username]</a></span>&nbsp;在&nbsp;{date $val[dateline],'Y-m-d H:i'}&nbsp;留言：</h4>
+                    </div>
+                    <div class="body">
+                        <div class="content" id="guestbook_content_$val[guestbookid]">{print nl2br($val[content])}</div>
+                        <!--{if $val[replytime]}-->
+                        <div class="reply" id="guestbook_reply_$val[guestbookid]">回复：{print nl2br($val[reply])}&nbsp;&nbsp;<span class="font_3">{date $val[replytime],'m-d H:i'}</span></div>
+                        <!--{/if}-->
+                    </div>
+                    
+                </div>
+                <!--{/dbres}-->
+            </div>
+            <div class="multipage">$multipage</div>
+        </div>
+    </div>
+    <div id="item_right">
+        <div class="mainrail rail-border-3">
+            <!--{template item_subject_side}-->
+        </div>
+    </div>
+
+    <div class="clear"></div>
+
+</div>
+<!--{eval footer();}-->

@@ -1,0 +1,58 @@
+<!--{eval
+    if(SCRIPTNAV != 'index' && $_G[show_sitename]):
+        $_HEAD[title] .= $_G['cfg']['titlesplit'] . $_G['cfg']['sitename'];
+    endif;
+}-->
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+    <meta charset="utf-8">
+    <title>{if $newspace[my_name]&& $newspace[other_name]}$newspace[my_name]&amp;$newspace[other_name]{else}$member[username]{/if}的婚礼主页－$_G['cfg']['sitename']</title>
+    <meta content="141120651657140655" property="qc:admins">
+    <meta content="AUWbtX9ZHz" name="baidu-site-verification">   
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="!" name="fragment">
+    <meta content="user-scalable=no, initial-scale=1.0, maximum-scale=1, minimum-scale=1, width=device-width" name="viewport">
+    <meta content="webkit" name="renderer">
+    <meta content=",婚礼,婚礼布置,电子请柬,主题婚礼,婚礼歌曲,婚礼时光,婚礼图片,婚礼灵感,婚礼风尚,婚礼时光" name="keywords">
+    <meta content="fex2的婚礼时光" name="description">
+    <meta content="Fm1dhkCKEM" name="baidu-site-verification">
+    <link rel="shortcut icon" type="image/x-icon" href="{URLROOT}/static/images/favicon.ico">
+    <!-- bootstarp -->
+    <link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/bootstrap.css?{$_G[modoer][build]}" />
+	<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/widget/scroll.css?{$_G[modoer][build]}" />
+	<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/dropdown.css?{$_G[modoer][build]}" />
+	<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/v3_css/user.css?{$_G[modoer][build]}" />
+	<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/cards/cardbase.css?{$_G[modoer][build]}" />
+	<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/cards/theme-set.css?{$_G[modoer][build]}" />
+	<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/progress.css?{$_G[modoer][build]}" />
+    
+    <link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/widget/bootstrap-datetimepicker.min.css?{$_G[modoer][build]}" />
+	<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/table.css?{$_G[modoer][build]}" />
+	<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/ui/widget/notice.css?{$_G[modoer][build]}" />
+
+
+    <link href="{URLROOT}/{$_G[tplurl]}rss.xml" title="婚礼时光RSS Feed" type="application/rss+xml" rel="alternate">
+<!--[if lt IE 9]>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/html5shiv/dist/html5shiv.min.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/lib/respondJs/dest/respond.min.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/placeholders.min.js?{$_G[modoer][build]}"></script>
+
+<link href="{URLROOT}/static/javascript/lib/respondJs/cross-domain/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
+<link href="{URLROOT}/static/javascript/lib/respondJs/cross-domain/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
+<script src="{URLROOT}/static/javascript/lib/respondJs/cross-domain/respond.proxy.js"></script>
+<script>
+    window.onload = function () {
+        document.body.className = 'ie8';
+    }
+</script>
+<![endif]-->
+    
+<script type="text/javascript" src="{URLROOT}/data/cachefiles/config.js?{$_G[cfg][js_cache_flag]}"></script>
+<script src="{URLROOT}/static/javascript/jquery/jquery.js?t={$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/common.js?{$_G[modoer][build]}"></script>
+</head>
+
+<body class="">
+
+<!-- header end -->

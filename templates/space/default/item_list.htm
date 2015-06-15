@@ -1,0 +1,48 @@
+<!--{include space_template('header', $templateid)}-->
+
+<div class="container-box pages p-subjects clear">
+
+	<div class="pages-main">
+
+        <div class="modbox p-tabs-box">
+            <div class="tab clear">
+                <a {if $_GET['pr']=='item_follow'}class="active"{/if} href="{url space/$space->uid/pr/item_follow}">
+                    我关注的主题{if $_GET['pr']=='item_follow'}($total){/if}
+                </a>
+                <a {if $_GET['pr']=='item'}class="active"{/if} href="{url space/$space->uid/pr/item}">
+                    我添加的主题{if $_GET['pr']=='item'}($total){/if}
+                </a>
+            </div>
+        </div>
+
+        <div class="modbox subjects">
+            <!--{if $total}-->
+            <table border="0" cellspacing="0" cellpadding="0">
+                {dbres $list $val}
+                <tr>
+                    <td class="title">
+                        <a href="{url item/detail/id/$val[sid]}">$val[name]{if $val[subname]}($val[subname]){/if}</a>
+                    </td>
+                    <td class="point">
+                        <span class="start s{print get_star($val[avgsort],S('review:scoretype'))}"></span>
+                    </td>
+                    <td class="time">
+                        {date $val[addtime]}
+                    </td>
+                </tr>
+                {/dbres}
+            </table>
+            <div class="multipage">$multipage</div>
+            <!--{else}-->
+            <div>暂无信息</div>
+            <!--{/if}-->
+        </div>
+
+	</div>
+
+	<div class="pages-aside">
+	</div>
+
+</div>
+
+<!--{include space_template('footer', $templateid)}-->

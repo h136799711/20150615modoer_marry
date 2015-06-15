@@ -1,0 +1,421 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+<meta http-equiv="Content-Type" content="text/html; charset=$_G[charset]" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<title>$_HEAD[title] - 结婚预算</title>
+{if $_HEAD[keywords]}<meta name="keywords" content="$_HEAD[keywords],Modoer点评系统" />{/if}
+{if $_HEAD[description]}<meta name="description" content="$_HEAD[description]" />{/if}
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css/hyHelp.css" />
+<script type="text/javascript" src="{URLROOT}/static/javascript/jquery.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/layer_show.js?{$_G[modoer][build]}"></script>
+		
+			<script type="text/javascript">
+
+			$(document).ready(function(){	
+			})
+
+			var values = [
+				[ 20, 18, 18, 6, 11, 10, 10, 4, 1, 1, 1 ],
+				[ 26, 14, 15, 4, 12, 10, 10, 4, 1, 2, 2 ],
+				[ 30, 13, 14, 2, 12, 10, 10, 3, 2, 2, 2 ],
+				[ 34, 13, 13, 2, 11, 9, 9, 2, 2, 3, 2 ],
+				[ 40, 12, 12, 2, 10, 8, 8, 2, 2, 2, 2 ],
+				[ 42, 10, 11, 2, 10, 7, 7, 2, 3, 3, 3 ],
+				[ 46, 10, 11, 2, 9, 6, 5, 2, 3, 3, 3 ],
+				[ 50, 10, 10, 2, 8, 3, 4, 2, 4, 4, 3 ]
+				];
+
+			function formatFloat(src, pos)
+			{
+			    return Math.round(src*Math.pow(10, pos))/Math.pow(10, pos);
+    
+			}
+
+			function calc()
+				{
+					var total = parseInt(document.getElementById("total").value);
+					var desk = parseInt(document.getElementById("desk").value);
+					if(!total  || !desk){
+						alert('请输入数字');
+						return;
+					}
+
+					var i;
+		
+					if(desk*10<50)
+						i = 0;
+					else if(total<100)
+						i = 1;
+					else if(total<150)
+						i = 2;
+					else if(total<200)
+						i = 3;
+					else if(total<250)
+						i = 4;
+					else if(total<300)
+						i = 5;
+					else if(total<500)
+						i = 6;
+					else if(total>=500)
+						i = 7;
+
+					document.getElementById("totalParty").value = total * values[i][0] / 100;
+					document.getElementById("dress").value = total *　values[i][1] / 100;
+					document.getElementById("ring").value = total *　values[i][2] / 100;
+					document.getElementById("dressup").value = total *　values[i][3] / 100;
+					document.getElementById("camera").value = total *　values[i][4] / 100;
+					document.getElementById("music").value = total *　values[i][5] / 100;
+					document.getElementById("flower").value = total *　values[i][6] / 100;
+					document.getElementById("pie").value = total *　values[i][7] / 100;
+					document.getElementById("card").value = total *　values[i][8] / 100;
+					document.getElementById("sweet").value = total *　values[i][9] / 100;
+					document.getElementById("other").value = total *　values[i][10] / 100;
+
+					document.getElementById("price").value = 
+							Math.round(document.getElementById("totalParty").value / document.getElementById("desk").value);
+					document.getElementById("myBudget").innerHTML = total;
+
+		
+				}
+
+			</script>
+	
+		<title></title>
+		
+		<!-- UA-->
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//script.daoxila.net/public/statistics/analytics.js','ga');
+		
+		  ga('create', 'UA-17330707-1', 'daoxila.com');
+		  ga('send', 'pageview');
+		</script>
+		
+	</head>
+
+	<body>
+		<!--<iframe id="orderFrame" name="orderFrame" class="box1" src="../order/sub-mobile?usertype=unknown&act=go&var=preload" frameborder="0" scrolling="No" style="z-index:99;width:602px; height:557px;display:none;" allowtransparency="true"></iframe>-->
+<!--<div class='gray_layer'></div>	-->	<div id="hyHelp">
+			
+
+<script charset="utf-8" src="http://script.daoxila.com/root/js/common.js?v={$script_v}" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+function SetCookie(name,value)//两个参数，一个是cookie的名子，一个是值
+{
+    var Days = 30; //此 cookie 将被保存 30 天
+    var exp  = new Date();    //new Date("December 31, 9998");
+    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString() + ";path=/";
+}
+</script>
+
+
+<style>
+
+/* ------------------- ?????? ------------------- */
+.popupLayer{position:absolute;z-index:20;}
+.popup_item{padding:2px;background:#fffcfc;border:0px solid #ffe0ed;z-index:21;}
+	.popup_item .pop_box{position:relative;}
+	.popup_item .pop_box .bd{padding:9px;}
+	.popup_item .pop_box a.close_a{position:absolute;right:10px;top:6px;width:18px;height:18px;line-height:50px;overflow:hidden;background-position:left -644px;}
+	.popup_item .hd{padding-left:13px;height:30px;line-height:30px;background:#eee;color:#333;font-size:14px;font-weight:700;}
+	.popup_item .noneBg{background:#fff;}
+	.popup_item .cart_hd{height:30px;line-height:30px;}
+	.popup_item .cart_hd .num_c{color:#df0404;}
+	.popup_item .cart_hd .user_a{font-weight:700;}
+	.popup_item .return{clear:both;overflow:hidden;}
+	/*-- tab_hd --*/
+	.tab_hd li{display:inline;float:left;margin-left:3px;padding-top:5px;height:25px;overflow:hidden;font-size:0;}
+	.tab_hd li a{display:inline-block;padding:0 10px;height:25px;line-height:25px;text-align:center;vertical-align: top;background:#36a3cd;border:1px solid #088ac7;border-bottom:none;font-size:12px;color:#fff;-webkit-border-radius:3px 3px 0 0;
+	-moz-border-radius:3px 3px 0 0;}
+	.tab_hd li a:hover,.tab_hd li a.active{background:#fff;text-decoration:none;color:#0370bd;}
+
+	.tips_item .bd{ line-height:22px;}
+	.tips_item .bd .tip_t{display:block;color:#000;font-weight:700;}
+	.tips_item .bd .return{padding:10px 0;}
+
+/* ---------------------------------------------*/
+</style>
+<div style="height: 50px;">
+	
+</div>
+
+			<!---------------str middle----------------->
+			<div class="subContainter_register"> 
+				<div class="weddingTit"><img src="http://script.daoxila.com//root/img/hyHelp_img/weddingTit_05.gif" width="75" height="97" /></div> 
+				<!-- str title-->
+				<div class="budget_title none">
+					<p><span>（本服务由10万对新人结婚花费的数据分析所得，完全免费）</span>客服热线：<strong>400-820-1709</strong></p>
+					<!--<div class="register_service"><a href="javascript:void(0);"></a></div>-->
+				</div>
+				<!-- end title-->
+				<!--str right-->
+				<div class="budget_right" style="display: none;">
+					<p><strong>你还在为婚宴预算烦恼吗？</strong></p>
+					<p><strong>现在只需留下您的联系手机，就能订到最实惠的酒店！</strong></p>
+					<p class="budget_line">留下联系手机，就有机会获得马尔代夫双人游的机会哦！</p>
+
+					<form id="yusuan_form" action='{url modoer/index/act/tool/do/yusuan}' onsubmit="$('#f_desk').val($('#desk').val());$('#f_total').val($('#total').val());"  method="post" class="form_list formAticle">
+						<!-- S 手机验证公共部分 -->
+						<div class="pub_mobile">
+							<label for="">您的联系手机为：</label>
+							<input name="mobile" type="text" id="mobile" value='' class="moblie_input" maxlength="11">
+								<i class="tip_icon"></i>
+								<span class="red_btn_s1"><input name="" type="submit" class="red_btn_sIn mobile_submit" value=""></span>
+								<input type="hidden" name="dosubmit" value="yes"/>
+								<input id="f_desk" type="hidden" name="desk" value=""/>
+								<input id="f_total" type="hidden" name="total" value=""/>
+						</div>
+						<!-- E 手机验证公共部分 -->
+					</form>
+					<div class="budget_rightTip">预算还不清楚吗？试试到喜啦 <a href="../wedding-helper/">婚宴助手</a> 吧！</div>
+				</div>
+				<!--end right-->
+				<!--str left-->
+				<div class="register_left">
+					<h4>结婚预算：</h4>
+					<form>
+						<div class="budget_selectArea">            	
+							您结婚的总预算：
+							<input type="text" name="total" id="total" class="budgetInput" /> 元
+							&nbsp;&nbsp;预计婚宴桌数：
+							<input type="text" name="desk" id="desk" class="budgetInput" /> 桌
+							<input type="button" name="button" id="button" value="计算" class="register_seaBtn" onclick='calc()'/>                
+						</div>
+						<div class="budget_text">            	
+							<p>我们建议的您的结婚预算精确而合理的分配为：</p>
+							<table width="490" border="0" cellpadding="0" cellspacing="0" class="budgetTable">
+								<tr>
+									<td class="budgetTdSty">婚宴总预算：</td>
+									<td><input type="text" name="textfield" id="totalParty" readonly='' /></td>
+									<td class="budgetTdSty">每桌预算：</td>
+									<td><input type="text" name="textfield12" id="price" readonly=''/></td>
+								</tr>
+								<tr>
+									<td class="budgetTdSty">婚纱&amp;礼服：</td>
+									<td><input type="text" name="textfield2" id="dress" readonly=''/></td>
+									<td class="budgetTdSty">婚戒：</td>
+									<td><input type="text" name="textfield11" id="ring" readonly=''/></td>
+								</tr>
+								<tr>
+									<td class="budgetTdSty">新人饰品：</td>
+									<td><input type="text" name="textfield3" id="dressup" readonly=''/></td>
+									<td class="budgetTdSty">摄影&amp;摄像：</td>
+									<td><input type="text" name="textfield10" id="camera" readonly=''/></td>
+								</tr>
+								<tr>
+									<td class="budgetTdSty">乐队/司仪：</td>
+									<td><input type="text" name="textfield4" id="music" readonly=''/></td>
+									<td class="budgetTdSty">捧花&amp;花艺：</td>
+									<td><input type="text" name="textfield9" id="flower" readonly=''/></td>
+								</tr>
+								<tr>
+									<td class="budgetTdSty">婚礼蛋糕：</td>
+									<td><input type="text" name="textfield5" id="pie" readonly=''/></td>
+									<td class="budgetTdSty">请贴/婚礼卡片：</td>
+									<td><input type="text" name="textfield8" id="card" readonly=''/></td>
+								</tr>
+								<tr>
+									<td class="budgetTdSty">喜糖/回礼：</td>
+									<td><input type="text" name="textfield6" id="sweet" readonly=''/></td>
+									<td class="budgetTdSty">其他（用车）：</td>
+									<td><input type="text" name="textfield7" id="other" readonly=''/></td>
+								</tr>
+							</table>
+							<div class="budget_leftTip">您的总预算为：￥<span id='myBudget'>0</span>元，现在通过到喜啦预订酒店能够获得超低价优惠，更有超值大礼包赠送！现在就试试到喜啦免费婚宴酒店推荐服务吧！</div>
+						</div>
+					</form>
+				</div>
+				<!--end left-->
+			</div>
+
+<div class="subContainter_bottom"></div>
+			<!---------------end middle----------------->
+			<!-- S 小弹层-->
+			<div class="pub_layer_s selectNo none" style="width:270px;">
+				<div class="pub_layer_hd"><h3>请选择联系手机 以完成需求</h3></div>
+				<div class="pub_layer_bd">
+					<ul class="mobile_list">
+						<li><a href="" target='orderFrame' onclick="setFrameIndex('orderFrame')" class='mobile_new'><i></i>
+								<span class='mobile_span_new'></span></a></li>
+						<li><a href="../order/sub-mobile-detail?act=do&from=event&order_from=xa_WeddingHelper_HunYanYuSuan_MidRight&mobile=&usertype=unknown" target='orderFrame' onclick="setFrameIndex('orderFrame')" class='mobile_old'><i></i>
+								<span class='mobile_span_old'></span></a></li>
+					</ul>
+				</div>    
+				<div class="pub_layer_wrap"></div>
+				<a href="javascript:void(0);" class="closed_layer_s">关闭</a>
+				<input type="hidden" class="register_phone" value="" />
+				<input type="hidden" name="order_path" class='order_path' value="../order/logout-order?act=order/sub-mobile-detail?usertype=unknown,act=do,from=event,order_from=xa_WeddingHelper_HunYanYuSuan_MidRight,mobile=">
+			</div>
+			<!-- E 小弹层-->
+			    <!---------------str footer----------------->
+<div class="subFooter none">
+    	<ul>
+        	<li><a href="http://www.daoxila.com">兰州婚宴网首页</a>|</li>
+            <li><a href="#" target="_blank">关于我们</a>|</li>
+            <li><a href="#" target="_blank">服务协议</a>|</li>
+            <li><a href="#" target="_blank">加入我们</a>|</li>
+            <li><a href="#" target="_blank">隐私声明</a></li>
+        </ul>
+        <p>Copyright 2010 daoxila.com All Rights Reserved 沪ICP备10039145号</p>
+  </div>
+    <!---------------end footer----------------->
+
+<!--Baidu Analytics-->
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F1d2519efe52fbcddc471e1b2ee80eb9e' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<!--Baidu End-->
+
+<!-- Google Code for Convertion -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 1014092333;
+var google_conversion_label = "7OqDCKOo5QQQraTH4wM";
+var google_custom_params = window.google_tag_params;
+var google_remarketing_only = true;
+/* ]]> */
+</script>
+<script type="text/javascript" src="http://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="http://googleads.g.doubleclick.net/pagead/viewthroughconversion/1014092333/?value=0&amp;label=7OqDCKOo5QQQraTH4wM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+
+<!--Baidu Visit-->
+
+<script type="text/javascript">
+<!-- 
+var bd_cpro_rtid="nWnYPs";
+//-->
+</script>
+<script type="text/javascript" src="http://cpro.baidu.com/cpro/ui/rt.js"></script>
+<noscript>
+<div style="display:none;">
+<img height="0" width="0" style="border-style:none;" src="http://eclick.baidu.com/rt.jpg?t=noscript&rtid=nWnYPs" />
+</div>
+</noscript>
+
+
+
+		</div>
+		
+			<script type="text/javascript">
+				$(document).ready(function() {
+					$('.closed_layer_s').click(function(){
+						$('.pub_layer_s').hide();			   
+					});
+					$('.mobile_list a').click(function(){
+						$('.pub_layer_s').hide();			   
+					});	
+			    });
+			</script>
+              <!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=slide&img=0&pos=left&uid=485514" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<!-- Baidu Button END -->
+<script type="text/javascript">
+var bds_config = {"bdTop":340,'snsKey':{'tsina':'3933900156','tqq':'100649544'},'bdText':'分享一个在【到喜啦婚宴网】上找到的计算结婚预算的小东东，可以根据结婚预算精准合理分配结婚预算哦！要结婚的童鞋快看过来，点这里看看'};
+document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + new Date().getHours();
+</script>
+<!-- Baidu Button END -->
+
+<script type="text/javascript">
+	$(document).ready(function(){
+			//关闭弹层
+			$(".pub_layer_s .closed_layer_s").click(function(){
+				$(".pub_layer_s").hide();
+				});
+			$(".pub_layer_s .yes_btn").click(function(){
+				$(".pub_layer_s").hide();
+				});
+			//弹出小弹层
+			$(".add_demand .closed_layer").click(function(){
+				$(".sure_layer").show();
+				});
+			$(".add_demand .skip_link").click(function(){
+				$(".skip_layer").show();
+				});
+		//验证码弹层事件
+			if($("#getCodes").attr("tm")!=""){
+			  var _this=$("#getCodes");
+			  var _tm= parseInt(_this.attr("tm"));
+			  if(_tm>0){
+				_this.attr("disabled",true);
+				var tm=setInterval(function(){
+								 if(_tm!=0){
+									_tm=_tm-1;
+								   _this.val("剩余"+_tm.toString()+"秒");
+								
+								   }
+								 else{
+								  _this.attr({"tm":"","disabled":false}).val("重发验证码");
+								  clearInterval(tm);
+								  
+								 }
+							   },1000); 
+			  }
+			}
+			$("#getCodes").click(function(){
+			var _mobilecode=/^1[3|4|5|8][0-9]\d{8,}$/;
+				 var _that=$(this); 
+				 var obj={}
+				 obj.type=$("form[type]").attr("type");
+				 obj.mobile=$("#mobile").val();
+				 if(_mobilecode.test(obj.mobile)==false){
+				   alert("请填写正确的手机号!");
+				   return false;
+				 }
+				 var dataobj=$.param(obj);
+				 _that.attr("disabled",true);
+				 $.ajax({
+				  url:"/order/mobilecode",
+				  data:dataobj,
+				  dataType:"json",
+				  type:"get",
+				  success:function(data){
+					//alert(data.code);
+					 switch (data.code){
+					   case 1:
+						var time=_that.attr("tm")==""||"0"?60:parseInt(_that.attr("tm"));
+						if(time>0){
+						 clearInterval(tm);
+						var tn=setInterval(function(){
+						
+								 if(time!=0){
+									time=time-1;
+								   _that.val("剩余"+time.toString()+"秒");
+								  //alert(time);
+								   }
+								 else{
+								  _that.attr({"tm":"","disabled":false}).val("重发验证码");
+								  clearInterval(tn);
+								  
+								 }
+							   },1000);
+							}
+							
+						else{
+						 _that.attr("disabled",false);
+						
+						}	
+					   break;
+					   default:
+					   alert(data.msg);
+					 }
+				   }
+				 });
+			});
+		})
+</script>
+		
+	</body>
+</html>

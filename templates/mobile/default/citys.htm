@@ -1,0 +1,26 @@
+{eval 
+    $_HEAD[title] = "选择城市";
+    $header_title="选择访问城市";
+    !$_CITY[aid] && $header_forward = false;
+    $header_frbtn_hide = true;
+}
+{include mobile_template('header')}
+<div class="list-group list-group-insertmod">
+    <!--{if $d_city}-->
+    <div class="list-group-heading">推荐</div>
+    <a class="list-group-item" href="{print:modoer cityurl(city_id/$d_city[aid]/in_mobile/Y/forward/$forward)}">
+        <div class="fr"><span class="arrow"></span></div>
+        $d_city[name]
+    </a>
+    <!--{/if}-->
+    <!--{loop $list $initial $val}-->
+    <div class="list-group-heading">{$initial}</div>
+    <!--{loop $val $k $v}-->
+    <a class="list-group-item" href="{print:modoer cityurl(city_id/$k/in_mobile/Y/forward/$forward)}">
+        <div class="fr"><span class="arrow"></span></div>
+        $v[name]
+    </a>
+    <!--{/loop}-->
+    <!--{/loop}-->
+</div>
+{include mobile_template('footer')}

@@ -1,0 +1,32 @@
+{if !$list} <div class="list-group-item center">Sorry，没有找到任何信息。</div> {/if}
+{eval $i=0;}
+{dbres $list $val}
+{eval if($distance>0 && $val['distance']>0 && $val['distance']>$distance)continue;}
+<a href="{url item/mobile/do/detail/id/$val[sid]}" class="list-group-item" data-name="newload">
+    <div class="fr">
+        {if $val['distance']}
+        <span class="txt-small">{print item_location::showDistanceUnit($val['distance'])}</span>
+        {/if}
+        <span class="arrow"></span>
+    </div>
+    <div class="richtxt-comm richtxt-img-defaultsize">
+        <div class="fl">
+            <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name]" class="richtxt-img">
+        </div>
+        <div class="richtxt-body">
+            <h4>$val[name]{if $val[subname]}($val[subname]){/if}</h4>
+            <p class="txt-comm txt-small">
+                <span class="start s{print get_star($val[avgsort],S('review:scoretype'))} start-txt">
+                {if $catcfg[useprice] && $val[avgprice]}
+                    ￥$val[avgprice]
+                {/if}
+                </span><br>
+                {$val[reviews]} 个点评
+                <span class="split"></span>
+                {$val[favorites]} 个关注
+            </p>
+        </div>
+    </div>
+</a>
+{/dbres}
+{if $multipage}$multipage{/if}

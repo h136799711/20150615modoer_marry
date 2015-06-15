@@ -1,0 +1,37 @@
+<!--{eval 
+    $_HEAD['title'] = 完成订单支付;
+}-->
+
+{template modoer_header}
+<style type="text/css">
+@import url("{URLROOT}/{$_G[tplurl]}css_product.css");
+</style>
+<div id="body">
+	<div class="piece piece_w960">
+		<div class="piece_hd"><b class=hl></b><b class=hr></b></div>
+		<div class="piece_bd clearfix">
+			<div class="link_path"> <a href="{url modoer/index}">首页</a><span>&gt;</span>{print implode('<span>&gt;</span>', $urlpath)} </div>
+			<ul class="step mt">
+				<li class="first"><span>STEP 1.</span>查看购物车</li>
+				<li><span>STEP 2.</span>确认订单信息</li>
+				<li><span>STEP 3.</span>支付订单款项</li>
+				<li class="on2"><span>STEP 4.</span>完成订单支付</li>
+			</ul>
+			<div class="blank"></div>
+			<div class="pay_box">
+				<div class="pay_box_border">
+					<div class="clue_on">
+						<h4>订单支付成功！</h4>
+						<p>您的订单已经完成付款，请等待卖家发货处理！
+					</div>
+					<div class="order_information">
+						<h3> <b>订单号&nbsp;:&nbsp;<span>$detail[ordersn]</span></b> <b>支付金额&nbsp;:&nbsp;<span>&yen;{$detail[order_amount]}</span></b> </h3>
+						<p><a href="{url product/member/ac/m_order}">您可以在我的助手中查看该订单</a></p>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{eval footer();}-->

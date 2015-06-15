@@ -1,0 +1,110 @@
+{template modoer_header}
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_product_mem.css");</style>
+<div id="body">
+    <div id="path">当前位置：<a href="{url modoer/index}">首页</a><span>&gt;</span><a href="{url member/index}">用户中心</a><span>&gt;</span><a href="{url product/member/ac/m_order}">我的商品订单</a> <span>&gt;</span>查看订单</div>
+    <div class="order_box">
+        <div class="order_box_border">
+            <h2>订单详情</h2>
+            <div class="box">
+                <div class="state">订单状态&nbsp;:&nbsp;<strong>{print lang('product_status_'.$detail['status'])}</strong></div>
+                <div class="num">订单号&nbsp;:&nbsp;$detail[ordersn]</div>
+                <div class="time">下单时间&nbsp;:&nbsp;{date $detail[addtime],'Y-m-d H:i:s'}</div>
+            </div>
+            <div class="clear"></div>
+            <!--{if $serial}-->
+            <h3>卡密信息</h3>
+            <div class="goods">
+                <ul class="order_detail_list">
+                	<!--{dbres $serial $val}-->
+                	<li>$val['serial']</li>
+                	<!--{/dbres}-->
+                </ul>
+            </div>
+            <!--{/if}-->
+            <h3>订单信息</h3>
+            <dl class="info">
+                <dt>卖家信息</dt>
+                <dd>店铺名&nbsp;:&nbsp;$detail[name].$detail[subname]</dd>
+                <dd class="conc">联系商家&nbsp;:&nbsp;<a href="javascript:send_message($detail[sellerid]);" class="email"></a></dd>
+            </dl>
+            <div class="ware_line">
+                <div class="ware">
+                    <!--{get:product _val=getproduct(orderid/$orderid)}-->
+                    <div class="ware_list">
+                        <div class="ware_pic">
+                            {eval $image=$_val[goods_image]?$_val[goods_image]:'static/images/noimg.gif';}
+                            <img src="{img $image}" width="50" height="50"  />
+                        </div>
+                        <div class="ware_text">
+                            <div class="ware_text1">
+                                <a href="{url product/detail/pid/$_val['pid']}" target="_blank">$_val[pname]</a><br />
+                                {eval $buyattr = $_val['buyattr']?unserialize($_val['buyattr']):array();}
+                                {loop $buyattr $attr}
+                                <span class="font_3">{$attr[name]}:{$attr[value]}</span>&nbsp;
+                                {/loop}
+                            </div>
+                            <div class="ware_text2">
+                                <span>数量&nbsp;:&nbsp;<strong>$_val[quantity]</strong></span>
+                                <span>价格&nbsp;:&nbsp;<strong>&yen;$_val[price]</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--{/get}-->
+                    <div class="transportation">
+                        运费&nbsp;:&nbsp;<span><b>&yen;$detail['shipfee']</b><strong>（$detail['shipname']）</strong></span>
+                        +&nbsp;商品总价&nbsp;:&nbsp;<span><b>&yen;$detail['goods_amount']</b></span>
+                        {if $detail[integral]}-&nbsp;消费积分抵价&nbsp;:&nbsp;<span><b>&yen;$detail[integral_amount]</b></span>{/if}
+                        =&nbsp;订单支付总价&nbsp;:&nbsp;<b>&yen;$detail['order_amount']</b>
+                    </div>
+                    <ul class="order_detail_list">
+                        <li>下单时间&nbsp;:&nbsp;{date $detail[addtime],'Y-m-d H:i:s'}</li>
+                        {if $detail[paytime]}
+                        <li>支付方式&nbsp;:&nbsp;
+                            {if $detail[paymentname]=='cod'}货到付款
+                            {elseif $detail[paymentname]=='offline'}线下支付({if $detail['is_offline_pay']=='admin'}网站收款{else}商家收款{/if})
+                            {else}{print lang('pay_name_'.$detail[paymentname])}
+                            {/if}
+                        </li>
+                        <li>支付时间&nbsp;:&nbsp;{date $detail[paytime],'Y-m-d H:i:s'}</li>
+                        {/if}
+                        {if $detail[shiptime]}<li>发货时间&nbsp;:&nbsp;{date $detail[shiptime],'Y-m-d H:i:s'}</li>{/if}
+                        {if $detail[finishedtime]}<li>完成时间&nbsp;:&nbsp;{date $detail[finishedtime],'Y-m-d H:i:s'}</li>{/if}
+                    </ul>
+                </div>
+            </div>
+
+            <h3>物流信息</h3>
+            <div class="goods">
+                {if $detail['delivery_time']}
+                发货时间&nbsp;:&nbsp;{date $detail['delivery_time'],'Y-m-d'}&nbsp;(买家指定)<br />
+                {/if}
+                收货地址&nbsp;:&nbsp;&nbsp;{$detail['address']}，&nbsp;{$detail['zipcode']}，{$detail['username']}，&nbsp;{$detail['mobile']}<br />
+                配送方式&nbsp;:&nbsp;$detail['shipname']<br />
+                {if $detail[shiptime]}
+                发货时间&nbsp;:&nbsp;{date $detail[shiptime],'Y-m-d H:i:s'}<br />
+                {if $detail['invoice_no']}
+                物流单号&nbsp;:&nbsp;$detail['invoice_no']
+                    {if ($_CFG['kd100_api_key']||$_CFG['dk100_api_key']) && $detail[kdcom] && $detail[kdcom]!='other'}
+                    {eval $kdurl = $_CFG['siteurl'].'api/kd100.php';}
+                    <fieldset style="width:auto;padding:10px;">
+                        <legend>物流信息</legend>
+                        <div id="kdstatus"></div>
+                    </fieldset>
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            $.post("$kdurl", { 'com':'$detail[kdcom]','nu':'$detail[invoice_no]','in_ajax':1 },
+                            function(result) {
+                                $('#kdstatus').html(result);
+                            });
+                        });
+                    </script>
+                    {/if}
+                {/if}
+                {/if}
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+
+<!--{eval footer();}-->

@@ -1,0 +1,9 @@
+{eval if($auto_url)$header_forward = $auto_url;}
+{eval 
+    $_HEAD[title] = '系统提示';
+}
+{include mobile_template('header')}
+<div class="redirect" id="page_redirect">
+    $msg
+</div>
+{include mobile_template('footer')}

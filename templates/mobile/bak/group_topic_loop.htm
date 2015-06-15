@@ -1,0 +1,26 @@
+{dbres $list $val}
+<li class="list-group-item">
+    <div class="richtxt-comm">
+        <div class="fl">
+            <img src="{print get_face($val[uid])}" alt="$val[username]" class="richtxt-img">
+        </div>
+        <div class="richtxt-body">
+            <div class="fr txt-small">
+                <p style="text-align:right;">{print $reply_index++}楼</p>
+                {if !$topic[closed]}<span><a href="{url group/mobile/do/post/op/reply/tpid/$topic[tpid]/reuid/$val[uid]}">回复该信息</a></span>{/if}
+            </div>
+            <div class="txt-small">
+                <p>
+                    $val[username]
+                    {if $val[source]}<img src="{URLROOT}/static/images/common/mobile.gif" alt="手机发布">{/if}
+                </p>
+                {date $val[dateline],w2style}
+            </div>
+        </div>
+    </div>
+    <div class="txt-comm txt-richtxt">
+        {print msubb::pares($val[content], $val)}
+    </div>
+</li>
+{/dbres}
+{if $multipage}$multipage{/if}

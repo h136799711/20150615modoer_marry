@@ -1,0 +1,89 @@
+{template modoer_header}
+<script type="text/javascript" src="{URLROOT}/data/cachefiles/product_gcategory.js?r=$MOD[jscache_flag]"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/item.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript">
+function do_next() {
+    var sid = $("#sid").val();
+    if(!sid || sid < 1 || !is_numeric(sid)) {
+        alert('未选择所属主题，请选择。');
+        return false;
+    }
+    var catid=$("[name='gcatid']").val();
+    if(!catid || catid <= 1) {
+        var allow = false;
+        alert('未选择所属商品三级分类，请选择。');
+        return false;
+    }
+    check_category_allow(sid,catid);
+}
+
+function check_category_allow(sid,catid) {
+    $.post(Url('product/ajax/do/category/op/add_allow'), {'catid':catid, 'in_ajax':1 }, 
+        function(result) {
+        if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+            myAlert(result);
+        } else if(result == 'OK') {
+            var copy_pid='';
+            copy_pid=$('#copy_pid').val();
+            if(copy_pid) copy_pid='/copy_pid/'+copy_pid;
+            jslocation(Url('product/member/ac/$ac/op/$op/sid/'+sid+'/catid/'+catid+copy_pid));
+        } else {
+            alert('数据读取失败，可能网络忙碌，请稍后尝试。');
+        }
+    });
+}
+</script>
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+        <!--{eval !$mymenu && $mymenu = 'mmenu';}-->
+        <!--{template $mymenu,'member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3><cite>当前操作的主题:<span class="font_2">$_G[manage_subject][name]{if $_G[manage_subject][subname]}($_G[manage_subject][subname]){/if}</span>[<a href="javascript:void(0);" onclick="item_subject_manage();">更换</a>]</cite>添加产品</h3>
+                <div class="mainrail">
+                    <table width="95%" cellspacing="0" cellpadding="0" class="maintable">
+                        <tr>
+                            <td width="100" align="right"><span class="font_1">*</span>所属主题：</td>
+                            <td width="*">
+                                <input type="hidden" name="sid" id="sid" value="$_G[manage_subject][sid]" />
+                                $_G[manage_subject][name]{if $_G[manage_subject][subname]}($_G[manage_subject][subname]){/if}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  width='*' class='altbg1' align='right'><span class="font_1">*</span>商品分类：</td>
+                            <td>
+                                <div id="product_gcategory"></div>
+                                <script type="text/javascript">
+                                    $('#product_gcategory').mselect({
+                                        'data':_product_cate,
+                                        'name':'gcatid'
+                                    });
+                                </script>
+                            </td>
+                        </tr>
+                        <!--{if $MOD[product_copy_enable]}-->
+                        <tr>
+                            <td align="right">复制产品ID：</td>
+                            <td>
+                                <input type="text" id="copy_pid" name="copy_pid" class="t_input">
+                                <span class="font_3">通过产品ID，复制产品内容</span>
+                            </td>
+                        </tr>
+                        <!--{/if}-->
+                        <tr>
+                            <td></td>
+                            <td><button type="button" onclick="do_next()">继续下一步</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="mybottom"></div>
+</div>
+<!--{eval footer();}-->

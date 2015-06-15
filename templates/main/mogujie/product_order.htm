@@ -1,0 +1,120 @@
+<!--{eval 
+    $_HEAD['title'] = 确认订单;
+}-->
+
+{template modoer_header}
+<div id="body">
+	<div class="piece piece_w960">
+		<div class="piece_hd"><b class=hl></b><b class=hr></b></div>
+		<div class="piece_bd clearfix">
+			<div class="link_path"> <a href="{url modoer/index}">首页</a><span>&gt;</span>{print implode('<span>&gt;</span>', $urlpath)} </div>
+			<ul class="step clear_p mt">
+				<li class="first"><span>STEP 1.</span>查看购物车</li>
+				<li class="on2"><span>STEP 2.</span>确认订单信息</li>
+				<li><span>STEP 3.</span>支付订单款项</li>
+				<li><span>STEP 4.</span>完成订单支付</li>
+			</ul>
+			<div class="blank"></div>
+			<div id="cart_l_box">
+        <form method="post" name="myform" action="{url product/ajax/do/order}" id="orderform">
+        <!-- JS需要的积分抵换现金比率,商品总价 -->
+        <input type="hidden" id="params" data-goods_amount="{print $checkout_obj->goods_amount()}" 
+        data-rate="{print $checkout_obj->integral['rate']}" data-max_integral="{print $checkout_obj->integral['ex_integral']}" />
+        <input type="hidden" name="sid" value="{print $checkout_obj->subject[sid]}" />
+        <input type="hidden" name="cids" value="{print implode(',', $checkout_obj->cids)}" />
+					<div class="cart_title">
+			<h2>
+				收货人地址
+				<span><a href="{url member/index/ac/address}" target="_blank">管理收货地址</a></span>
+				<span><a href="#" onclick="member_add_address();">新增收货地址</a></span>
+			</h2>
+						<div class="fashion_list"> 
+							<!--{get:product val=getaddress(uid/$user->uid)}-->
+							<ul class="receive_add clearfix">
+                    <li class="radio"><input type="radio" name="addressid" id="addressid_{$val[id]}" value="$val[id]"{if $val[is_default]} checked="checked"{/if} /></li>
+                    <label for="address_options_$val[id]">
+                    <li class="particular">$val[addr]</li>
+                    <li class="name">收货人姓名: $val[name]</li>
+                    <li class="mobile">$val[mobile]</li>
+                    </label>
+                </ul>
+                <!--{/get}-->
+            </div>
+        </div>
+        <div class="cart_title mt">
+            <h2>选择配送方式</h2>
+            <div class="fashion_list">
+                <!--{loop $checkout_obj->express $exp}-->
+                <ul class="receive_add">
+                    <li class="radio"><input type="radio" name="shipid" value="$exp[shipid]" id="shipid_{$exp[shipid]}" data-price="$exp[price]" /></li>
+                    <label for="shipid_{$exp[shipid]}">
+                    <li class="fashion">$exp[shipname]</li>
+                    <li class="pay">配送费用:&nbsp;<span class="money">&yen;$exp[price]</span> 元</li>
+                    <li>$exp[des]</li>
+                    </label>
+                </ul>
+                <!--{/loop}-->
+                <!--{if $use_deliverytime}-->
+                <!--{eval 
+                    $now = date('H',$_G['timestamp']);
+                    $minDate = date('Y-m-d',($onedaydelivery_limit > $now ? $_G['timestamp'] : $_G['timestamp']+(24*3600-1)));
+                }-->
+                <div style="padding:5px 10px 0 23px;">指定发货日期： <input type="text" class="t_input" name="delivery_time" onfocus="WdatePicker({minDate:'$minDate',dateFmt:'yyyy-MM-dd'})" readonly="true" /></div>
+                <!--{/if}-->
+						</div>
+					</div>
+					<div class="cart_title clear_p mt">
+						<h2>给卖家附言</h2>
+						<div class="fashion_list">
+                <textarea id="remark" style="width:98%;height:50px;" placeholder="选填，可以告诉卖家您对商品的特殊需求，如颜色、尺码等。"></textarea>
+						</div>
+					</div>
+					<div class="make_sure mt"> 
+            <!--{if $checkout_obj->integral && $checkout_obj->integral[ex_integral]>0}-->
+            <p>
+                {eval $ex_integral = $checkout_obj->integral['ex_integral'];}
+                您最多可使用 <span class="fb font_2">$ex_integral</span> {print $checkout_obj->integral['point_name']}，最多可以抵价 <span class="fb font_2">{print $checkout_obj->integral['ex_price']}</span> 元。
+                请输入使用数量：<input type="text" name="integral" class="t_input" id="integral" size="10" data-max="{$ex_integral}" /> 
+            </p>
+            <!--{/if}-->
+            <p class="f18">订单总价：<strong class="font_2">&yen;<span id="order_amount">{print $checkout_obj->goods_amount()}</span></strong></p>
+            <p>
+                <input type="hidden" name="order_amount" id="cart_amount" />
+                <input type="hidden" name="goods_amount" id="goods_amount" value="{print $checkout_obj->goods_amount()}" />
+                <input type="hidden" name="dosubmit" value="yes">
+                <a href="###" class="btn" id="order_submit">提交订单</a>
+                <a href="{url product/cart}" class="back">返回购物车</a>
+            </p>
+					</div>
+				</form>
+			</div>
+			<div id="cart_r_box">
+				<div class="p_title">
+					<h2>已选商品</h2>
+					<div class="hot_p"> 
+                <!--{loop $checkout_obj->goods $goods}-->
+                <dl>
+                    <dt><a href="{url product/detail/id/$goods[pid]}" target="_blank" title="$goods[pname]">$goods[pname]</a></dt>
+                    <dd class="pic">
+                        {eval $image = $goods['goods_image']?$goods['goods_image']:'static/images/noimg.gif';}
+                        <a href="{url product/detail/id/$goods[pid]}" target="_blank"><img src="{img $image}" alt="$goods[pname]" /></a>
+                    </dd>
+                    <dd class="price p_amout">
+                        <span class="font_1 fb">&yen;$goods[price]</span> × {$goods[quantity]}
+                        {loop $goods['buyattr'] $buyattr}
+                        <div><span class="font_3">{$buyattr[name]}:</span><span class="font_2">$buyattr[value]</span></div>
+                        {/loop}
+                    </dd>
+                </dl>
+                <!--{/loop}-->
+			</div>
+		</div>
+	</div>
+</div>
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_product.css");</style>
+<script type="text/javascript" src="{URLROOT}/static/javascript/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+//定义当前页面，以便js加载对应函数
+website.module.page = 'order';
+</script>
+<!--{eval footer();}-->

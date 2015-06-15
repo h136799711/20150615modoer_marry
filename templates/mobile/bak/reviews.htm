@@ -1,0 +1,75 @@
+{eval 
+    $_HEAD[title] = $fullname . $_G['cfg']['titlesplit'] .'点评列表';
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        {print implode('&nbsp;&gt;&nbsp;', $urlpath)}(<span class="ui-li-count">{$total} 条</span>)
+    </div>
+    <div class="list-group list-group-insertmod review-list" id="data_container">
+        {include mobile_template('reviews_li')}
+    </div>
+    <div id="page_container" class="mb10"></div>
+</div>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe.js"></script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe_srceen.js"></script>
+<script>
+$(document).ready(function() {
+
+    //点评图片浏览
+    var swipe_pics = function(container) {
+        container.find('div.review-list-pictures').each(function() {
+            var pics = $(this);
+            var rid = pics.data('rid');
+            if(!pics.data('bind') && rid > 0) {
+                $(this).find('> a').each(function(index) {
+                    $(this).click(function() {
+                        swipe_srceen(pics, 'input.[data-name="pic-'+rid+'"]', index);
+                    });
+                });
+            }
+            pics.attr('data-bind',true);
+        });
+    };
+
+    //展开更多点评内容
+    var content_view = function(container) {
+        var max_height = 100;
+        container.find('.review-list-content').each(function() {
+            var content = $(this);
+            if(!content.data('bind') && content.find('>p').height() > max_height) {
+                var expand = $('<div><a href="javascript:;">展开内容</a></div>')
+                    .addClass('btn btn-default btn-sm block').click(function() {
+                        content.click();
+                    });
+                content.attr('data-bind', true).parent().append(expand);
+                content.click(function() {
+                    var height = content.find('>p').height();
+                    var set_height = max_height;
+                    if(content.height() < height) {
+                        set_height = height;
+                        expand.text('收缩内容');
+                    } else {
+                        expand.text('展开内容');
+                    }
+                    content.animate({
+                        maxHeight: set_height+'px',
+                    }, 'fast');
+                });
+            }
+        });
+
+    };
+
+    $('#page_container').m_ajaxpage({
+        container:'#data_container',
+        onInit:function(page, container) {
+            swipe_pics(container);
+            content_view(container);
+        }
+    });
+
+});
+</script>
+
+{include mobile_template('footer')}

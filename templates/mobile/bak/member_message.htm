@@ -1,0 +1,18 @@
+{include mobile_template('header')}
+<ul class="list-group list-group-insertmod">
+    <a href="{url member/mobile/do/notice}" class="list-group-item">
+        <div class="fr">
+            <span class="badge">{print $notice_obj->get_count()}</span>
+            <span class="arrow"></span>
+        </div>
+        提醒
+    </a>
+    <a href="{url member/mobile/do/pm}" class="list-group-item">
+        <div class="fr">
+            <span class="badge">{print $user->newmsg}</span>
+            <span class="arrow"></span>
+        </div>
+        短信息
+    </a>
+</ul>
+{include mobile_template('footer')}

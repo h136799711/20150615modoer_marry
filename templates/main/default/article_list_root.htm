@@ -1,0 +1,75 @@
+
+{template modoer_header}
+<div id="body">
+
+    <div class="link_path">
+        <em>
+            <!--{if $access_post}-->
+            <span class="review-ico"><a href="{url article/member/ac/article/op/add/role/$role}">我要投稿</a></span>&nbsp;&nbsp;
+            <!--{/if}-->
+            <!--{if $MOD['rss']}-->
+            <span class="rss-ico"><a href="{url article/rss/catid/$catid}">新闻聚合</a></span>
+            <!--{/if}-->
+        </em>
+        <a href="{url modoer/index}">{lang global_index}</a>
+        &raquo;
+        <a href="{url article/index}">$MOD[name]</a>
+        &raquo;
+        {print misc_article::category_path($catid,' &raquo; ',url("article/list/catid/_CATID_"))}
+    </div>
+
+    <div class="mainrail rail-border-3">
+        <div id="article_left">
+            <div class="article_root">
+                {get:article cat=category(pid/$catid)}
+                <ul>
+                    <em><a href="{url article/list/catid/$cat[catid]}">更多&nbsp;&raquo;</a></em>
+                    <h3>$cat[name]</h3>
+                    {get:modoer val=table(table/dbpre_articles/select/articleid,subject,dateline/where/city_id IN (_NULL_CITYID_) AND catid='$cat[catid]' AND status=1/orderby/dateline DESC/row/10)}
+                    <li><cite>{date $val[dateline]}</cite><a href="{url article/detail/id/$val[articleid]}">$val[subject]</a></li>
+                    {/get}
+                </ul>
+                {/get}
+            </div>
+        </div>
+        <div id="article_right">
+
+            <div class="mainrail category_list">
+                <h3 class="rail-h-1"><b>文章主分类</b></h3>
+                <ul>
+                    {get:article val=category(pid/0)}
+                    <li><a href="{url article/list/catid/$val[catid]}">$val[name]</a></li>
+                    {/get}
+                </ul>
+                <div class="clear"></div>
+            </div>
+
+            <div class="mainrail">
+                <h4 class="rail-h-2">推荐文章</h4>
+                <ul class="rail-list">
+                    {get:article val=getlist(select/articleid,subject,dateline/city_id/_NULL_CITYID_/catid/$catid/att/2/orderby/dateline DESC/rows/5)}
+                    <li>
+                        <cite>{date $val[dateline],'m-d'}</cite>
+                        <a href="{url article/detail/id/$val[articleid]}" title="$val[subject]">{sublen $val[subject],12}</a>
+                    </li>
+                    {/get}
+                </ul>
+            </div>
+
+            <div class="mainrail">
+                <h4 class="rail-h-2">热门评论</h4>
+                <ul class="rail-list">
+                    {get:article val=getlist(select/articleid,subject,comments/city_id/_NULL_CITYID_/catid/$catid/comments/1/orderby/comments DESC/rows/5)}
+                    <li>
+                        <cite>$val[comments] 评论</cite>
+                        <a href="{url article/detail/id/$val[articleid]}" title="$val[subject]">{sublen $val[subject],12}</a>
+                    </li>
+                    {/get}
+                </ul>
+            </div>
+
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<!--{eval footer();}-->

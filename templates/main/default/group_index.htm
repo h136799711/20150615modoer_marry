@@ -1,0 +1,75 @@
+{template modoer_header}
+<div id="body" class="mt10">
+    <div class="discussion_left">
+        <div class="mainrail">
+            <h3 class="rail-h-2 rail-h-bm-3" style="position:relative;">
+                官方小组
+                <div style="position:absolute;right:5px;top:5px;">
+                    <a href="{url group/list/pr/1_0}">更多&nbsp;&raquo;</a>
+                </div>
+            </h3>
+            {eval $list=&$auth_list;}
+            {template group_part_list}
+        </div>
+        <div class="mainrail">
+            <h3 class="rail-h-2 rail-h-bm-3" style="position:relative;">
+                推荐小组
+                <div style="position:absolute;right:5px;top:5px;">
+                    <a href="{url group/list}">更多&nbsp;&raquo;</a>
+                </div>
+            </h3>
+            {eval $list=&$finer_list;}
+            {template group_part_list}
+        </div>
+        {if $area_list}
+        <div class="mainrail">
+            <h3 class="rail-h-2 rail-h-bm-3" style="position:relative;">
+                地方小组
+                <div style="position:absolute;right:5px;top:5px;">
+                    <a href="{url group/list/pr/0_0_1}">更多&nbsp;&raquo;</a>
+                </div>
+            </h3>
+            {eval $list=&$area_list;}
+            {template group_part_list}
+        </div>
+        {/if}
+    </div>
+    <div class="discussion_right">
+        <div class="mainrail rail-border-3">
+            <div class="mainrail rail-h-bm-3">
+                <p class="comm-p m10">如果想就某一类话题跟别人交流，可以创建一个小组。小组是对同一个话题感兴趣的人的聚集地。</p>
+                <div class="mb20" style="text-align:center;">
+                    <a class="abtn1" href="{url group/member/ac/group/op/add}"><span class="icomoon icon-plus ic-white"></span>创建小组</a>
+                </div>
+            </div>
+            <div class="mainrail rail-h-bm-3">
+                <h3 class="rail-h-2">热门话题</h3>
+                <ul class="rail-list side_topiclist">
+                    {get:group val=get_topic(city_id/_NULL_CITYID_/orderby/gt.replies desc/rows/10/cachetime/2150)}
+                    <li><a href="{url group/topic/id/$val[tpid]}" title="$val[subject]">$val[subject]</a></li>
+                    {/get}
+                </ul>
+            </div>
+            <div class="mainrail mb10">
+                <h3 class="rail-h-2">最近创建</h3>
+                <ul class="side_grouplist">
+                    {get:group val=get_group(city_id/_NULL_CITYID_/orderby/g.createtime desc/rows/9/cachetime/2000)}
+                    <li>
+                        {eval if(!$val[icon]) $val['icon']='static/images/z_noimg.gif';}
+                        <div class="gicon">
+                            <a href="{url group/$val[gid]}" title="$val[groupname]"><img src="{URLROOT}/$val[icon]" alt="$val[groupname]" /></a>
+                        </div>
+                        <div class="gtitle">
+                            <span>$val[groupname]</span>
+                        </div>
+                    </li>
+                    {/get}
+                    <div class="clear"></div>
+                </ul>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--{eval footer();}-->

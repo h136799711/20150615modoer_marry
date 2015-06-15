@@ -1,0 +1,37 @@
+<div class="content1">
+    <form method="post" action="{url product/member/ac/g_order/op/$op/in_ajax/1}" class="post" id="frm_changeship" 
+        name="frm_changeship" target="ajaxiframe">
+        <input type="hidden" name="orderid" value="$orderid" />
+        <input type="hidden" name="dosubmit" value="yes" />
+        <h1 class="font_2">请输入您的快递单号</h1>
+        {if $detail[delivery_time]}
+        <p>买家希望在 <span class="font_2">{date $detail[delivery_time], 'Y-m-d'}</span> 进行发货</p>
+        {/if}
+        <p>订 单 号：<span>$detail[ordersn]</span></p>
+        <!--{if $detail[orderstyle]=='1'}-->
+        <p>快递单号：
+            <select name="kdcom" id="kdcom">
+                <option value="$k">==快递公司==</option>
+                {loop $kds $k $v}
+                <option value="$k"{if $detail['kdcom']==$k} selected="selected"{/if}>$v</option>
+                {/loop}
+                <option value="other"{if $detail['kdcom']=='other'} selected="selected"{/if}>其他快递</option>
+            </select>
+            <input type="text" name="invoice_no" class="t_input" value="$detail[invoice_no]" />
+        </p>
+        <dl>
+            <dt>操作原因：</dt>
+            <dd>
+                <textarea style="width:350px;height:60px;" name="remark"></textarea>
+            </dd>
+        </dl>
+        <!--{else}-->
+        <p>发送虚拟卡密，请先检查产品的虚拟卡库存是否正常。</p>
+        <!--{/if}-->
+        {if $detail[is_cod]}<p>注意事项：本订单为 <strong>货到付款</strong> 订单，请在送货时注意收款。</p>{/if}
+        <div class="btn">
+            <button type="button" class="btn1" onclick="ajaxPost('frm_changeship', '','document_reload');">发货</button>&nbsp;
+            <button type="button" class="btn1" onclick="dlgClose();">关闭</button>
+        </div>
+    </form>
+</div>

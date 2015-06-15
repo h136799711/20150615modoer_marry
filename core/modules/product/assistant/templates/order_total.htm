@@ -1,0 +1,70 @@
+{template modoer_header}
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_product_mem.css");</style>
+<script type="text/javascript" src="{URLROOT}/static/javascript/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/item.js?{$_G[modoer][build]}"></script>
+<style type="text/css">
+.total td{padding:5px;}
+</style>
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+        <!--{template 'mmenu','member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3><cite>当前操作的主题:<span class="font_2">$_G[manage_subject][name]{if $_G[manage_subject][subname]}($_G[manage_subject][subname]){/if}</span>[<a href="javascript:void(0);" onclick="item_subject_manage();">更换</a>]</cite>销售统计</h3>
+                <div class="mainrail">
+                    <div class="scarch_order">
+                        <form name="form" method="get" action="/index.php">
+                        <input type="hidden" name="m" value="product">
+                        <input type="hidden" name="act" value="member">
+                        <input type="hidden" name="ac" value="g_order">
+                        <input type="hidden" name="op" value="total">
+                        <div style="float:left;">
+                            <span>时间类型：</span>
+                            <input type="radio" name="timetype" value="paytime" id="timetype_paytime"{if $timetype=='paytime'} checked="checked"{/if}>
+                            <label for="timetype_paytime">付款时间</label>
+                            <input type="radio" name="timetype" value="addtime" id="timetype_addtime"{if $timetype=='addtime'} checked="checked"{/if}>
+                            <label for="timetype_addtime">下单时间</label>
+                            &nbsp;&nbsp;
+                            <span>开始时间：</span>
+                            <input class="text_normal width2" type="text" name="starttime" id="starttime" value="$starttime" onfocus="WdatePicker({doubleCalendar:true,maxDate:'%y-%M-{%d-1}',dateFmt:'yyyyMMdd'})">&nbsp;~&nbsp;<input class="text_normal width2" id="endtime" type="text" name="endtime" value="$endtime" onfocus="WdatePicker({doubleCalendar:true,maxDate:'%y-%M-%d',dateFmt:'yyyyMMdd'})">
+                            <input type="submit" class="btn" value="搜索">
+                        </div>
+                        <div class="clear"></div>
+                        </form>
+                    </div>
+                    <table width="99%" cellspacing="0" cellpadding="0" class="maintable total" style="clear:both;margin-top:20px;">
+                        <tr>
+                            <th width="100">项目</th>
+                            <th width="*">统计对象：$_G[manage_subject][name]{if $_G[manage_subject][subname]}($_G[manage_subject][subname]){/if}</th>
+                        </tr>
+                        <!--{if !$totalprice}-->
+                        <tr>
+                            <td colspan="2">没有任何记录.</td>
+                        </tr>
+                        <!--{else}-->
+                        {loop $totalprice $key $value}
+                        <tr>
+                            <td>{$status_name[$key]}订单：</td>
+                            <td>
+                                {$status_name[$key]} <span class="font_1">{$value[totalorder]}</span> 个订单，总计：<span class="font_1">{$value['totalprice']}</span> 元
+                                {if $value['brokerage']>0}
+                                ，&nbsp;收入（扣除佣金）：<span class="font_1">{print $value['totalprice'] - $value['brokerage']}</span> 元
+                                {/if}
+                                &nbsp;<a href="{url product/member/ac/g_order/starttime/$starttime/endtime/$endtime/status/$key}">&raquo;&nbsp;查看详情</a>
+                            </td>
+                        </tr>
+                        {/loop}
+                        {/if}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="mybottom"></div>
+</div>
+<!--{eval footer();}-->

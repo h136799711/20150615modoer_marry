@@ -1,0 +1,213 @@
+<!--{eval 
+    $_HEAD['title'] = 支付订单款项;
+}-->
+
+{template modoer_header}
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_product_mem.css");</style>
+<div id="body">
+	<div class="piece piece_w960">
+		<div class="piece_hd"><b class=hl></b><b class=hr></b></div>
+		<div class="piece_bd clearfix">
+			<div id="path">当前位置：<a href="{url modoer/index}">首页</a><span>&gt;</span>{print implode('<span>&gt;</span>', $urlpath)}</div>
+			<ul class="step clear_p mt">
+				<li class="first"><span>STEP 1.</span>查看购物车</li>
+				<li><span>STEP 2.</span>确认订单信息</li>
+				<li class="on2"><span>STEP 3.</span>支付订单款项</li>
+				<li><span>STEP 4.</span>完成订单支付</li>
+			</ul>
+    <div class="order_box mt">
+        <form method="post" name="myform" action="{url product/member/ac/pay/rand/$_G[random]}" id="payform" onsubmit="return check_payment();">
+        <div class="order_box_border">
+            <h2>订单详情</h2>
+            <div class="box">
+                <div class="state">订单状态：<strong>{print lang('product_status_'.$detail['status'])}</strong></div>
+                <div class="num">订单号：$detail[ordersn]</div>
+                <div class="time">下单时间：{date $detail[addtime],'Y-m-d H:i:s'}</div>
+                <div class="time">订单总价：<strong class="font_1">&yen;$detail[order_amount]</strong></div>
+            </div>
+            <div class="goods">
+                <h3>订单信息</h3>
+                <dl class="info">
+                    <dt>卖家信息</dt>
+                    <dd>店铺名：<a href="{url product/shop/sid/$detail[sid]}" target="_blank">$detail[name]{if $detail[subname]}($detail[subname]){/if}</a></dd>
+                    <dd class="conc">联系商家：<a href="javascript:send_message($detail[sellerid]);" class="email"></a></dd>
+                </dl>
+                <div class="ware_line">
+                    <div class="ware">
+                        <!--{get:product _val=getproduct(orderid/$orderid)}-->
+                        <div class="ware_list">
+                            <div class="ware_pic"><img src="{URLROOT}/{if $_val[goods_image]}$_val[goods_image]{else}static/images/noimg.gif{/if}" width="50" height="50"  /></div>
+                            <div class="ware_text">
+                                <div class="ware_text1">
+                                    <a href="{url product/detail/pid/$_val['pid']}" target="_blank">$_val[pname]</a><br />
+                                    {eval $buyattr = $_val['buyattr']?unserialize($_val['buyattr']):array();}
+                                    {loop $buyattr $attr}
+                                    <span>{$attr[name]}:{$attr[value]}</span>&nbsp;
+                                    {/loop}
+                                </div>
+                                <div class="ware_text2">
+                                    <span>数量：<strong>$_val[quantity]</strong></span>
+                                    <span>单价：<strong>&yen;$_val[price]</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--{/get}-->
+                    </div>
+                    <div class="transportation">
+                        运费：<span><b>&yen;$detail[shipfee]</b><strong>（$detail[shipname]）</strong></span>
+                        +&nbsp;商品总价：<span><b>&yen;$detail[goods_amount]</b></span>{if $detail[integral]}
+                        -&nbsp;消费积分抵价：<span><b>&yen;$detail[integral_amount]</b></span>{/if}
+                        =&nbsp;订单支付总价：<b>&yen;$detail['order_amount']</b></div>
+                    <ul class="order_detail_list">
+                        {if $detail[amount_changed]}
+                        <li class="font_2">本订单支付价格被商家调整过 $detail[amount_changed] 次。</li>
+                        {/if}
+                        <li>下单时间：{date $detail[addtime],'Y-m-d H:i:s'}</li>
+                    </ul>
+                </div>
+            </div>
+            <!--{if $detail['orderstyle']=='1'}-->
+            <div class="goods">
+                <h3>物流信息</h3>
+                <dl class="info">
+                    {if $detail['delivery_time']}
+                    <div>发货时间：{date $detail['delivery_time'],'Y-m-d'}&nbsp;(买家指定)</div>
+                    {/if}
+                    <div>收货地址：{$detail['address']}，&nbsp;{$detail['zipcode']}，{$detail['username']}，&nbsp;{$detail['mobile']}</div>
+                    <div>配送方式：$detail['shipname']</div>
+                </dl>
+            </div>
+            <!--{/if}-->
+            <h2>支付方式</h2>
+            <div class="goods">
+                <!--{if $detail[is_cod]}-->
+                <div class="order-my-rmb">
+                    <h3><input type="radio" name="payment" value="cod" id="payment_name" checked="checked"> <label for="payment_name">货到付款</label></h3>
+                    <div class="balance_pay">
+                        <span class="font_1">本订单为货到付款模式，在确认发货前，您可以站内短信联系卖家是否支持货到付款，或者调整价格。您确认现在让卖家开始发货吗？</span>
+                        <div style="margin-top:15px;">
+                            请输入支付密码密码：<input type="password" id="password" name="password" class="t_input" size="20" />
+                            <span class="txt-small">货到付款时输入的支付密码仅做本人操作识别，并不会扣除积分和现金。</span>
+                        </div>
+                    </div>
+                </div>
+                <!--{else}-->
+                <!--{if $PAY->has_pc_payment()}-->
+                <div class="order-my-rmb">
+                    <h3><label for="payment_online">在线支付</label></h3>
+                    <ul id="online_payments">
+                        <li data-name="balance"><a href="javascript:void(0);" onclick="select_payment('balance');">{print lang('pay_name_balance')}</a></li>
+                        <!--{loop $PAY->get_pc_payments() $payment}-->
+                        <li data-name="{$payment}"><a href="javascript:void(0);" onclick="select_payment('$payment');">{print lang('pay_name_'.$payment)}</a></li>
+                        <!--{/loop}-->
+                        <input type="hidden" name="payment" id="payment_name" value="">
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="order-my-rmb" id="balance_box">
+                    <h3>余额支付</h3>
+                    <div class="balance_pay">
+                        <!--{eval 
+                            $needprice = get_numeric($detail[order_amount]-$user->rmb);
+                            $forward = base64_encode(url("product/member/ac/m_order/op/pay/orderid/$orderid",'',TRUE));
+                        }-->
+                        您目前有 <span class="money">&yen;</span><strong>{print get_numeric($user->rmb)}</strong>，<!--{if $user->rmb < $detail[order_amount]}-->金额不足，您需要先充值 <span class="money">&yen;</span><strong>{$needprice}</strong>，<a href="{url pay/member/ac/pay/select/rmb/price/$needprice/forward/$forward}" target="_blank">请点击这里进行充值</a>。<!--{else}-->足够支付本次订单，建议使用余额支付。<!--{/if}-->
+                        <!--{if $user->rmb >= $detail[order_amount]}-->
+                        <div style="margin-top:15px;color:red;">请输入支付密码密码：<input type="password" id="password" name="password" class="t_input" size="20" /></div>
+                        <!--{else}-->
+                        <input type="hidden" id="picre_not_enough" value="Y">
+                        <!--{/if}-->
+                    </div>
+                </div>
+                <!--{/if}-->
+                <!--{if $offlinepay}-->
+                <div class="order-my-rmb">
+                    <h3>线下支付</h3>
+                    <div class="balance_pay">
+                        <span class="font_2">线下支付时，请向商家提供订单号，购买会员帐号等信息，商家确认付款后，会确认订单付款并发货。</span>
+                        <div>{print nl2br($offlinepay)}</div>
+                    </div>
+                </div>
+                <!--{/if}-->
+                <!--{/if}-->
+                <div class="text_center mt">
+                    <input type="hidden" name="dosubmit" value="yes">
+                    <input type="hidden" name="price" value="$detail[order_amount]" />
+                    <input type="hidden" name="orderid" value="$orderid" />
+                    <input type="button" value="{if $detail[is_cod]}确定让卖家发货{else}确定付款{/if}" class="subbutton" onclick="check_payment();">&nbsp;
+                    <input type="button" value="返回" class="subbutton" onclick="history.go(-1);">
+                </div>
+            </div>
+
+        </div>
+        </form>
+				<div class="clear_p"></div>
+    </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    select_payment($('#online_payments li:eq(0)').data('name'));
+});
+//选择在线支付商
+function select_payment (payment) {
+    $('#online_payments li').each(function(i){
+        if($(this).data('name') == payment)
+            $(this).addClass('selected');
+        else
+            $(this).removeClass('selected');
+    });
+    if(payment != null) $('#payment_name').val(payment);
+    if('balance'==payment) {
+        $('#balance_box').show();
+    } else {
+        $('#balance_box').hide();
+    }
+}
+
+//提交监测
+function check_payment() {
+    var payment = $('#payment_name').val();
+    if(payment == '') {
+        alert('未选择在线支付商，请选择。');
+        return false;
+    } else if(payment=='cod') {
+        if($('#password').val() == '') {
+            alert('请先输入您的支付密码。');
+            return false;
+        }
+        if(confirm('请确定要卖家开始发货了吗？')) {
+            $('#payform').attr('target','');
+            $('#payform')[0].submit();
+        }
+    } else if(payment=='balance') {
+        if($('#picre_not_enough').val()=='Y') {
+            alert('请的帐号现金余额不足，请先进行充值。');
+            return false;
+        }
+        if($('#password').val() == '') {
+            alert('请先输入您的支付密码。');
+            return false;
+        }
+        if(confirm('请确定要进行本次订单支付吗？')) {
+            $('#payform').attr('target','');
+            $('#payform')[0].submit();
+        }
+        return false;
+    } else {
+        var content = $('<div></div>').css({'text-align':'center','margin':'10px 0'});
+        var btn1 = $('<button></button>').html('支付成功，查看订单').addClass('formbutton').css({'margin':'5px 5px'})
+            .click(function() {
+                jslocation("{url product/member/ac/m_order/op/detail/orderid/$orderid}");
+            });
+        var btn2 = $('<button></button>').html('支付失败，重新支付').addClass('formbutton').css({'margin':'5px 5px'})
+            .click(function() {
+                $('#payform')[0].submit();
+            });
+        content.append(btn1).append(btn2);
+        dlgOpen('在线支付', content, 230, 140);
+        $('#payform').attr('target','_blank');
+        $('#payform')[0].submit();
+    }
+}
+</script>
+<!--{eval footer();}-->

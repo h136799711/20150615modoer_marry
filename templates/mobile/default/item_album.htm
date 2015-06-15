@@ -1,0 +1,191 @@
+{eval 
+    $_HEAD[title] = '商铺相册';
+}
+{include mobile_template('header')}
+<div class="item_album" id="page_album">
+    <ul class="wf-imgbox wf-imgnox-left" id="thumbs_1"></ul>
+    <ul class="wf-imgbox wf-imgnox-right" id="thumbs_2"></ul>
+    <div class="clear"></div>
+    <div id="loadingmessage"></div>
+</div>
+<div id="wf_pictures" style="display:none;">
+    {include mobile_template('item_album_li')}
+</div>
+<script>
+    var offset = $offset; //单次载入图片数量
+    var wf_count_c = 1; //当前已经加载次数
+    var wf_count = $wf_count; //最多加载几次
+    var ajax_loading = true; //是否进行ajax加载
+    $(function() {
+        load_pictures($('#wf_pictures'));
+    });
+    $(window).bind("scroll", function(){
+        if( $(document).scrollTop() + $(window).height() > $(document).height() - 100 && ajax_loading) {
+            load_next_page();
+        }
+    });
+    function load_pictures(container) {
+        var x = h = 0;
+        var gid = 'thumbs_';
+        container.find('.wf-container').each(function(i) {
+            x++;h++;
+            $('#'+gid+h).append($(this)); //加载图片
+            if(h>=2) h=0;
+        });
+        //没有加载满，表明已经加载了全部的数据
+        if(x < offset) {
+            if($('#wf_multipage')[0]) {
+                $('#loadingmessage').append($('#wf_multipage'));
+            } else {
+                show_wf_message('全部加载完毕');
+            }
+        } else if(wf_count_c >= wf_count) { //单页加载次数满，则不再ajax加载，显示分页允许选择下一个页面进行加载
+            $('#loadingmessage').append($('#wf_multipage')); //显示分页
+        } else {
+            //本次加载完毕，允许进行下一页加载
+            ajax_loading = true;
+        }
+    }
+    function load_next_page() {
+        if(!ajax_loading) return;
+        //正在加载，因此锁定加载
+        ajax_loading = false;
+        //找到下一页的url
+        var nexturl = $('#multipage').find('[nextpage="Y"]').attr('href');
+        if(!nexturl) {
+            if($('#wf_multipage')[0]) {
+                $('#loadingmessage').append($('#wf_multipage'));
+            } else {
+                show_wf_message('全部加载完毕...');
+            }
+            return;
+        }
+        show_wf_message('正在加载...请稍后...');
+        //获取下一批图片
+        $.post(nexturl, { 'in_ajax':1, 'waterfall':'Y' },
+        function(result) {
+            $('#loadingmessage').html('');
+            if(result == null) {
+                show_wf_message('信息读取失败，可能网络忙碌，请稍后尝试。');
+            } else if (is_message(result)) {
+                myAlert(result);
+            } else if(result != '') {
+                wf_count_c++;
+                //ajax获取后，加载到页面
+                load_pictures($('#wf_pictures').html(result));
+            } else {
+                show_wf_message('全部加载完毕......');
+            }
+        });
+    }
+    //在底部显示的状态信息
+    function show_wf_message(msg) {
+        if($(".wf-message")[0]) {
+            $(".wf-message").html( msg );
+        } else {
+            $('#loadingmessage').append( '<div class="wf-message">'+msg+'</div>' );
+        }
+    }
+</script>
+{include mobile_template('footer')}
+
+<div data-role="page" id="page_album">
+    <div data-theme="e" data-role="header">
+        <h2>主题相册</h2>
+        <a data-role="button" data-rel="back" data-icon="back" class="ui-btn-left" href="#">返回</a>
+        <a data-role="button" data-icon="home" href="{url mobile/index}" class="ui-btn-right">首页</a>
+    </div>
+    <div data-role="content" style="padding:5px" id="wf-thumbs">
+        {if $subject}
+        <div style="padding:10px 0 15px; margin-bottom:10px;">
+            <ul data-role="listview" data-divider-theme="c" data-inset="false" id="list_item">
+                <li data-role="list-divider" role="heading">$subject[name]</li>
+            </ul>
+        </div>
+        {/if}
+        <ul class="wf-imgbox wf-imgnox-left" id="thumbs_1"></ul>
+        <ul class="wf-imgbox wf-imgnox-right" id="thumbs_2"></ul>
+        <div class="clear"></div>
+        <div id="loadingmessage"></div>
+    </div>
+    <div id="wf_pictures" style="display:none;">
+        {include mobile_template('item_album_li')}
+    </div>
+    <script>
+        var offset = $offset; //单次载入图片数量
+        var wf_count_c = 1; //当前已经加载次数
+        var wf_count = $wf_count; //最多加载几次
+        var ajax_loading = true; //是否进行ajax加载
+        $('#page_album').bind('pageinit',function() {
+            load_pictures($('#wf_pictures'));
+        });
+        $(window).bind("scroll", function(){
+            if( $(document).scrollTop() + $(window).height() > $(document).height() - 100 && ajax_loading) {
+                load_next_page();
+            }
+        });
+        function load_pictures(container) {
+            var x = h = 0;
+            var gid = 'thumbs_';
+            container.find('.wf-container').each(function(i) {
+                x++;h++;
+                $('#'+gid+h).append($(this)); //加载图片
+                if(h>=2) h=0;
+            });
+            //没有加载满，表明已经加载了全部的数据
+            if(x < offset) {
+                if($('#wf_multipage')[0]) {
+                    $('#loadingmessage').append($('#wf_multipage'));
+                } else {
+                    show_wf_message('全部加载完毕');
+                }
+            } else if(wf_count_c >= wf_count) { //单页加载次数满，则不再ajax加载，显示分页允许选择下一个页面进行加载
+                $('#loadingmessage').append($('#wf_multipage')); //显示分页
+            } else {
+                //本次加载完毕，允许进行下一页加载
+                ajax_loading = true;
+            }
+        }
+        function load_next_page() {
+            if(!ajax_loading) return;
+            //正在加载，因此锁定加载
+            ajax_loading = false;
+            //找到下一页的url
+            var nexturl = $('#multipage').find('[nextpage="Y"]').attr('href');
+            if(!nexturl) {
+                if($('#wf_multipage')[0]) {
+                    $('#loadingmessage').append($('#wf_multipage'));
+                } else {
+                    show_wf_message('全部加载完毕...');
+                }
+                return;
+            }
+            show_wf_message('正在加载...请稍后...');
+            //获取下一批图片
+            $.post(nexturl, { 'in_ajax':1, 'waterfall':'Y' },
+            function(result) {
+                $('#loadingmessage').html('');
+                if(result == null) {
+                    show_wf_message('信息读取失败，可能网络忙碌，请稍后尝试。');
+                } else if (is_message(result)) {
+                    myAlert(result);
+                } else if(result != '') {
+                    wf_count_c++;
+                    //ajax获取后，加载到页面
+                    load_pictures($('#wf_pictures').html(result));
+                } else {
+                    show_wf_message('全部加载完毕......');
+                }
+            });
+        }
+        //在底部显示的状态信息
+        function show_wf_message(msg) {
+            if($(".wf-message")[0]) {
+                $(".wf-message").html( msg );
+            } else {
+                $('#loadingmessage').append( '<div class="wf-message">'+msg+'</div>' );
+            }
+        }
+        </script>
+</div>
+{include mobile_template('footer')}

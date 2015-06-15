@@ -1,0 +1,39 @@
+{if !$member}
+用户不存在
+{else}
+<style type="text/css">
+.vcard { position: relative; width: 280px; min-height: 110px; padding:10px 15px 10px; }
+.vcard .face { position:absolute; width:80px; display:inline; }
+.vcard .face .space { width:50px; text-align:center; }
+.vcard .face .space img { width:48px;border:1px solid #eee; padding:1px; }
+.vcard .face ul { list-style: none;padding: 0;margin: 0; }
+.vcard .face ul li { padding: 3px 0 3px 2px; margin: 0; text-align: left; }
+.vcard .fields { margin:0 0 0 80px; padding: 0; }
+.vcard .fields li { margin: 0; padding:4px 0; float:left;width: 49%; color:#808080; }
+.vcard .fields li.block { clear:both; width:100%; }
+</style>
+<div class="vcard">
+    <div class="face">
+        <a class="space" href="{url space/index/uid/$member[uid]}"><img src="{print get_face($member[uid])}" alt="$member[username]" title="$member[username]"></a>
+        <ul>
+            <li><span class="icomoon icon-user-plus2"></span><a href="javascript:add_friend($uid);">加好友</a></li>
+            <li><span class="icomoon icon-envelope"></span><a href="javascript:send_message($uid);">发短信</a></li>
+            <li><span class="icomoon icon-star"></span><a href="javascript:member_follow($uid);">加关注</a></li>
+        </ul>
+    </div>
+    <ul class="fields">
+        <li class="block"><span class="icomoon icon-user"></span><a href="{url space/index/uid/$member[uid]}">$member[username]</a>&nbsp;(UID：$uid)</li>
+        <li>等级：{print:member group(groupid/$member[groupid])}</li>
+        <li>点评：<span class="font_2">$member[reviews]</span></li>
+        <li>鲜花：<span class="font_2">$member[flowers]</span></li>
+        {get:member val=point_groups()}
+        {if $val[enabled]}
+        <li>$val[name]：<span class="font_2">{print $member[$val_k]}</span></li>
+        {/if}
+        {/get}
+        <li class="block">注册时间：{date $member[regdate], 'Y-m-d H:i'}</li>
+        <li class="block">最后登陆：{date $member[logintime], 'Y-m-d H:i'}</li>
+    </ul>
+    {/if}
+    <div class="clear"></div>
+</div>

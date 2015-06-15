@@ -1,0 +1,16 @@
+{eval $_HEAD[title] = $header_title = "我的点评";}
+{include mobile_template('header')}
+<div class="panel-comm panel-fullsize">
+	<div class="list-group list-group-insertmod" id="data_container">
+	    {include mobile_template('review_my_li')}
+	</div>
+	<div id="page_container" class="mb10"></div>
+</div>
+<script>
+$(document).ready(function() {
+    page = $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+});
+</script>
+{include mobile_template('footer')}

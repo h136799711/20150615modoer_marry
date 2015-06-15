@@ -1,0 +1,62 @@
+{eval
+	$_HEAD[title] = "会员登录";
+}
+{include mobile_template('header')}
+<div class="panel-comm">
+	<div class="panel-body">
+		<div class="margin-wl10">
+			<div class="form-box">
+				<form action="$form_action" method="POST">
+
+					<!--{if $passport}-->
+						<input type="hidden" name="passport" value="$passport_type">
+						<input type="hidden" name="passport_id" value="$passport_id">
+					<!--{/if}-->
+
+					<!--{if $_G['passport_apis']}-->
+					<div class="form-item">
+						<fieldset>
+							<legend>使用合作网站帐号登录：</legend>
+							<!--{if $passport && $title}-->
+								<p>$title</p>
+							<!--{else}-->
+								<!--{loop $_G['passport_apis'] $passport_name $passport_title}-->
+									<a href="{url member/passport/op/login/type/$passport_name/source/mobile_web}">
+										<img src="{URLROOT}/static/images/passport/{$passport_name}_n.png">
+										$passport_title
+									</a>
+								<!--{/loop}-->
+							<!--{/if}-->
+						</fieldset>
+					</div>
+					<!--{/if}-->
+
+					<div class="form-item">
+						<label for="username">用户名:</label>
+						<input name="username" id="username" placeholder="请输入用户名" value="" type="text" required>
+					</div>
+					<div class="form-item">
+						<label for="password">密码:</label>
+						<input name="password" id="password" placeholder="请输入密码" value="" type="password" required>
+					</div>
+					<div class="form-item">
+						<input name="life" id="life" type="checkbox" value="2592000" style="float:left;margin-top:5px;">
+						<label for="life">记住密码</label>
+						<div class="clear"></div>
+					</div>
+					<input type="hidden" name="forward" value="$forward">
+					<div class="form-item">
+						<div class="btn-group-vertical btn-group-mt10 full-width">
+							<button type="submit" value="Yes" name="dosubmit" class="btn btn-mycolor">登录</button>
+							<a href="{url member/mobile/do/reg}" class="btn btn-default">注册帐号</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+		//App custom javascript
+</script>
+{include mobile_template('footer')}

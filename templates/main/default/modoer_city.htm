@@ -1,0 +1,26 @@
+<!--{eval
+    $_HEAD['title'] = S('sitename').S('titlesplit').S('subname');
+}-->
+{template modoer_header_small}
+<div id="body" style="border-top:2px solid #ffcc66;">
+    <div class="selectcity-body">
+        <h3>目前<span class="font_1">$SITE[sitename]</span>已经开通<span class="font_2">$total</span>个城市，立刻选择你所关心的城市！<a href="{print:modoer cityurl(city_id/$d_city[aid]/forward/$forward)}">进入{$d_city[name]}站</a></h3>
+        <h5>热门城市：
+            <!--{get:modoer val=citys(num/10)}-->
+            <span><a href="{print:modoer cityurl(city_id/$val[aid]/forward/$forward)}">$val[name]</a></span>
+            <!--{/get}-->
+        </h5>
+        <h5>按名称排序：</h5>
+        <!--{loop $list $initial $val}-->
+        <ul>
+            <li>
+                <span class="selectcity-body-word">{$initial}.</span>
+                <!--{loop $val $k $v}-->
+                <a href="{print:modoer cityurl(city_id/$k/forward/$forward)}">$v[name]</a>
+                <!--{/loop}-->
+            </li>
+        </ul>
+        <!--{/loop}-->
+    </div>
+</div>
+<!--{eval footer();}-->

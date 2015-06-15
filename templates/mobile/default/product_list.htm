@@ -1,0 +1,305 @@
+{include mobile_template('header')}
+{include mobile_template('product_common')}
+<script>
+var params = {};
+{loop $params $k $v}
+params.$k = '$v';
+{/loop}   
+</script>
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="atab-box">
+        <div class="atab-box-nav">
+            {loop lang('product_orderby') $key $val}
+            <a class="atab-box-nav-link" href="#" data-orderby="$key" {if $key=='price'}data-sort="true"{/if}>
+                <span>$val</span>
+            </a>
+            {/loop}
+            <a class="atab-box-nav-link" id="filter_btn" href="">
+                <span>筛选</span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="list-group list-group-insertmod product-list" id="data_container">
+    {include mobile_template('product_list_loop')}
+</div>
+<div id="page_container" class="mb10"></div>
+<div class="panel-comm panel-default" id="filter_box">
+    <div class="panel-heading">筛选</div>
+    <div class="panel-body">
+        <div class="form-box">
+            <input type="hidden" name="act" value="mobile">
+            <input type="hidden" name="do" value="list">
+            <input type="hidden" name="catid" value="$params[catid]">
+            <div class="form-item">
+                <label for="category">分类:</label>
+                <select id="category" data-level="1">
+                    <!--{get:product val=gcategory(pid/0)}-->
+                    <option value="$val[catid]"{if $result['pid']==$val['catid']} selected{/if}>$val[name]</option>
+                    <!--{/get}-->
+                </select>
+                <div class="clear"></div>
+            </div>
+            <div class="form-item">
+                <div class="item-inline">
+                    <input type="checkbox" name="filter" id="filter" value="1"><label for="filter">只显示促销产品</label>
+                </div>
+            </div>
+            <div class="form-submit">
+                <div class="btn-group btn-group-auto">
+                    <div class="btn-group">
+                        <a class="btn btn-mycolor" id="submit_btn" href="javascript:" data-type="submit">提交</a>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-default" href="javascript:" data-type="close">取消</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(function() {
+
+    //分页加载
+    ajaxpage = $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+
+    //排序
+    good_orderby();
+    //筛选
+    good_filter();
+
+});
+
+//ajax页面加载
+var ajaxpage;
+
+//商品排序
+var good_orderby = function() {
+
+    //初始化
+    var init = function() {
+        $('a[data-orderby]').each(function() {
+            $(this).click(orderby);
+            $(this).attr('data-text',$(this).find('span').text());
+        });
+        tab_change();
+    };
+
+    //tab切换
+    var tab_change = function() {
+        var sort_text = '';
+        $('a[data-orderby]').each(function() {
+            $(this).removeClass('atab-box-nav-current').find('span').text($(this).data('text'));
+        });
+
+        var my = $('a[data-orderby="'+params.orderby+'"]');
+        sort_text = my.data('text') + (params.sort=='DESC'?'↓':'↑');
+        my.addClass('atab-box-nav-current').find('span').text(sort_text);
+    };
+
+    //开始排序
+    var orderby = function(e) {
+        e.preventDefault();
+
+        params.orderby = $(this).data('orderby');
+        if($(this).data('sort')) {
+            params.sort = params.sort=='DESC'?'ASC':'DESC';
+        } else {
+            params.sort = 'DESC';
+        }
+        var url = params;
+        url.m = 'product';
+        url.act = 'mobile';
+        url.do = 'list';
+
+        ajaxpage.get(urlroot+'/index.php?'+$.param(url), true);
+
+        tab_change();
+    };
+
+    init();
+};
+
+//商品筛选对话框
+var good_filter = function() {
+
+    var init = function() {
+        //下拉框事件绑定
+        $('#category').change(gcategory.change);
+        //实例化弹出层对话框
+        new $.m_drawer('#filter_box', {}, {
+            onInit:function(container, workArea) {
+                $('#filter_btn').click(function() {
+                    container.open();
+                    return false;
+                });
+                $('#category').change();       
+            },
+            onSubmit:function(container, workArea) {
+                submit();
+                container.close();
+            }
+        });
+    };
+
+    /**
+     * 筛选提交
+     */
+    var submit = function() {
+        params.catid = $('[name="catid"]').val();
+        params.filter = $('[name="filter"]').attr('checked') ? 1 : 0;
+
+        var att = new Array();
+        $('[name="att[]"]').each(function() {
+            att.push($(this).val());
+        });
+        params.att = att.join("_");
+
+        var url = params;
+        url.m = 'product';
+        url.act = 'mobile';
+        url.do = 'list';
+        //页面ajax加载
+        ajaxpage.get(urlroot+'/index.php?'+$.param(url), true);
+        return true;
+    }
+
+    var gcategory = {
+        /**
+         * 商品分类选择事件执行
+         * @type {[type]}
+         */
+        change:function(e) {
+            var select = $(this);
+            // 获取下一级分类的等级
+            var level = parseInt(select.data('level'))+1;
+            var pid = select.val();
+            //删除下一级的select内容
+            $('div[data-level]').each(function() {
+                var tl = parseInt($(this).data('level'));
+                if(tl>=level) $(this).remove(); //本级以下分类div删除
+            });
+            var catid = pid;
+            if(!pid) {
+                catid = $('select[data-level="'+(level-2)+'"]').val(); //如果本级分类没有选择，则使用上一级的分类id
+                $('[name="catid"]').val(catid);
+            } else {
+                $('[name="catid"]').val(pid);
+            }
+            //加载数据
+            if(pid > 0) {
+                var box = select.parent();
+                gcategory.load(pid, level, box);
+            }
+            //获取属性组
+            var attcat = select.find(':selected').data('attcat');
+            if(typeof(attcat)!='undefine') atts.load(attcat);//ajax加载
+        },
+
+        /**
+         * 加载分类数据
+         * @param  {int} pid 父级分类id
+         * @param  {object} box 准备在当前元素对象后面插入
+         */
+        load:function(pid, level, box){
+            //从 product_category_sub 获取下级分类信息
+            $.get(Url('product/ajax/do/gcategory/op/sub/pid/'+pid+'/in_ajax/1'), function(data) {
+                if(is_message(data)) {
+                    myAlert(data);
+                    return;
+                }
+                var json = parse_json(data);
+                if(json.code!=200) {
+                    alert(json.messgae);
+                    return;
+                }
+                if(typeof(json.data)!='object') return;
+                var item = $('<div class="form-item" data-level="'+level+'"></div>');
+                var select = $('<select data-level='+level+'></select>').change(gcategory.change);
+                var option = $('<option value="">==全部==</option>');
+                item.append(select.append(option));
+                $.each(json.data, function(index, val) {
+                    option = $('<option value="'+val.catid+'" data-attcat="'+val.attcat+'">'+val.name+'</option>');
+                    item.append(select.append(option));
+                });
+                box.after(item);
+            });
+        }
+    };
+
+    var atts = {
+
+        /**
+         * 生成属性组下拉框
+         * @param  {object} data 属性组数据json
+         */
+        create:function(data) {
+            var new_item = function(cat)
+            {
+                var select = $('<select name="att[]"></select>');
+                var option = $('<option value="">==全部==</option>');
+                select.append(option);
+                $.each(data.list, function(index, val) {
+                     if(val.catid == cat.catid) {
+                        option = $('<option value="'+cat.catid+'.'+val.attid+'">'+val.name+'</option>');
+                        select.append(option);
+                     }
+                });
+                return select;
+            }
+
+            atts.delete();
+            var insertbox = $('div.form-submit').prev();
+            $.each(data.cat, function(index, val) {
+                var item = $('<div class="form-item" data-name="att"></div>');
+                item.append('<label for="">'+val.name+'</label>');
+                item.append(new_item(val));
+                insertbox.before(item);
+            });
+        },
+
+        /**
+         * 删除属性组元素
+         * @return {[type]} [description]
+         */
+        delete:function() {
+            $('div[data-name="att"]').remove();
+        },
+
+        /**
+         * 加载属性组数据
+         * @param  {int} catid 商铺分类id
+         * @return {[type]}       [description]
+         */
+        load:function(attcat) {
+            if(!attcat) {
+                atts.delete();
+            }
+            $.get(Url('product/ajax/do/att/attcat/'+attcat+'/in_ajax/1'), function(data) {
+                if(is_message(data)) {
+                    myAlert(data);
+                    return;
+                }
+                var json = parse_json(data);
+                if(json.code!=200) {
+                    alert(json.messgae);
+                    return;
+                }
+                if(typeof(json.data)!='object') {
+                    atts.delete();
+                    return;
+                }
+                atts.create(json.data);
+            });
+        }
+
+    }
+
+    init();
+
+};
+</script>
+{include mobile_template('footer')}

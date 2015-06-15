@@ -1,0 +1,196 @@
+{eval 
+    $_HEAD[title] = $detail[name] . $detail[subname];
+}
+{include mobile_template('header')}
+{eval $fullname = $detail[name].($detail[subname]?("(".$detail[subname].")"):'');}
+<div class="panel-comm panel-fullsize panel-mycolor item-subject">
+	<div class="panel-heading">
+		<h3>$fullname</h3>
+	</div>
+	<div class="panel-body item-subject-info">
+
+		<div class="richtxt-comm">
+			<div class="fl">
+				{if $detail[thumb] && $detail[pictures]}
+				<a href="{url item/mobile/do/album/sid/$sid}">
+					<img src="{URLROOT}/$detail[thumb]" alt="$fullname" class="richtxt-img">
+				</a>
+				{else}
+				<img src="{URLROOT}/static/images/noimg.gif" alt="无图" class="richtxt-img">
+				{/if}
+			</div>
+			<div class="richtxt-body">
+				<span class="start s{print get_star($detail[avgsort],S('review:scoretype'))}"></span>
+				<p class="txt-comm txt-small">
+					<!--{if $catcfg[useprice]}-->
+						$catcfg[useprice_title]：
+						{if $detail[avgprice]}$detail[avgprice]{else}-{/if} $catcfg[useprice_unit]<br>
+					<!--{/if}-->
+					<ul class="item-subject-score">
+						<!--{loop $reviewpot $val}-->
+						<li>
+							<div class="fr">
+								<span class="txt-primary">{print cfloat($detail[$val[flag]])}</span>
+							</div>
+							$val[name]
+						</li>
+						<!--{/loop}-->
+					</ul>
+				</p>
+			</div>
+		</div>
+
+		<div class="panel-group mt10" id="subject_data">
+			<div class="panel-comm panel-white">
+				<div class="panel-heading">
+					<h4>{$model[item_name]}信息</h4>
+				</div>
+				<div class="panel-collapse collapse in">
+					<div class="panel-body">
+						<table class="subject_field" border="0" cellspacing="0" cellpadding="0">
+							$detail_custom_field
+						</table>
+					</div>
+				</div>
+			</div>
+			<!--{loop $textarea_field $field}-->
+			<!--{if $detail[$field[fieldname]]}-->
+			<div class="panel-comm panel-white">
+				<div class="panel-heading">
+					<h4>$field[title]</h4>
+				</div>
+				<div class="panel-collapse collapse in">
+					<div class="panel-body">
+						<div class="txt-comm txt-richtxt">
+							$detail[$field[fieldname]]
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+			<!--{/loop}-->
+			<!--{if $model[usearea] && $detail[mappoint] && $fields[mappoint][show_detail]}-->
+			<div class="panel-comm panel-white">
+				<div class="panel-heading">
+					<h4>{$model[item_name]}地图</h4>
+				</div>
+				<div class="panel-collapse collapse">
+					<div class="panel-body">
+						<div class="txt-richtxt">
+							<!--{eval $show_map = $detail[mappoint] ? 1 : 0;}-->
+			            <a href="javascript:;"onclick="jump_webmap('{print:modoer map_jump_web(p/$detail[mappoint]/title/$fullname/show/1)}')">
+			                <img src="{print:modoer map_static_image(size/288x200/title/$fullname/p/$detail[mappoint]/show/$show_map/scale/2)}" alt="$fullname" title="$fullname" />
+			            </a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+			<!--{if $detail[products] > 0 && check_module('product') && $_MODULES[product][extra]}-->
+			<div class="panel-comm panel-white">
+				<div class="panel-heading">
+					<h4>{$model[item_name]}商品</h4>
+				</div>
+				<div class="panel-collapse collapse">
+					<div class="panel-body">
+						<ul>
+						<!--{get:product val=getlist(sid/$sid/rows/10/cachetime/0)}-->
+							<li><a href="{url product/mobile/do/detail/id/$val[pid]}" data-transition="none">$val[subject]</a></li>
+						<!--{/get}-->
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+			<!--{if $detail[coupons] > 0}-->
+			<div class="panel-comm panel-white">
+				<div class="panel-heading">
+					<h4>{$model[item_name]}优惠券</h4>
+				</div>
+				<div class="panel-collapse collapse">
+					<div class="panel-body">
+						<ul>
+						<!--{get:coupon val=list_subject(sid/$sid/rows/10/cachetime/0)}-->
+							<li><a href="{url coupon/mobile/do/detail/id/$val[couponid]}" data-transition="none">$val[subject]</a></li>
+						<!--{/get}-->
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+		</div>
+
+		<div class="list-group mt10">
+			<a href="javascript:;" onclick="add_follow($sid);" class="list-group-item">
+				<div class="fr"><span class="txt-small txt-grey">{$detail[favorites]} 个关注</span></div>
+				加关注
+			</a>
+			<a href="{url review/mobile/do/review/op/add/sid/$sid}" class="list-group-item">
+				<div class="fr">
+					<span class="txt-small txt-grey">{$detail[reviews]} 条点评</span>
+				</div>
+				写点评
+			</a>
+			<a href="{url item/mobile/do/upload_pic/sid/$sid}" class="list-group-item">
+				<div class="fr">
+					<span class="txt-small txt-grey">$detail[pictures] 张图片</span>
+				</div>
+				传图片
+			</a>
+		</div>
+
+		{if $detail[reviews]>0}
+		<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe.js"></script>
+		<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe_srceen.js"></script>
+		<ul class="list-group mt10 review-list">
+			{include mobile_template('reviews_li')}
+			{if $detail[reviews]>$review_offset}
+            	<a href="{url review/mobile/do/reviews/sid/$sid}" class="list-group-item">
+            		<div class="fr"><span class="arrow"></span></div>
+            		查看全部点评
+            	</a>
+            {/if}
+		</ul>
+		{/if}
+
+	</div>
+</div>
+<script>
+$(document).ready(function() {
+
+	$('#subject_data').m_collapse();
+
+	//点评图片浏览
+	$('ul.review-list div.review-list-pictures').each(function() {
+		var pics = $(this);
+	    var rid = $(this).data('rid');
+	    if(rid > 0) {
+	        $(this).find('> a').each(function(index) {
+	            $(this).click(function() {
+	                swipe_srceen(pics, 'input.[data-name="pic-'+rid+'"]', index);
+	            });
+	        });
+	    }
+	});
+
+});
+
+function add_follow(sid) {
+    if (!is_numeric(sid)) {alert('无效的ID'); return;}
+    $.post(Url('item/mobile/do/follow/op/add'), 
+    { sid:sid,in_ajax:1 },
+    function(result) {
+        if(result == null) {
+            alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+        } else if (is_message(result)) {
+            myAlert(result);
+        }
+    });
+}
+
+function jump_webmap(url) {
+	if(!url||url=='') return;
+	window.open(url);
+}
+</script>
+{include mobile_template('footer')}

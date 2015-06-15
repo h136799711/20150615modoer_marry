@@ -1,0 +1,35 @@
+<!--{include space_template('header', $templateid)}-->
+
+<div class="container-box pages p-pictures clear">
+
+	<div class="pages-container">
+
+        <div class="modbox p-tabs-box">
+            <div class="tab clear">
+                <a class="active" href="{url space/$space->uid/pr/item_pictures}">我上传的图片($total)</a>
+            </div>
+        </div>
+
+        <div class="modbox picture-list">
+            <ul class="clear">
+                {dbres $list $val}
+                <li>
+                    <div class="thumb">
+                        <a href="{url item/album/albumid/$val[albumid]/picid/$val[picid]}"><img src="{URLROOT}/$val[thumb]" alt="$val[title]" title="$val[title]"></a>
+                    </div>
+                    <p class="info">
+                        <span class="ttl"><a href="{url item/album/albumid/$val[albimid]/picid/$val[picid]}">$val[title]</a></span>
+                        <span class="tm">{date $val[addtime], 'w2style'}</span>
+                    </p>
+                </li>
+                {/dbres}
+            </ul>
+        </div>
+
+        <div class="multipage">$multipage</div>
+		
+	</div>
+
+</div>
+
+<!--{include space_template('footer', $templateid)}-->

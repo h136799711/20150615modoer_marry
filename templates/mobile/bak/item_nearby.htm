@@ -1,0 +1,220 @@
+{eval 
+    $header_title = $_HEAD[title] = '附近商铺';
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <div class="fr">
+            <select id="lp_distance" name="lp_distance">
+                {loop $distances $dt}
+                <option value="$dt"{if $dt==$distance} selected="selected"{/if}>{$dt}米内</option>
+                {/loop}
+            </select>
+        </div>
+        <select id="lp_catid" name="lp_catid">
+            {get:item val=category(pid/0)}
+            <option value="$val[catid]"{if $catid==$val[catid]} selected="selected"{/if}>$val[name]</option>
+            {/get}
+        </select>
+    </div>
+    <div class="list-group list-group-insertmod item-subject-list" id="list_item">
+    </div>
+</div>
+<script>
+(function($){
+
+    $.fn.web_nearby = function(options,callbacks) {
+
+        var _options = {
+            url:'',
+            catid:0,
+            distance:5000,
+            lat:0,
+            lng:0,
+            page:1,
+            offset:10
+        };
+        var _callbacks = {
+            onLocation:null,
+            onLocationOver:null
+        }
+
+        var _opts = $.extend({}, _options, options);
+        var _cbks = $.extend({}, _callbacks, callbacks);
+        var _contaier = this;
+
+        var _message = {
+
+            show:function(msg, clear) {
+                if(clear) {
+                    _contaier.empty();
+                } else {
+                    _contaier.find('div.[data-name="message"]').remove();
+                }
+                var item = $('<div>').addClass('list-group-item center').attr('data-name','message').text(msg);
+                _contaier.append(item);
+            },
+            remove:function() {
+                _contaier.find('div.[data-name="message"]').remove();
+            }
+        };
+
+        var _ajax = {
+            load:function() {
+                var params = {};
+                params.lat = _opts.lat;
+                params.lng = _opts.lng;
+                params.catid = _opts.catid;
+                params.distance = _opts.distance;
+                params.page = _opts.page;
+                params.in_ajax = 1;
+                if(_opts.lat==0||_opts.lng==0) {
+                    _message.show('定位坐标数据无效。', true);
+                }
+                _message.show('数据加载中，请稍后...', true);
+                $.post(_opts.url.url(), params, function(data) {
+                    _ajax.pares(data);
+                });
+            },
+            pares:function(data) {
+                if(is_message(data)) {
+                    myAlert(data);
+                    return;
+                }
+                _contaier.find('a.[data-name="load_more"]').remove();
+                if(data == 'EMPTY' || !data) {
+                    if(_opts.page <= 1) {
+                        _message.show('对不起，没有搜索到相关信息。', true);
+                    } else {
+                        //_message.show('没有了:)');
+                    }
+                } else {
+                    if(_opts.page <= 1) {
+                        _contaier.empty();
+                    }
+                    //删除提示信息div
+                    _message.remove();
+                    //追加数据
+                    _contaier.append(data);
+                    //alert(_opts.page);
+                    _opts.page = _opts.page + 1;
+                    //alert(_opts.page);
+                    if(_contaier.find('a[data-name="newload"]').length == _opts.offset) {
+                         //加载更多连接
+                        _ajax.more_data();
+                    }
+                    _contaier.find('a[data-name="newload"]').data('name','');
+                }
+            },
+             more_data:function() {
+                var link = $('<a>').text('加载更多...')
+                .addClass('list-group-item center')
+                .attr('href', 'javascript:')
+                .attr('data-name', 'load_more')
+                .click(function() {
+                    _ajax.load();
+                    return false;
+                });
+                _contaier.append(link);
+            }
+        };
+
+        //H获取定位
+        function _location() {
+            _message.show('正在定位，请稍后...', true);
+            if(_cbks.onLocation) _cbks.onLocation();
+            $.m_location({
+                succeed:function(lat, lng, position) {
+                    //保存在cookie
+                    set_cookie('gps_lat', lat, 0);
+                    set_cookie('gps_lng', lng, 0);
+                    //参数赋值
+                    _opts.lat = lat;
+                    _opts.lng = lng;
+                    //定位结束回调
+                    if(_cbks.onLocationOver) _cbks.onLocationOver(true, position);
+                      //开始加载
+                    _ajax.load();                 
+                },
+                error:function(code, msg, error) {
+                    _message.show('定位失败('+msg+')', true);
+                    //定位结束回调
+                    if(_cbks.onLocationOver) _cbks.onLocationOver(false, error);
+                }
+            });
+        }
+
+        //经纬度已经保存在本机
+        if(_opts.lat!=0 && _opts.lng!=0) {
+            _ajax.load();
+        } else {
+            //通过定位获取经纬度
+            _location();
+        }
+
+        return {
+            contaier:function() {
+                return _contaier;
+            },
+
+            set_param:function(params) {
+                _opts = $.extend({}, options, params);
+            },
+
+            load:function() {
+                _ajax.load();
+            }
+        };
+
+    }
+
+})(jQuery);
+
+$(document).ready(function() {
+
+    $.m_location();
+
+
+    nearby = $('#list_item').web_nearby(
+    {
+        url:'{url item/mobile/do/nearby}',
+        lat:$map_lat,
+        lng:$map_lng,
+        catid:$catid,
+        distance:$distance,
+        offset:$offset
+    },
+    {
+        onLocation:function() {
+            $('select').attr('disabled','disabled');
+        },
+        onLocationOver:function(succeed) {
+            $('select').attr('disabled',!false);
+        }
+    });
+
+    $('#lp_distance').change(function() {
+        var distance = $(this).val();
+        var catid = $('#lp_catid').val();
+        nearby.set_param({
+            catid:catid,
+            distance:distance,
+            page:1
+        });
+        nearby.load();
+    });
+
+    $('#lp_catid').change(function() {
+        var catid = $(this).val();
+        var distance = $('#lp_distance').val();
+        nearby.set_param({
+            catid:catid,
+            distance:distance,
+            page:1
+        });
+        nearby.load();
+    });
+
+});
+</script>
+{include mobile_template('footer')}

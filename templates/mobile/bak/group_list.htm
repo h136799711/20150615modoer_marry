@@ -1,0 +1,76 @@
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <div class="fr">
+            <a href="javascript:" id="filter_btn"><span class="label-comm label-mycolor label-big">标签</span></a>
+        </div>
+        <h3>$MOD[name]</h3>
+    </div>
+    <div class="list-group list-group-insertmod group-list" id="data_container">
+        {include mobile_template('group_list_li')}
+    </div>
+    <div id="page_container" class="mb10"></div>
+</div>
+<div class="panel-common panel-default"  id="filter_box" style="display:none;">
+    <div class="panel-body">
+        <div class="form-box">
+            <!--{get:group val=category()}-->
+            <ul class="side_categorylist">
+                <h5><a {if $tag==$val[name]}class="selected"{/if}href="{url group/mobile/do/list/tag/$val[name]}">$val[name]</a></h5>
+                <!--{get:group vval=category_tag(catid/$val[catid])}-->
+                <li><a {if $tag==$vval}class="selected"{/if}href="{url group/mobile/do/list/tag/$vval}">$vval</a></li>
+                <!--{/get}-->
+            </ul>
+            <div class="clear"></div>
+            <!--{/get}-->
+            <ul class="side_categorylist">
+                <h5>小组属性</h5>
+                <li><label><input id="auth" type="checkbox" style="vertical-align:middle;">官方</label></li>
+                <li><label><input id="finer" type="checkbox" style="vertical-align:middle;">推荐</label></li>
+                <li><label><input id="area" type="checkbox" style="vertical-align:middle;">地方</label></li>
+            </ul>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+<script>
+$(function() {
+
+    $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+
+    new $.m_drawer('#filter_box',{},{
+        onInit:function(obj, workArea) {
+            $('#filter_btn').click(function() {
+                obj.open();
+            });
+        }
+    });
+
+    {if $auth}$('#auth').attr('checked',true);{/if}
+    {if $finer}$('#finer').attr('checked',true);{/if}
+    {if $area}$('#area').attr('checked',true);{/if}
+    $('#auth').click(function(){group_filter()});
+    $('#finer').click(function(){group_filter()});
+    $('#area').click(function(){group_filter()});
+})
+function group_filter(){
+    var url = "{url group/mobile/do/list/tag/$tag/pr/__PR__}";
+    var auth = $('#auth').attr('checked');
+    var finer = $('#finer').attr('checked');
+    var area = $('#area').attr('checked');
+    var pr='';
+    pr = auth ? '1' : '0';
+    pr = finer ? (pr+'_1') : (pr+'_0');
+    pr = area ? (pr+'_{$_CITY[aid]}') : (pr+'_0');
+    if(!auth&&!finer&&!area) {
+        url = url.replace('-pr-__PR__','');
+        url = url.replace('&pr=__PR__','');
+    } else {
+        url = url.replace('__PR__',pr);
+    }
+    jslocation(url);
+}
+</script>
+{include mobile_template('footer')}

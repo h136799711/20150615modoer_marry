@@ -1,0 +1,27 @@
+{dbres $list $val}
+<a href="{url group/mobile/do/topic/id/$val[tpid]}" class="list-group-item">
+    <div class="fr">
+        <span class="badge">$val[replies]</span>
+    </div>
+    <div class="richtxt-comm">
+        <div class="fl">
+            <img src="{print get_face($val[uid])}" alt="$val[username]" class="richtxt-img">
+        </div>
+        <div class="richtxt-body">
+            <h4>
+                {if $val[typeid]>0}[{$val[typename]}] {/if}{sublen $val[subject],25,'...'}
+                {if $val[top]}<img src="{URLROOT}/static/images/common/top.gif" alt="置顶" />{/if}
+                {if $val[digest]}<img src="{URLROOT}/static/images/common/digest.gif" alt="精华" />{/if}
+                {if $val[source]}<img src="{URLROOT}/static/images/common/mobile.gif" alt="手机发布" />{/if}
+            </h4>
+            <p class="txt-comm txt-grey txt-small">
+                by $val[username]
+                {if $val[replytime]}
+                    最后回复 {date $val[replytime],'w2style'}
+                {/if}
+            </p>
+        </div>
+    </div>
+</a>
+{/dbres}
+{if $multipage}$multipage{/if}

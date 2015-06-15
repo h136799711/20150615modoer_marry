@@ -1,0 +1,79 @@
+{template modoer_header}
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+        <!--{eval !$mymenu && $mymenu = 'mmenu';}-->
+        <!--{template $mymenu,'member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3>虚拟卡数据管理($product[subject])</h3>
+                <div class="mainrail">
+                    <form method="post" name="myform" action="{url product/member/ac/$ac/rand/$_G[random]}">
+                    <table width="100%" cellspacing="0" cellpadding="0" class="maintable" trmouse="Y">
+                        <tr>
+                            <th width="25"><input type="checkbox" id="allcheck" onclick="checkbox_checked('ids[]',this);" /></th>
+				            <th width="80">状态</th>
+                            <th width="*">内容</th>
+				            <th width="120">生成时间</th>
+				            <th width="120">发送时间</th>
+				            <th width="80">操作</th>
+                        </tr>
+                        <!--{if $total}-->
+                        <!--{dbres $list $val}-->
+                        <tr>
+                            <td><input type="checkbox" name="ids[]" value="$val[id]" /></td>
+				            <td>{if $val[status]}<span class="font_3">未使用</span>{else}<span class="font_2">已使用</span>{/if}</td>
+				            <td>$val[serial]</td>
+				            <td>{date $val[dateline],'Y-m-d H:i'}</td>
+				            <td>{if $val[sendtime]}{date $val[sendtime],'Y-m-d H:i'}{else}未发送{/if}</td>
+				            <td>-</td>
+                        </tr>
+                        <!--{/dbres}-->
+                        <!--{else}-->
+                        <tr><td colspan="6">暂无信息。</td></tr>
+                        <!--{/if}-->
+                    </table>
+                    <!--{if $total}-->
+                    <div class="multipage">$multipage</div>
+                    <!--{/if}-->
+                    <div class="text_center">
+                        <input type="hidden" name="forward" value="{print get_forward()}" />
+                        <input type="hidden" name="pid" value="$pid">
+                        <!--{if $total}-->
+                        <input type="hidden" name="dosubmit" value="yes" />
+                        <input type="hidden" name="op" value="delete" />
+                        <button type="button" onclick="easy_submit('myform','delete','ids[]');">删除所选</button>&nbsp;
+                        <!--{/if}-->
+                        <button type="button" onclick="serial_add();">增加</button>&nbsp;
+                        <button type="button" onclick="location.href=Url('product/member/ac/g_product/op/edit/pid/$pid');">返回</button>&nbsp;
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="mybottom"></div>
+</div>
+<script type="text/javascript">
+function serial_add () {
+	var form = $("<form action=\"{url product/member/ac/serial/op/save}\" method=\"post\"></form>");
+	form.append("<textarea name=\"serial\" rows=\"6\" cols=\"65\" id='post_serial'></textarea>");
+	form.append("<div class=\"font_1\" style='margin:5px 0;width:100%;'>一行一条卡密信息;例如：卡号:12345678 密码:123456</div>");
+	form.append("<input type=\"submit\" class=\"btn\" name=\"dosubmit\" value=\"提交\">&nbsp;&nbsp;");
+	form.append("<input type=\"button\" class=\"btn\" value=\"关闭\" onclick='dlgClose()'>");
+	form.append("<input type=\"hidden\" name=\"pid\" value=\"$pid\">");
+	form.bind('submit',function(){
+		if($('#post_serial').val()=='') {
+			alert('对不起，您尚未填写卡密信息。');
+			return false;
+		}
+		return true;
+	});
+	dlgOpen('添加卡密',form,500);
+}
+</script>
+<!--{eval footer();}-->

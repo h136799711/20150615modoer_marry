@@ -1,0 +1,96 @@
+<!--{include space_template('header', $templateid)}-->
+<script type="text/javascript" src="{URLROOT}/static/javascript/review.js?$_G['modoer']['build']"></script>
+<div class="container-box pages p-reviews clear">
+
+	<div class="pages-main">
+
+        <div class="modbox p-tabs-box">
+            <div class="tab clear">
+                <a class="active" href="{url space/$space->uid/pr/mylist}">我发布的点评($total)</a>
+            </div>
+        </div>
+
+		<div class="modbox reviews">
+            <!--{eval $_G['loader']->helper('function','item');}-->
+			<!--{dbres $reviews $val}-->
+			<div class="reviews-item">
+                <div class="reviews-item-heading">
+                    <h4 class="title">
+                        <a href="{print:review typeurl(idtype/$val[idtype]/id/$val[id])}">$val[subject]</a>
+                    </h4>
+                </div>
+                <!--{if display('review:viewdigest',array('digest'=>$val[digest],'uid'=>$val[uid]))}-->
+                <div class="reviews-item-body">
+                    <!--{eval $config = get_category_config($val[pcatid]);}-->
+                    <div class="score">
+                        <!--{get:item _val=reviewopt(catid/$val[pcatid])}-->
+                        <span class="item">$_val[name]：{print cfloat($val[$_val[flag]])}</span>
+                        <!--{/get}-->
+                    </div>
+                    <!--{if $val[pictures]}-->
+                    <div class="pics">
+                        <!--{eval $val[pictures] = unserialize($val[pictures]);}-->
+                        <!--{loop $val[pictures] $picid $pic}-->
+                        <a href="{URLROOT}/$pic[picture]"><img src="{URLROOT}/$pic[thumb]" /></a>
+                        <!--{/loop}-->
+                    </div>
+                    <!--{/if}-->
+                    <div class="content">
+                        {if $val[title] && $val[title] != $val[subject]}
+                        <h5 class="title"><a href="{url review/detail/id/$val[rid]}">$val[title]</a></h5>
+                        {/if}
+                        <!--{if $val[voice_file]}-->
+                        <p class="voicefile" id="voicefile_$val[rid]">
+                            <object type="application/x-shockwave-flash" data="{URLROOT}/static/images/dewplayer-mini.swf?mp3={URLROOT}/$val[voice_file]" width="160" height="20" id="dewplayer-mini"><param name="wmode" value="transparent" /><param name="movie" value="{URLROOT}/static/images/dewplayer-mini.swf?mp3={URLROOT}/$val[voice_file]" /></object>
+                        </p>
+                        <!--{/if}-->
+                        <!--{eval 
+                            $reviewurl = '...<a href="'.url("review/detail/id/".$val[rid]).'">[查看全文]</a>';
+                            $val[content] = trimmed_title($val[content],300,$reviewurl);
+                        }-->
+                        <p>{print nl2br($val[content])}</p>
+                        <p>
+                            <!--{if $val[price] && $config['useprice']}-->
+                                {$config[useprice_title]}：$val[price]{$config[useprice_unit]}<br />
+                            <!--{/if}-->
+                            <!--{get:item _val=tag_groups(tags/$val[taggroup])}-->
+                                {$_val[taggroup][name]}：
+                                <!--{loop $_val['tags'] $tagname}-->
+                                <a href="{url item/tag/tagname/$tagname}">$tagname</a>
+                                <!--{/loop}-->
+                                <br />
+                            <!--{/get}-->
+                        </p>
+                    </div>
+                </div>
+                <!--{else}-->
+                <div class="reviews-item-body">
+                    <p class="digestdes">
+                        <!--{if !$user->isLogin}-->
+                        <a href="javascript:dialog_login();">登录后查看精华点评</a>
+                        <!--{else}-->
+                        <a href="javascript:review_view_digst($val[rid]);">查看精华点评</a>（第一次查看需要购买）
+                        <!--{/if}-->
+                    </p>
+                </div>
+                <!--{/if}-->
+                <div class="reviews-item-footer">
+                    <div class="float-right">
+                        <a href="{url review/detail/id/$val[rid]}">回应($val[responds])</a>
+                        <a href="{url review/detail/id/$val[rid]}">鲜花(<span id="flower_$val[rid]">$val[flowers]</span>)</a>
+                    </div>                
+                    <span class="clr-grey">{date $val[posttime]}</span>
+                </div>
+            </div>
+			<!--{/dbres}-->
+		</div>
+
+		<div class="multipage">$multipage</div>
+		
+	</div>
+
+    <div class="pages-aside">
+    </div>
+</div>
+
+<!--{include space_template('footer', $templateid)}-->

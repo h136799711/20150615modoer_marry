@@ -1,0 +1,54 @@
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <div class="fr">
+            <a href="javascript:;" id="filter_btn"><span class="label-comm label-mycolor label-big">筛选</span></a>
+        </div>
+        {if $urlpath}<h4>{print implode('&gt;', $urlpath)}</h4>{/if}
+    </div>
+    <ul class="list-group list-group-insertmod mylist-list" id="data_container">
+        <!--{if $total}-->
+            {include mobile_template('mylist_list_li')}
+        <!--{else}-->
+            <a class="list-group-item center">Sorry，还没有榜单数据。</a>
+        <!--{/if}-->        
+    </ul>
+</div>
+<div id="page_container" class="mb10"></div>
+<div class="panel-common panel-default panel-fullsize none" id="filter">
+    <div class="panel-heading">筛选</div>
+    <div class="panel-body">
+        <div class="form-box">
+            <ul class="side_categorylist">
+                <h5>分类</h5>
+                <!--{get:mylist vval=category(catid/0)}-->
+                <li><a {if $catid==$vval[catid]}class="selected"{/if}href="{url mylist/mobile/do/list/catid/$vval[catid]/lo/$lo}">$vval[name]</a></li>
+                <!--{/get}-->
+            </ul>
+            <div class="clear"></div>
+            <ul class="side_categorylist">
+                <h5>排序</h5>
+                <!--{loop $lo_arr $lo_key $lo_val}-->
+                <li><a {if $lo==$lo_key}class="selected"{/if}href="{url mylist/mobile/do/list/catid/$catid/lo/$lo_key}">{print lang('mylist_lo_'.$lo_key)}</a></li>
+                <!--{/loop}-->
+            </ul>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+<script>
+$(function() {
+    $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+
+    new $.m_drawer('#filter', {}, {
+        onInit:function(obj, workArea) {
+            $('#filter_btn').click(function() {
+                obj.open();
+            });
+        }
+    });
+});
+</script>
+{include mobile_template('footer')}

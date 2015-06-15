@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=$_G[charset]" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<title>$_HEAD[title] - Powered by Modoer</title>
+<meta name="keywords" content="$_HEAD[keywords]" />
+<meta name="description" content="$_HEAD[description]" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/static/images/icons.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/static/images/mdialog.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{SPACE_TPL_DIR}/css/default.css?{$_G[modoer][build]}" />
+<script type="text/javascript" src="{URLROOT}/data/cachefiles/config.js?{$_G[cfg][js_cache_flag]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/jquery.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/jquery.plugin.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/common.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/mdialog.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/member.js?{$_G[modoer][build]}"></script>
+<!--{if $_CFG[headhtml]}-->$_CFG[headhtml]<!--{/if}-->
+</head>
+<body>
+<div id="ajax_loading"></div>
+<div class="head-top">
+	<div class="head-top-center">
+		<div class="head-top-logo"><a href="{url modoer/index}" title="$_CFG[sitename]"><img src="{URLROOT}/static/images/logo_s.png" alt="$_CFG[sitename]" /></a></div>
+		<div class="head-top-menu">
+			<!--{eval 
+				$main_menus = $_CFG['main_menuid'] ? $_G['loader']->variable('menu_' . $_CFG['main_menuid']) : '';
+				$menu_count = count($main_menus);
+				$menu_index = 0;
+			}-->
+			<ul class="topmenu clear">
+				<!--{loop $main_menus $val}-->
+				<li><a href="{url $val[url]}"{if $val[target]} target="$val[target]"{/if} onfocus="this.blur()">$val[title]</a></li>
+				<!--{eval if(++$menu_index>=6) break;}-->
+				<!--{/loop}-->
+				<!--{if $menu_index>=6 && $menu_count>6}-->
+				<li class="topmenu-more"><a href="#" id="head_topmenu_src" rel="head_topmenu_box"><span class="arrwd-ico">更多&nbsp;</span></a></li>
+				<!--{/if}-->
+				
+			</ul>
+		</div>
+		<div class="head-top-op clear">
+			<ul class="topmenu clear">
+			<!--{if $user->isLogin}-->
+				<li><a href="{url member/login/op/logout}">退出</a></li>
+				<li><a href="{url member/index/ac/pm/folder/inbox}">短信箱<span id="login_newmsg" style="display:none;">(0)</span></a></li>
+				<li><a href="{url member/index/ac/task}">任务<span id="login_task" style="display:none;"></span></a></li>
+				<li><a href="{url member/index}" id="assistant_menu" rel="assistant_menu_box"><span class="arrwd-ico">我的助手</span></a></li>
+			<!--{else}-->
+				<li><a href="{url member/login}">忘记密码?</a></li>
+				<li><a href="{url member/login}">注册</a></li>
+				<li><a href="{url member/login}">登录</a></li>
+			<!--{/if}-->
+			</ul>
+			
+		</div>
+		
+	</div>
+	<!--主菜单 - 更多菜单 -->
+	<!--{if $menu_index>=6 && $menu_count>6}-->
+	<div id="head_topmenu_box" class="topmenu-more-list">
+		<ul>
+			<!--{eval $menu_index=0;}-->
+			<!--{loop $main_menus $val}-->
+			<!--{if ++$menu_index>6}-->
+			<li><a href="{url $val[url]}"{if $val[target]} target="$val[target]"{/if} onfocus="this.blur()">$val[title]</a></li>
+			<!--{/if}-->
+			<!--{/loop}-->
+		</ul>
+		<!--{if $index>9}--><div class="morecitys"><a href="{url index/city/forward/$forward}">全部城市</a></div><!--{/if}-->
+	</div>
+	<script type="text/javascript">
+	$("#head_topmenu_src").powerFloat({
+		position:"3-2",
+		offsets:{x:0,y:-1},
+		showCall: function() {
+			$(this).addClass("hover");    
+		},
+		hideCall: function() {
+			$(this).removeClass("hover");
+		}
+	});
+	</script>
+	<!--{/if}-->
+	<!-- 我的助手 下拉菜单 -->
+	<div id="assistant_menu_box" class="topmenu-more-list">
+		<ul>
+			<li><a href="{url space/$user->uid}">我的主页</a></li>
+			<li><a href="{url member/index/ac/point}">我的积分</a></li>
+			<li><a href="{url member/index/ac/follow}">我的关注</a></li>
+			<li><a href="{url member/index/ac/task}">我的任务</a></li>
+			<li><a href="{url member/index/ac/myset}">个人设置</a></li>
+			<li><a href="{url member/index/ac/face}">修改头像</a></li>
+		</ul>
+	</div>
+	<script type="text/javascript">
+	$("#assistant_menu").powerFloat({
+		position:"3-2",
+		offsets:{x:0,y:-1},
+		showCall: function() {
+			$(this).addClass("hover");    
+		},
+		hideCall: function() {
+			$(this).removeClass("hover");
+		}
+	});
+	</script>
+</div>
+<div class="head-space">
+	<div class="head-box">
+		<div class="head-user">
+			<div class="face">
+				<a href="{url space/$space->uid}"><img src="{print get_face2($space->uid,'big')}" alt="$space->spacename" title="$space->spacename" /></a>
+			</div>
+			<div class="txt clear">
+				<div class="title">$space->spacename</div>
+				<div class="des">
+					<p>$space->spacedescribe</p>
+					<p class="operation">
+						<a href="javascript:"onclick="member_follow($space->uid);"><span class="icomoon icon-user-plus2"></span>加关注</a>
+						<a href="javascript:"onclick="send_message($space->uid);"><span class="icomoon icon-mail-send"></span>发短信</a>
+						<a href="javascript:"onclick="add_friend($space->uid);"><span class="icomoon icon-user-plus2"></span>加好友</a>
+					</p>
+				</div>
+				<div class="head-navs">
+					<ul class="clear">
+						<li{if !$flag} class="active"{/if}><a href="{url space/$space->uid}">首页</a></li>
+						{loop $space->fetch_nav() $nav}
+							<li{if $flag==$nav['flag']} class="active"{/if}><a href="$nav[url]">$nav[title]</a></li>
+						{/loop}
+					</ul>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

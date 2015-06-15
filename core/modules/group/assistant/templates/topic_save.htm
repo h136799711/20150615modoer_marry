@@ -1,0 +1,98 @@
+<!--{if !defined('IN_AJAX')}-->
+{template modoer_header}
+<script type="text/javascript" src="{URLROOT}/static/javascript/item.js"></script>
+<!--{/if}-->
+<style type="text/css">
+.ajax_smilies img { margin:2px 0 2px 5px; cursor:pointer; }
+.upimg { float:left; text-align:center; width:85px; height:90px; }
+.upimg img { display:block; max-width:75px; max-height:80px; padding:1px; border:1px solid #ccc;
+    _width:expression(this.width > 75 ? 75 : true); _height:expression(this.height > 80 ? 80 : true); }
+.frm_topic label { display:inline-block; }
+</style>
+<!--{if !defined('IN_AJAX')}-->
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+            <!--{template 'menu','member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3>发布话题</h3>
+<!--{/if}-->
+                <div class="mainrail" style="width:650px;">
+                    <form method="post"name="frm_topic" id="frm_topic" action="{url group/member/ac/topic/op/post/in_ajax/$_G[in_ajax]}" class="frm_topic">
+                    <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                        <tr>
+                            <td>
+                                <!--{if !defined('IN_AJAX')}--><label>话题名称：</label><!--{/if}-->
+                                <input type="text" class="t_input" name="subject" style="width:99%;" value="$detail[subject]">
+                            </td>
+                            <td>
+                                {if $needtypeid>=1 && $typecount>0}
+                                {eval $_G['loader']->helper('form','group');}
+                                &nbsp;<select name="typeid">
+                                    <option>=话题分类=</option>
+                                    {print form_group_type($detail['gid'],$detail['typeid'])}
+                                </select>
+                                {if $needtypeid=='2'}<span class="font_3">必选</span>{/if}
+                                {/if}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:620px; *width:650px;">
+                                <!--{if !defined('IN_AJAX')}--><label>话题内容：</label><!--{/if}-->
+                                <textarea name="content" id="topic_ajax_content" style="width:99%;height:250px;">$detail[content]</textarea>
+                            </td>
+                            <td style="width:210px; *width:250px;" valign="top">
+                                <!--{if !defined('IN_AJAX')}--><label>&nbsp;</label><!--{/if}-->
+                                <div class="ajax_smilies">
+                                    <!--{loop $smilies $value}-->
+                                    <img src="{URLROOT}/static/images/smilies/{$value}.gif" width="20" height="20" onclick="insert_smilies('topic_ajax_content','$value');" />
+                                    <!--{/loop}-->
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div id="topic_images_foo">
+                                    <span class="update-img-ico"><a href="javascript:;" onclick="discuss_topic_upimg('topic_ajax_content');">上传图片</a></span>
+                                    <span class="update-video-ico"><a href="javascript:;" onclick="group_topic_video('topic_ajax_content');">添加视频</a></span>
+                                </div>
+                                <!--{eval $pictures = is_serialized($detail[pictures]) ? unserialize($detail[pictures]) : array();}-->
+                                <!--{loop $pictures $key $val}-->
+                                <div class="upimg" id="frm_img_$key"><img src="{URLROOT}/$val" />
+                                    <input type="hidden" name="pictures[$key]" value="$val" />
+                                    <a href="javascript:void(0);" onclick="discuss_topic_insertimg('topic_ajax_content', '$key');">插入</a> | <a href="javascript:void(0);" onclick="$('#frm_img_$key').remove();return false;">删除</a>
+                                </div>
+                                <!--{/loop}-->
+                            </td>
+                        </tr>
+                        <!--{if $MOD[topic_seccode]&&$op!='edit'}-->
+                        <tr>
+                            <td>
+                                <label style="float:left;">验证码：</label>
+                                <input type="text" name="seccode" class="t_input" style="float:left;width:118px;" onblur="check_seccode(this.value);" onfocus="show_seccode('seccode_tp');" validator="{'empty':'N','errmsg':'请输入注册验证码'}" />
+                                <div id="seccode_tp" class="none" style="float:left;width:80px;margin-left:5px;position:relative;top:-3px;"></div>
+                                <span id="msg_seccode" class="formmessage none"></span>
+                            </td>
+                        </tr>
+                        <!--{/if}-->
+                    </table>
+                    <div class="text_center">
+                        <input type="hidden" name="{if $op=='edit'}edit{else}add{/if}" value="yes" />
+                        {if !$add}<input type="hidden" name="tpid" value="$tpid" />{/if}
+                        <button type="button" onclick="ajaxPost('frm_topic','$op','discussion_topic_save',1);">提交</button>
+                    </div>
+                    </form>
+                </div>
+<!--{if !defined('IN_AJAX')}-->
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="mybottom"></div>
+</div>
+<!--{eval footer();}-->
+<!--{/if}-->

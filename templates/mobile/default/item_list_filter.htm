@@ -1,0 +1,194 @@
+{eval 
+    $_HEAD[title] = '商户筛选';
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-body">
+        <div class="form-box">
+            <form action="{print url('item/mobile','',0,1)}" method="GET">
+				<input type="hidden" name="m" value="item">
+                <input type="hidden" name="act" value="mobile">
+                <input type="hidden" name="do" value="list">
+                <div class="form-item">
+                    <label for="catid">分类:</label>
+                    <select name="catid" id="catid">
+                        <option value="$pid" data-type="parent">{print:item category(catid/$pid)}</option>
+                        <!--{get:item val=category(pid/$catid)}-->
+                        <option value="$val[catid]">&nbsp;&nbsp;$val[name]</option>
+                        <!--{/get}-->
+                    </select>
+                </div>
+                <div class="form-item none" id="item-subcatid">
+                    <label>子分类:</label>
+                    <select name="subcatid" id="subcatid"></select>
+                </div>
+                <!--{if $model['usearea']}-->
+                <div class="form-item">
+                    <label for="aid">地区:</label>
+                    <select name="aid" id="aid">
+                        <option value="$_CITY[aid]" data-type="parent">$_CITY[name]</option>
+                        <!--{get:modoer val=area(pid/$_CITY[aid])}-->
+                        <option value="$val[aid]">&nbsp;&nbsp;$val[name]</option>
+                        <!--{/get}-->
+                    </select>
+                </div>
+                <div class="form-item none" id="item-subaid">
+                    <label for="subaid">区县/街区:</label>
+                    <select name="subaid" id="subaid">
+                        <option value="$_CITY[aid]">$_CITY[name]</option>
+                        <!--{get:modoer val=area(pid/$_CITY[aid])}-->
+                        <option value="$val[aid]">&nbsp;&nbsp;$val[name]</option>
+                        <!--{/get}-->
+                    </select>
+                </div>
+                <!--{/if}-->
+                <!--{if $attcats}-->
+                <input type="hidden" name="att" id="att" value="">
+                <!--{eval $att_cats = $_G['loader']->variable('att_cat','item');}-->
+                <!--{loop $attcats $att_catid}-->
+                <!--{if $att_cats[$att_catid]}-->
+                <div class="form-item">
+                    <label for="att$att_catid">{$att_cats[$att_catid][name]}:</label>
+                    <!--{eval $att_url = item_att_url($att_catid,0,1);}-->
+                    <select id="att$att_catid" onchange="attlink();" data-type="att-select" attsel='Y'>
+                        <option value="$att_url">{$att_cats[$att_catid][name]}</option>
+                        <!--{eval $ix=0;}-->
+                        <!--{get:item val=attlist(catid/$att_catid)}-->
+                        <!--{eval $att_url = item_att_url($att_catid,$val_k);}-->
+                        <option value="$att_url">$val[name]</option>
+                        <!--{/get}-->
+                    </select>
+                    <div class="clear"></div>
+                </div>
+                <!--{/if}-->
+                <!--{/loop}-->
+                <!--{/if}-->
+                <div class="form-submit">
+                    <div class="btn-group btn-group-auto">
+                        <div class="btn-group">
+                            <button type="submit" value="Y" name="dosubmit" class="btn btn-mycolor">提交</button>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default" onclick="history.go(-1);">后退</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+
+$(document).ready(function() {
+
+    $('#catid').item_filter_select({
+        url:"{url item/ajax/do/category/pid/__ID__/in_ajax/1}",
+        select_id:"#subcatid",
+        create_option:function(val) {
+            return $('<option></option>').val(val.catid).text(val.name);
+        }
+    });
+
+    $('#aid').item_filter_select({
+        url:"{url index/ajax/op/area/pid/__ID__/in_ajax/1}",
+        select_id:"#subaid",
+        create_option:function(val) {
+            return $('<option></option>').val(val.aid).text(val.name);
+        }
+    });
+
+});
+
+(function($){
+
+    $.fn.item_filter_select = function(options) {
+
+        /*
+        options参数
+        url 获取数据的url，动态ID占位符用 __ID__ 表示
+        select_id 准备加载数据的select
+        create_option 回调函数，用于返回一个option标签元素加载到select
+         */
+
+        var _this = this;
+        var _select = $(options.select_id);
+        var _data_cache = new Array();
+
+        var _select_obj = {
+            create:function(data) {
+                _select.empty().append($('<option>').val(0).text('==不限=='));
+                $.each(data, function(index, val) {
+                    _select.append(options.create_option(val));
+                });
+                _select.parent().show();
+            },
+            clear:function() {
+                _select.empty().parent().hide();
+            }
+        };
+
+        var _ajax_obj = {
+            id:0,
+            get:function(id) {
+                if(_data_cache[id]) {
+                    if(typeof(_data_cache[id])=='object') {
+                        _select_obj.create(_data_cache[id]);
+                    } else {
+                        _select_obj.clear();
+                    }
+                    return;
+                }
+                var url = options.url.replace('__ID__',id).url();
+                $.get(url, function(data) {
+                    if(is_message(data)) {
+                        myAlert(data);
+                    } else {
+                        _ajax_obj.id = id;
+                        _ajax_obj.parse_data(data);
+                    }
+                });
+            },
+            parse_data:function(data) {
+                var ret = parse_json(data);
+                if(ret.code == 200) {
+                    _data_cache[_ajax_obj.id] = ret.data;
+                    _select_obj.create(ret.data);
+                } else {
+                    _select_obj.clear();
+                    if(ret.code != 110003) {
+                        alert(ret.message);
+                        return;
+                    }
+                    _data_cache[_ajax_obj.id] = true;
+                }
+            }
+        }
+
+        _this.change(function() {
+            var opt = $(this).find('option:selected');
+            if(opt.data('type')=='parent') {
+                _select_obj.clear();
+            } else {
+                _ajax_obj.get(opt.val());
+            }
+        });
+
+    }
+
+})(jQuery);
+
+
+function attlink() {
+    var atts = new Array();
+    var x = 0;
+    $("select").each(function(i){
+        if($(this).attr('attsel')=='Y') {
+            if($(this).val() != '') {
+                atts[x++]=$(this).val();
+            }
+        }
+    })
+    $('#att').val(atts.join('_'));
+}
+</script>
+{include mobile_template('footer')}

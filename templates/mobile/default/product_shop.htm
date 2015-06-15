@@ -1,0 +1,97 @@
+{eval $tplsetting = $_G['loader']->model('item:subjectsetting')->read($subject[sid]);}
+{include mobile_template('header')}
+{include mobile_template('product_common')}
+<script>
+var params = {};
+{loop $params $k $v}
+params.$k = '$v';
+{/loop}   
+</script>
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="product-shop-header">
+        {eval $banner = $tplsetting[banner]?$tplsetting[banner]:($_G[tplurl_mobile].'/images/product/banner.png');}
+        <div class="product-shop-banner" style="background-image:url('{img $banner}');!important;"></div>    
+        <h3>$subject[name]{if $subject[subname]}($subject[subname]){/if}</h3>   
+    </div>
+
+    <div class="atab-box">
+        <div class="atab-box-nav">
+            {loop lang('product_orderby') $key $val}
+            <a class="atab-box-nav-link" href="#" data-orderby="$key" {if $key=='price'}data-sort="true"{/if}>
+                <span>$val</span>
+            </a>
+            {/loop}
+        </div>
+    </div>
+</div>
+<div class="list-group list-group-insertmod product-list" id="data_container">
+    {include mobile_template('product_list_loop')}
+</div>
+<div id="page_container" class="mb10"></div>
+<script>
+$(function() {
+
+    $('.atab-box').m_nav();
+
+    //分页加载
+    ajaxpage = $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+
+    //排序
+    good_orderby();
+
+});
+
+//ajax页面加载
+var ajaxpage;
+
+//商品排序
+var good_orderby = function() {
+
+    //初始化
+    var init = function() {
+        $('a[data-orderby]').each(function() {
+            $(this).click(orderby);
+            $(this).attr('data-text',$(this).find('span').text());
+        });
+        tab_change();
+    };
+
+    //tab切换
+    var tab_change = function() {
+        var sort_text = '';
+        $('a[data-orderby]').each(function() {
+            $(this).removeClass('atab-box-nav-current').find('span').text($(this).data('text'));
+        });
+
+        var my = $('a[data-orderby="'+params.orderby+'"]');
+        sort_text = my.data('text') + (params.sort=='DESC'?'↓':'↑');
+        my.addClass('atab-box-nav-current').find('span').text(sort_text);
+    };
+
+    //开始排序
+    var orderby = function(e) {
+        e.preventDefault();
+
+        params.orderby = $(this).data('orderby');
+        if($(this).data('sort')) {
+            params.sort = params.sort=='DESC'?'ASC':'DESC';
+        } else {
+            params.sort = 'DESC';
+        }
+        var url = params;
+        url.m = 'product';
+        url.act = 'mobile';
+        url.do = 'shop';
+
+        ajaxpage.get(urlroot+'/index.php?'+$.param(url), true);
+
+        tab_change();
+    };
+
+    init();
+};
+
+</script>
+{include mobile_template('footer')}

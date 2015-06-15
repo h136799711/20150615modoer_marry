@@ -1,0 +1,218 @@
+<!--{include space_template('header', $templateid)}-->
+
+<div class="container-box container-index clear">
+
+	<div class="aside">
+
+        <div class="aside-stat">
+            <ul class="clear">
+                <li>关注<span>$space->follow</span></li>
+                <li>粉丝<span>$space->fans</span></li>
+                <li>点评<span>$space->reviews</span></li>
+            </ul>       
+        </div>
+
+		<div class="modbox aside-info">
+            <ul>
+                <li><span>点评等级：</span>{print:member group(groupid/$space->groupid)}</li>
+                <li><span>注册时间：</span>{date $space->regdate, 'Y-m-d H:i'}</li>
+                <li><span>最后登录：</span>{date $space->logintime, 'Y-m-d H:i'}</li>
+            </ul>      
+        </div>
+
+        <div class="modbox aside-feeds">
+            <div class="hd">
+                <h4>动态</h4>
+            </div>
+            <ul>
+                <!--{get:member val=feed(uid/$space->uid/rows/5)}-->
+                <li class="clear">
+                    <div class="content">
+                        <h4>$val[title]<span>{date $val[dateline],'w2style'}</span></h4>
+                        <!--{if $val[images]}-->
+                        <div class="content-images">
+                        <!--{eval $images=unserialize($val[images]);}-->
+                        <!--{loop $images $img}-->
+                        <a href="$img[link]"><img src="$img[url]" /></a>
+                        <!--{/loop}-->
+                        </div>
+                        <!--{else}-->
+                        <p>$val[body]</p>
+                        <!--{/if}-->
+                    </div>
+    
+                </li>
+                <!--{/get}-->
+
+            </ul>
+        </div>
+
+		<div class="modbox aside-faces">
+			<div class="hd">
+                <h4>关注</h4>
+            </div>
+            <ul class="clear">
+                <!--{get:modoer val=sql(sql/SELECT f.fid,f.id,f.addtime,m.uid,m.username,m.follow,m.fans,reviews,groupid FROM dbpre_favorites f LEFT JOIN dbpre_members m ON (f.id = m.uid) WHERE f.idtype='member' AND f.uid=$space->uid ORDER BY f.addtime DESC/rows/9)}-->
+                <li><a href="{url space/$val[uid]}"><img src="{print get_face($val[uid])}" /><span>$val[username] dsfsdfsdf</span></a></li>
+                <!--{/get}-->
+            </ul>
+        </div>
+
+		<div class="modbox aside-faces">
+            <div class="hd">
+                <h4>最近谁来看过</h4>
+            </div>
+            <ul class="clear">
+                <!--{get:modoer val=sql(sql/select uid,username,last_time from dbpre_space_visit where space_uid=$space->uid order by last_time desc/rows/9)}-->
+                <li><a href="{url space/$val[uid]}"><img src="{print get_face($val[uid])}" /><span>$val[username]</span></a></li>
+                <!--{/get}-->
+            </ul>
+		</div>
+
+		<div class="modbox aside-subjects">
+            <div class="hd">
+                <h4>添加的商户</h4>
+            </div>
+            <ul>
+                <!--{get:modoer val=table(select/sid,name,subname,pid/table/dbpre_subject/where/cuid=$space->uid AND status=1/orderby/addtime desc/rows/10)}-->
+                <li><a href="{url item/detail/id/$val[sid]}">$val[name]{if $val[subname]}($val[subname]){/if}</a></li>
+                <!--{/get}-->
+            </ul>
+		</div>
+	</div>
+
+	<div class="main">
+		
+		<div class="modbox reviews">
+            <div class="hd">
+                <h4>点评</h4>
+                <em><a href="{url space/$space->uid/pr/review}">更多&nbsp;&raquo;</a></em>
+            </div>
+            <!--{eval $_G['loader']->helper('function','item');}-->
+            <!--{get:review val=review(uid/$space->uid/hide_name/1/orderby/posttime DESC/rows/3)}-->
+                <div class="reviews-item">
+                    <div class="reviews-item-heading">
+                        <h4 class="title">
+                            <a href="{print:review typeurl(idtype/$val[idtype]/id/$val[id])}">$val[subject]</a>
+                        </h4>
+                    </div>
+                    <!--{if display('review:viewdigest',array('digest'=>$val[digest],'uid'=>$val[uid]))}-->
+                    <div class="reviews-item-body">
+                        <!--{eval $config = get_category_config($val[pcatid]);}-->
+                        <div class="score">
+                            <!--{get:item _val=reviewopt(catid/$val[pcatid])}-->
+                            <span class="item">$_val[name]：{print cfloat($val[$_val[flag]])}</span>
+                            <!--{/get}-->
+                        </div>
+                        <!--{if $val[pictures]}-->
+                        <div class="pics">
+                            <!--{eval $val[pictures] = unserialize($val[pictures]);}-->
+                            <!--{loop $val[pictures] $picid $pic}-->
+                            <a href="{URLROOT}/$pic[picture]"><img src="{URLROOT}/$pic[thumb]" /></a>
+                            <!--{/loop}-->
+                        </div>
+                        <!--{/if}-->
+                        <div class="content">
+                            {if $val[title] && $val[title] != $val[subject]}
+                            <h5 class="title"><a href="{url review/detail/id/$val[rid]}">$val[title]</a></h5>
+                            {/if}
+                            <!--{if $val[voice_file]}-->
+                            <p class="voicefile" id="voicefile_$val[rid]">
+                                <object type="application/x-shockwave-flash" data="{URLROOT}/static/images/dewplayer-mini.swf?mp3={URLROOT}/$val[voice_file]" width="160" height="20" id="dewplayer-mini"><param name="wmode" value="transparent" /><param name="movie" value="{URLROOT}/static/images/dewplayer-mini.swf?mp3={URLROOT}/$val[voice_file]" /></object>
+                            </p>
+                            <!--{/if}-->
+                            <!--{eval 
+                                $reviewurl = '...<a href="'.url("review/detail/id/".$val[rid]).'">[查看全文]</a>';
+                                $val[content] = trimmed_title($val[content],300,$reviewurl);
+                            }-->
+                            <p>{print nl2br($val[content])}</p>
+                            <p>
+                                <!--{if $val[price] && $config['useprice']}-->
+                                    {$config[useprice_title]}：$val[price]{$config[useprice_unit]}<br />
+                                <!--{/if}-->
+                                <!--{get:item _val=tag_groups(tags/$val[taggroup])}-->
+                                    {$_val[taggroup][name]}：
+                                    <!--{loop $_val['tags'] $tagname}-->
+                                    <a href="{url item/tag/tagname/$tagname}">$tagname</a>
+                                    <!--{/loop}-->
+                                    <br />
+                                <!--{/get}-->
+                            </p>
+                        </div>
+                    </div>
+                    <!--{else}-->
+                    <div class="reviews-item-body">
+                        <p class="digestdes">
+                            <!--{if !$user->isLogin}-->
+                            <a href="javascript:dialog_login();">登录后查看精华点评</a>
+                            <!--{else}-->
+                            <a href="javascript:review_view_digst($val[rid]);">查看精华点评</a>（第一次查看需要购买）
+                            <!--{/if}-->
+                        </p>
+                    </div>
+                    <!--{/if}-->
+                    <div class="reviews-item-footer">
+                        <div class="float-right">
+                            <a href="{url review/detail/id/$val[rid]}">回应($val[responds])</a>
+                            <a href="{url review/detail/id/$val[rid]}">鲜花(<span id="flower_$val[rid]">$val[flowers]</span>)</a>
+                        </div>                
+                        <span class="clr-grey">{date $val[posttime]}</span>
+                    </div>
+                </div>
+            <!--{/get}-->
+		</div>
+
+        <div class="modbox bt pictures">
+            <div class="hd">
+                <h4>图片</h4>
+                <em><a href="{url space/$space->uid/pr/item_pictures}">更多&nbsp;&raquo;</a></em>
+            </div>
+            <ul class="clear">
+                <!--{get:item val=picture(select/albumid,picid,title,thumb,sid/uid/$space->uid/orderby/addtime DESC/rows/4)}-->
+                <li>
+                    <a href="{url item/album/id/$val[albumid]/picid/$val[picid]}"><img src="{URLROOT}/$val[thumb]" alt="$val[title]" title="$val[title]" /></a>
+                    <p><a href="{url item/album/id/$val[albumid]/picid/$val[picid]}">$val[name]</a></p>
+                </li>
+                <!--{/get}-->
+            </ul>
+		</div>
+
+        <!--{if check_module('group')}-->
+		<div class="modbox bt group-topics">
+            <div class="hd">
+                <h4>话题</h4>
+                <em><a href="{url space/$space->uid/pr/group_topics}">更多&nbsp;&raquo;</a></em>
+            </div>
+			<ul>
+                <!--{get:group val=get_topic(uid/$space->uid/orderby/gt.dateline desc/rows/9)}-->
+                <li>
+                    <a href="{url group/topic/id/$val[tpid]}" title="$val[subject]">{sublen $val[subject],30,'...'}</a>
+                    <span class="groupname"><a title="$val[groupname]" href="{url group/$val[gid]}">&raquo;&nbsp;$val[groupname]</a></span>
+                </li>
+                <!--{/get}-->
+            </ul>
+		</div>
+        <!--{/if}-->
+
+        <!--{if check_module('mylist')}-->
+        <div class="modbox bt mylist">
+            <div class="hd">
+                <h4>榜单</h4>
+                <em><a href="{url space/$space->uid/pr/mylist}">更多&nbsp;&raquo;</a></em>
+            </div>
+            <ul>
+                <!--{get:mylist val=get_mylist(uid/$space->uid/orderby/modifytime desc/rows/5)}-->
+                <li>
+                    <a href="{url mylist/$val[id]}" title="$val[subject]">$val[title]</a>
+                    <span class="des">共有 {$val[num]} 个主题</span>
+                </li>
+                <!--{/get}-->
+            </ul>
+        </div>
+        <!--{/if}-->
+
+	</div>
+
+</div>
+
+<!--{include space_template('footer', $templateid)}-->

@@ -1,0 +1,360 @@
+<!--{eval
+    if(SCRIPTNAV != 'index' && $_G[show_sitename]):
+        $_HEAD[title] .= $_G['cfg']['titlesplit'] . $_G['cfg']['sitename'];
+    endif;
+}-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=$_G[charset]" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<title>$_HEAD[title] - Powered by Modoer</title>
+{if $_HEAD[keywords]}<meta name="keywords" content="$_HEAD[keywords],Modoer点评系统" />{/if}
+{if $_HEAD[description]}<meta name="description" content="$_HEAD[description]" />{/if}
+<link rel="stylesheet" type="text/css" href="{URLROOT}/static/images/icons.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/{$_G[tplurl]}css_common.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" type="text/css" href="{URLROOT}/static/images/mdialog.css?{$_G[modoer][build]}" />
+<script type="text/javascript" src="{URLROOT}/data/cachefiles/config.js?{$_G[cfg][js_cache_flag]}"></script>
+<script type="text/javascript">
+<!--{if !empty($MOD)}-->
+var mod = modules['{$MOD[flag]}'];
+website.module.flag = '{$MOD[flag]}';
+website.module.page = '{$_GET['act']}';
+<!--{/if}-->
+</script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/jquery.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/jquery.plugin.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/common.js?{$_G[modoer][build]}"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/mdialog.js?{$_G[modoer][build]}"></script>
+<!--{if $_CFG[headhtml]}-->{LF}$_CFG[headhtml]{LF}<!--{/if}-->
+</head>
+<body>
+<!--{if SCRIPTNAV == 'index'}-->
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_index.css?{$_G[modoer][build]}");</style>
+<!--{elseif SCRIPTNAV == 'assistant'||SCRIPTNAV == 'manage'}-->
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_assistant.css?{$_G[modoer][build]}");</style>
+<!--{elseif !empty($MOD) && is_file(MUDDER_ROOT . $_G[tplurl] . 'css_' . $MOD['flag'] . '.css')}-->
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_{$MOD[flag]}.css?{$_G[modoer][build]}");</style>
+<!--{/if}-->
+<script type="text/javascript" src="{URLROOT}/static/javascript/member.js?{$_G[modoer][build]}"></script>
+<!--{if !empty($MOD) && $MOD['flag']!='member' && is_file(MUDDER_ROOT . 'static/javascript/' . $MOD['flag'] . '.js')}-->
+<script type="text/javascript" src="{URLROOT}/static/javascript/$MOD[flag].js?{$_G[modoer][build]}"></script>
+<!--{/if}-->
+<div id="gtop">
+    <div class="maintop">
+        <div class="maintop-left">
+            <a href="javascript:;" onclick="this.style.behavior='url(#default#homepage)';this.setHomePage('$_CFG[siteurl]')">设为首页</a>
+            <span class="xsplit">|</span>
+            <a href="javascript:;" onclick="window.external.addFavorite('$_CFG[siteurl]','$_CFG[sitename]');">加入收藏</a>
+            <span class="xsplit">|</span>
+            <a href="{url item/tag}">TAG标签</a>
+            <span class="xsplit">|</span>
+            <a href="{url item/rss/catid/$catid}" target="_blank">RSS聚合</a>
+            {if check_module('mobile') && is_mobile()}
+            <span class="xsplit">|</span>
+            <a href="{url mobile/index}"><strong class="font_1">手机版</strong></a>
+            {/if}
+        </div>
+        <div class="maintop-right">
+            <a href="{url item/albums}">相册</a>
+            <span class="xsplit">|</span>
+            <a href="{url item/tops}">排行榜</a>
+            <span class="xsplit">|</span>
+            <a href="{url item/map}">浏览地图</a>
+            <span class="xsplit">|</span>
+            <a href="{url item/detail/random/1}">随便看看</a>
+            <span class="xsplit">|</span>
+            <a href="{url item/search}">搜索</a>
+            <span class="xsplit">|</span>
+            <a href="{url item/member/ac/subject_add}" class="J_select_list" rel="addact_menu_box" params='{"reverseSharp":true}'>
+                <span class="icomoon icon-pencil2 ic-yellow"></span>添加信息
+            </a>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div id="header">
+    <div class="header-main">
+        <div class="logo">
+            <a href="{url modoer/index}"><img src="{URLROOT}/static/images/logo.jpg" alt="$_CFG[sitename]" title="$_CFG[sitename]"></a>
+        </div>
+		<div class="nav_citys">
+			<span rel="city_menu_box" class="J_select_list cityname" params='{"offsets":{"x":"0","y":"-1"}}'>{$_CITY[name]}站<span class="select-box"></span></span>
+		</div>
+        <div class="header-main-qrcode">
+            <a id="scan_qrcode" rel="qrcode_box" href="javascript:;">
+                <span class="icomoon icon-qrcode"></span>手机站
+            </a>
+            <div class="header-mobileweb-qrcode">
+                <span class="qrcode-msg">扫一扫，进入手机站</span>
+                <img src="{print get_qrcode(url("mobile/index",'',1))}" />
+            </div>
+        </div>
+        <div class="charmenu">
+            <!--{if $_GET['act']!='reg'&&$_GET['act']!='login'}-->
+            <div id="login_0" style="display:none;">
+                <!--{if $_G['passport_apis']}-->
+                <div class="passport_login">
+                    <span class="passport_api" id="passport_api">
+                        <!--{eval $ix=0;}-->
+                        <!--{loop $_G['passport_apis'] $passport_name $passport_title}-->
+                        <span {if $ix++} class="none" {/if} onclick="document.location='{url member/login/op/passport_login/type/$passport_name}';"><img src="{URLROOT}/static/images/passport/{$passport_name}_n.png" />{$passport_title}登录</span>
+                        <!--{/loop}-->
+                        <div class="clear"></div>
+                    </span>
+                    <span>帐号互联，快速登录</span>
+                </div>
+                <!--{/if}-->
+                <div class="mainlogin">
+                    <!--{eval $membercfg=$_G['loader']->variable('config','member');}-->
+                    <form method="post" id="main_frm_login" action="{url member/login/op/login/rand/$_G[random]}">
+                    <dl>
+                        <dd>
+                            <input type="text" name="username" id="main_username" class="t_input mainlogin-u" onfocus="main_username_check(this);" onblur="main_username_check(this);" tabindex=1>
+                            <input type="checkbox" name="life" value="2592000" tabindex=4 /><label for="life">记住</label>&nbsp;
+                            <a href="{url member/login/op/forget}">找回密码</a>
+                        </dd>
+                        <dd style="padding-top:2px\0">
+                            <input type="password" name="password" id="main_password" class="t_input mainlogin-p"{if $membercfg['seccode_login']}onfocus="main_show_seccode(this,'main_frm_seccode');"{/if} tabindex=2>&nbsp;
+                            <input type="hidden" name="onsubmit" value="yes">
+                            <button type="button" onclick="main_login();" tabindex=5>登录</button>
+                            <button type="button" onclick="document.location='{url member/reg}';" tabindex=6>注册</button>
+                        </dd>
+                    </dl>
+                    <!--{if $membercfg['seccode_login']}-->
+                    <div id="main_frm_seccode" style="padding:5px;border:1px solid #ddd; background:#fff;position:absolute; left:0; top:0; visibility:hidden;">
+                        <input type="text" name="seccode" id="main_seccode" class="t_input" style="width:118px;" onblur="check_seccode(this.value);" tabindex=3 /><div id="login_seccode" style="margin-top:5px;"></div>
+                    </div>
+                    <!--{/if}-->
+                    </form>
+                </div>
+            </div>
+            <!--{/if}-->
+            <div id="login_1" class="mainuser" style="display:none;">
+                <div class="mainuser-face">
+                    <a href="{url space/$user->uid}"><img src="{print get_face($user->uid)}" title="个人空间" /></a>
+                </div>
+                <div class="mainuser-operation">
+                    <div class="mainuser-operation-foo">
+                        <span class="member-ico"><a href="{url space/$user->uid}" id="login_name"></a></span>
+                        <span class="xsplit">|</span>
+                        <span class="arrwd-ico" id="assistant_menu" rel="assistant_menu_box"><a href="{url member/index}">我的助手</a></span>
+                        <span class="xsplit">|</span>
+                        <span class="arrwd-ico" id="manage_menu" rel="manage_menu_box"><a href="{url item/member/ac/g_subject}">主题管理</a></span>
+                        <span class="xsplit">|</span>
+                        <span><a href="{url member/index/ac/task}">任务</a><span id="login_task" style="display:none;"></span></span>
+                        <span class="xsplit">|</span>
+                        <a href="{url member/index/ac/pm/folder/inbox}">短信箱</a><span id="login_newmsg" style="display:none;">(0)</span>
+                        <span class="xsplit">|</span>
+                        <span><a href="{url member/index/ac/notice}">提醒</a><span id="login_notice" style="display:none;"></span></span>
+                        <span class="xsplit">|</span>
+                        <a href="{url member/login/op/logout}">退出</a>
+                    </div>
+                    <div>
+                        等级积分<b>:</b><span class="arrwd-ico" id="assistant_point" rel="{url member/index/ac/point/op/headerget}"><span id="login_point">$user->point</span></span>
+                        <span class="xsplit">|</span>
+                        用户组<b>:</b><span id="login_group">{print:member group(groupid/$user->groupid)}</span>
+                    </div>
+                </div>
+            </div>
+            <div id="login_2" style="display:none;">
+                <!--{eval 
+                    $am = _cookie('activation_module')?_cookie('activation_module'):'ucenter';
+                    if(!check_module($am)) $am='ucenter';
+                }-->
+                <span id="login_activation"></span>,<a href="{url $am/activation}" id="login_activation_a">您的帐号需要激活</a> [<a href="{url member/login/op/logout}">退出</a>]
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <!--{eval 
+        $main_menus = $_CFG['main_menuid'] ? $_G['loader']->variable('menu_' . $_CFG['main_menuid']) : '';
+    }-->
+    <div class="header-bar">
+        <div class="J_select_list header-itemcate" rel="header_itemcate_list">
+            <span class="itemcate-select"><a href="{url item/category}">全部主题分类</a></span>
+            <span class="select-box"></span>
+        </div>
+        <ul class="header-menu">
+        <!--{loop $main_menus $val}-->
+        <li{if SCRIPTNAV==$val[scriptnav]} class="current"{/if}><a href="{url $val[url]}"{if $val[target]} target="$val[target]"{/if} onfocus="this.blur()">$val[title]</a></li>
+        <!--{/loop}-->
+         <li><a href="{url modoer/tool}" target="_blank" >结婚预算</a></li>
+        </ul>
+    </div>
+    <div class="header-submain">
+        <div class="header-search">
+            <form method="get" action="{URLROOT}/index.php" id="header-search-frm">
+                <input type="hidden" name="act" value="search" />
+                <input type="hidden" name="module_flag" value="item" />
+                <div class="search-select-box">
+                    <span class="J_select_list search-select" id="header-search-select" rel="header_search_types" params='{"offsets":{"x":"0","y":"-1"}}'>主题</span>
+                    <span class="select-box down"></span>
+                </div>
+                <input type="text" name="keyword" value="" class="input" x-webkit-speech="x-webkit-speech" />
+                <button type="submit" class="sobtn" name="submit" value="yes">搜索</button>
+            </form> 
+                      
+        </div>
+        <div class="header-operation">
+            {if check_module('product') && $_MODULES[product][extra]}
+                {eval $totalp = mc_product_cart::instance()->goods_count(); }
+                <span class="icomoon ic-yellow icon-cart"></span><a href="{url product/cart}">购物车 <strong id="cart_num">$totalp</strong> 件</a>
+            {/if}
+        </div>
+    </div>
+</div>
+<!-- 切换城市 下拉菜单 -->
+<div id="city_menu_box" class="comm-dropdown-city">
+    <ul>
+        <!--{eval $index=0;}-->
+        <!--{get:modoer val=citys(num/9)}-->
+        <li{if $_CITY[aid]==$val[aid]} class="current"{/if}><a href="{print:modoer cityurl(city_id/$val[aid])}">$val[name]</a></li>
+        <!--{eval $index++;}-->
+        <!--{/get}-->
+    </ul>
+    <!--{if $index>1}--><div class="morecitys"><a href="{url index/city}">全部城市&nbsp;&raquo;</a>&nbsp;</div><!--{/if}-->
+</div>
+<!-- 主题分类 下拉菜单 -->
+<div class="header-itemcate-list none" id="header_itemcate_list">
+    <ul class="itemcate-root-list">
+        <!--{eval $TPL_root_pids=array();}-->
+        <!--{get:item val=category(pid/0)}-->
+        <li><a href="{url item/list/catid/$val[catid]}" rel="header_itemcate_$val[catid]">{if $val[config][icon]}<img src="{URLROOT}/static/images/category/$val[config][icon]" />{/if}$val[name]</a></li>
+        <!--{eval $TPL_root_pids[] = $val['catid'];}-->
+        <!--{/get}-->
+    </ul>
+    <!--{if $TPL_root_pids}-->
+    <div class="itemcate-sub-list none">
+        <!--{loop $TPL_root_pids $_TPL_pid}-->
+        <ul id="header_itemcate_$_TPL_pid">
+            {get:item _val=category(pid/$_TPL_pid/num/20)}
+            <li><a href="{url item/list/catid/$_val[catid]}">{sublen $_val[name],7}</a></li>
+            {getempty(_val)}
+            <li>没有子分类</li>
+            {/get}
+            <div class="clear"></div>
+        </ul>
+        <!--{/loop}-->
+    </div>
+    <!--{/if}-->
+</div>
+<!-- 搜索类型选择 下啦菜单 -->
+<ul class="header-search-types none" id="header_search_types">
+    <li><a href="javascript:;" data="item">主题</a></li>
+    {if check_module('product')}
+    <li><a href="javascript:;" data="product">商品</a></li>
+    {/if}
+    <li><a href="javascript:;" data="review">点评</a></li>
+    <li><a href="javascript:;" data="article">资讯</a></li>
+    <li><a href="javascript:;" data="coupon">优惠券</a></li>
+    <li><a href="javascript:;" data="group">小组</a></li>
+</ul>
+<!-- 我的助手 下拉菜单 -->
+<ul id="assistant_menu_box" class="dropdown-menu">
+    {if check_module('product') && $_MODULES[product][extra]}
+    <li><a href="{url product/member/ac/m_order}">我的订单</a></li>
+    {/if}
+    <li><a href="{url member/index/ac/point}">我的积分</a></li>
+    <li><a href="{url space/new/uid/$user->uid}">婚礼主页</a></li>
+    <li><a href="{url member/index/ac/follow}">我的关注</a></li>
+    <li><a href="{url member/index/ac/task}">我的任务</a></li>
+    <li><a href="{url member/index/ac/myset}">个人设置</a></li>
+    <li><a href="{url member/index/ac/face}">修改头像</a></li>
+</ul>
+<!-- 主题管理 下拉菜单 -->
+<ul id="manage_menu_box" class="dropdown-menu">
+    {if check_module('product')}
+    <li><a href="{url product/member/ac/g_product}">产品管理</a></li>
+    {if $_MODULES[product][extra]}
+    <li><a href="{url product/member/ac/g_order}">订单管理</a></li>
+    {/if}
+    {/if}
+    {if check_module('tuan')}
+    <li><a href="{url tuan/member/ac/g_tuan}">团购管理</a></li>
+    {/if}
+    <li><a href="{url item/member/ac/g_album}">相册管理</a></li>
+    <li><a href="{url item/member/ac/g_guestbook}">留言管理</a></li>
+</ul>
+<!-- 添加信息 下拉菜单 -->
+<ul id="addact_menu_box" class="dropdown-menu">
+    <li><a href="{url item/member/ac/subject_add}">添加主题</a></li>
+    <li><a href="{url review/member/ac/add}">发表点评</a></li>
+    <li><a href="{url mylist/member/ac/manage/op/add}">添加榜单</a></li>
+    {if check_module('party')}
+    <li><a href="{url party/member/ac/party/op/add}">发起聚会活动</a></li>
+    {/if}
+    {if check_module('fenlei')}
+    <li><a href="{url fenlei/member/ac/manage/op/add}">发布分类信息</a></li>
+    {/if}
+</ul>
+<script type="text/javascript">
+$(document).ready(function() {
+    //头部菜单数量过多时进行折叠隐藏
+    var menu_size = 0;
+    var more_list = new Array();
+    var menu_num = $('.header-menu li').size();
+    $('.header-menu li').each(function(i) {
+        menu_size+=$(this).width();
+        if(menu_size > 810 || (menu_size > 720 && i-1 > menu_num)) {
+            more_list[i] = $(this).html();
+            $(this).remove();
+        }
+    });
+    if(more_list.length > 0) {
+        $('.header-menu').append('<li><a href="#" rel="header_menu_more" id="header_menu_hand">更多<span class="select-box"></span></a></li>');
+        var header_menu_more = $('<ul class="header-menu-more none" id="header_menu_more"></ul>');
+        for (var i = 0; i < more_list.length; i++) {
+            header_menu_more.append($('<li></li>').append(more_list[i]));
+        };
+        $(document.body).append(header_menu_more);
+    }
+    //全部分类下拉菜单初始化
+    $('.header-itemcate').mousemove(function() {
+        $('.itemcate-root-list li > a').removeClass('selected');
+        $('.itemcate-sub-list').hide();
+    });
+    $('.itemcate-root-list li > a').each(function(i) {
+        $(this).mouseover(function() {
+            $('.itemcate-root-list li > a').removeClass('selected');
+            $(this).addClass('selected');
+            var sublist = $('.itemcate-sub-list').show();
+            sublist.find('ul').hide();
+            var subpal = $('#'+$(this).attr('rel')).show();
+            var one = $('.itemcate-root-list li:first > a');
+            var top =$(this).offset().top - one.offset().top -1 ;
+            if(i>0) top -= $(this).parent().height();
+            $('.itemcate-sub-list').css({'top':top+'px'});
+        });
+    });
+    //搜索类型
+    $("#header_search_types li > a").each(function() {
+        $(this).click(function() {
+            $('#header-search-select').text($(this).text());
+            $('#header-search-frm').find('[name="module_flag"]').val($(this).attr('data'));
+            $('#header_search_types').hide();
+        });
+    });
+    //头部菜单更多
+    $("#header_menu_hand").powerFloat({
+        offsets:{x:0,y:-1},
+        position:"3-2",
+        showCall: function() {
+            $(this).addClass("current");    
+        },
+        hideCall: function() {
+            $(this).removeClass("current");
+        }
+    });
+    //需要下拉菜单JS控件初始化
+    $(".J_select_list").powerFloat();
+    //手机扫一扫
+    $('#scan_qrcode').mouseover(function() {
+        $(this).next().show();
+    }).mouseout(function(){
+        $(this).next().hide();
+    });
+});
+</script>
+<!-- 登录状态获取 -->
+<script type="text/javascript" src="{URLROOT}/static/javascript/login.js"></script>

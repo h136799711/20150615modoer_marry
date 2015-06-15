@@ -1,0 +1,42 @@
+{eval 
+    $_HEAD[title] = '商品分类大全';
+}
+{include mobile_template('header')}
+{include mobile_template('product_common')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-body">
+        <div class="panel-group" style="border-top:0;" id="subject_category">
+            {get:product val=gcategory(pid/0)}
+            <div class="panel-comm panel-white">
+                <div class="panel-heading">
+                    <h4>$val[name]</h4>
+                </div>
+                <div class="panel-collapse">
+                    <div class="subject-category-list">
+                        <a href="{url $nextpag/catid/$val[catid]}" class="subject-category-list-item">
+                            <span style="color:green;">全部</span>
+                        </a>
+                        {eval $i=2;}
+                        {get:product val2=gcategory(pid/$val[catid])}
+                        <a href="{url $nextpag/catid/$val2[catid]}" class="subject-category-list-item">
+                            {if $i++%3!='1'}<span class="bar"></span>{/if}$val2[name]
+                        </a>
+                        {/get}
+                        {eval $xc = 3-($i-1)%3; if($xc<3)for($ix=0;$ix<$xc;$ix++):}
+                        <a href="javascript:void(0);" class="subject-category-list-item">
+                            {if !$ix}<span class="bar"></span>{/if}&nbsp;
+                        </a>
+                        {eval endfor;}
+                    </div>
+                </div>
+            </div>
+            {/get}
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    $('#subject_category').m_collapse();
+});
+</script>
+{include mobile_template('footer')}

@@ -1,0 +1,15 @@
+<!--{eval $i=0;}-->
+<!--{dbres $list $val}-->
+<div class="wf-container">
+    <div class="wf-album">
+        <a href="{url item/mobile/do/pictures/albumid/$val[albumid]}">
+            <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name]" />
+        </a>
+        <div class="albumtitle">
+            <span>{$val[name]}</span>
+        </div>
+    </div>
+</div>
+<!--{/dbres}-->
+<!--{if $multipage}--><div class="multipage" id="multipage">$multipage</div><!--{/if}-->
+<!--{if $wf_multipage}--><div class="multipage" id="wf_multipage">$wf_multipage</div><!--{/if}-->

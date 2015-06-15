@@ -1,0 +1,39 @@
+<form method="post" action="{url member/index/ac/myset/op/change_email/in_ajax/1}" name="frm" id="frm">
+<table class="table" width="100%" border="0" cellpadding="0" cellspacing="0">
+    {if $user->email}
+    <tr>
+        <td align="right">获取操作验证码：</td>
+        <td>
+            <input type="text" name="op_seccode" id="op_seccode" class="t_input" style="width:150px;" />
+            <!--{if check_module('sms') && $user->mobile}-->
+            <button type="button" class="J_send_btn button" onclick="change_email_seccode_send('mobile');">手机短信获取</button>
+            <!--{/if}-->
+            <!--{if $user->email}-->
+            <button type="button" class="J_send_btn button" onclick="change_email_seccode_send('email');">原邮箱获取验证码</button>
+            <!--{/if}-->
+        </td>
+    </tr>
+    {/if}
+    <tr>
+        <td width="100" align="right">新邮箱帐号：</td>
+        <td width="*">
+            <input type="text" name="new_email" id="new_email" class="t_input" style="width:150px;" />
+            <button type="button" class="J_new_send_btn button" onclick="change_email_new_seccode_send($('#new_email').val());">新邮箱获取验证码</button>
+        </td>
+    </tr>
+    <tr>
+        <td height="30" align="right">新邮箱验证码：</td>
+        <td>
+            <input type="text" name="new_seccode" id="new_seccode" class="t_input" style="width:150px;" />
+        </td>
+    </tr>
+    <tr>
+        <td height="30"></td>
+        <td>
+            <input type="hidden" name="dosubmit" value="yes" />
+            <button type="button" class="button" onclick="ajaxPost('frm', '', 'document_reload');">提交</button>&nbsp;
+            <button type="button" class="button" onclick="dlgClose();">关闭</button>
+        </td>
+    </tr>
+</table>
+</form>

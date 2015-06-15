@@ -1,0 +1,14 @@
+<div class="content1">
+<form method="post" action="{url product/member/ac/m_order/op/order_confirm/in_ajax/1}" class="post" id="frm_orderconfirm" name="frm_orderconfirm" target="ajaxiframe">
+    <input type="hidden" name="orderid" value="$orderid" />
+    <input type="hidden" name="dosubmit" value="yes" />
+    <h1 class="font_2">您是否确已经收到以下订单的货品？</h1>
+    <p>订&nbsp;&nbsp;单&nbsp;&nbsp;号：<span>$detail[ordersn]</span></p>
+    <p>帐号密码：<span><input type="password" name="password" class="t_input" size="20" /></span></p>
+    <p style="color:#999;line-height:26px;">注意 : 如果你尚未收到货品请不要点击“确认”。大部分被骗案件都是由于提前确认付款被骗的，请谨慎操作！</p>
+    <div class="btn">
+        <button type="button" class="btn1" onclick="ajaxPost('frm_orderconfirm', '','document_reload');">确认</button>&nbsp;
+        <button type="button" class="btn1" onclick="dlgClose();">取消</button>
+    </div>
+</form>
+</div>

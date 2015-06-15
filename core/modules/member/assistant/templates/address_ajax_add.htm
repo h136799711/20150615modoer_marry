@@ -1,0 +1,28 @@
+<form method="post" action="{url member/index/ac/address/op/save/in_ajax/1}" class="post" id="frm_address" name="frm_address" target="ajaxiframe">
+    <table class="ajaxtable" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td width="92" align="right"><span class="font_1">*</span>收货人姓名：</td>
+            <td><input type="text" name="address[name]" class="t_input" /></td>
+        </tr>
+        <tr>
+            <td align="right"><span class="font_1">*</span>详细地址：</td>
+            <td><input type="text" name="address[addr]" class="t_input" size="50" /></td>
+        </tr>
+        <tr>
+            <td align="right">邮政编码：</td>
+            <td><input type="text" name="address[postcode]" class="t_input" /></td>
+        </tr>
+        <tr>
+            <td align="right"><span class="font_1">*</span>手机号码：</td>
+            <td><input type="text" name="address[mobile]" class="t_input" /></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center" style="padding-top:10px;">
+                <input type="hidden" name="address[is_default]" value="1" />
+                <input type="hidden" name="dosubmit" value="yes" />
+                <button type="button" class="button" onclick="ajaxPost('frm_address', '','document_reload');">保存该地址</button>&nbsp;
+                <button type="button" class="button" onclick="dlgClose();">关闭</button>
+            </td>
+        </tr>
+    </table>
+</form>

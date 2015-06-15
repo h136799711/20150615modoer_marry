@@ -1,0 +1,49 @@
+{eval 
+    $_HEAD[title] = '随便看看';
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <div class="fr">
+            <a href="javascript:void(0)" id="reload"><span class="label-comm label-mycolor label-big">换一批</span></a>
+        </div>
+        <select id="catid" name="catid">
+            {get:item val=category(pid/0)}
+            <option value="{url item/mobile/do/rand/catid/$val[catid]}"{if $catid==$val[catid]} selected="selected"{/if}>$val[name]</option>
+            {/get}
+        </select>
+    </div>
+    <div class="list-group list-group-insertmod item-subject-list" id="list_item">
+        {include mobile_template('item_list_li')}
+    </div>
+</div>
+<script>
+$(function() {
+    $('#catid').change(function() {
+        common_rand_subject('list_item',$(this).val());
+    });
+    $('#reload').click(function() {
+        setTimeout("common_rand_subject('list_item', '{url item/mobile/do/rand/catid/$catid}')", 300 );
+    });
+});
+
+var ajaxing = false;
+function common_rand_subject(boxid, url) {
+    if(ajaxing) return;
+    ajaxing = true;
+    url = url.url();
+    $('#reload > span').text('加载中');
+    $.post(url, { rand:Math.random(), in_ajax:1 }, function(result) {
+        $('#reload > span').text('换一批');
+        ajaxing = false;
+        if(result == null) {
+            alert('信息读取失败，请稍后尝试。');
+        } else if (is_message(result)) {
+            myAlert(result);
+        } else if(result != '') {
+            $('#'+boxid).empty().append(result);
+        }
+    });
+}
+</script>
+{include mobile_template('footer')}

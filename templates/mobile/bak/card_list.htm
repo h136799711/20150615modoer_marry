@@ -1,0 +1,64 @@
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <div class="fr">
+            <a href="javascript:;" id="filter_btn">
+                <span class="label-comm label-mycolor label-big">筛选</span>
+            </a>
+        </div>
+        <h3>$MOD[name]</h3>
+    </div>
+    <div class="list-group list-group-insertmod item-subject-list">
+        {if !$list}
+        <div class="list-group-item center">Sorry，没有找到任何信息。</div>
+        {/if}
+        {eval $i=0;}
+        {dbres $list $val}
+        <a href="{url item/mobile/do/detail/id/$val[sid]}" class="list-group-item">
+            <div class="richtxt-comm richtxt-img-defaultsize">
+                <div class="fl">
+                    <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name]" class="richtxt-img">
+                </div>
+                <div class="richtxt-body">
+                    <h4>$val[name]{if $val[subname]}($val[subname]){/if}</h4>
+                    <p class="txt-comm txt-small">
+                        <span class="start s{print get_star($val[avgsort],S('review:scoretype'))} start-txt">
+                            {if $catcfg[useprice] && $val[avgprice]}
+                                ￥$val[avgprice]
+                            {/if}
+                        </span><br>
+                        {if $val[discount]>0}<span>折扣：<span class="txt-red">$val[discount]</span> 折</span>{/if}
+                        {if $val[largess]}<span>优惠：$val[largess]</span>{/if}
+                    </p>
+                </div>
+            </div>
+        </a>
+        {/dbres}
+        {if $multipage}$multipage{/if}
+    </div>
+</div>
+<div class="panel-comm panel-default panel-fullsize none" id="filter_box">
+    <div class="panel-heading">筛选会员卡</div>
+    <div class="panel-body">
+        <div class="form-box">
+            <ul class="side_categorylist">
+                {get:item val=category(pid/0)}
+                <li><a {if $catid==$val[catid]}class="selected"{/if}href="{url card/mobile/do/list/catid/$val[catid]}">$val[name]</a></li>
+                {/get}
+            </ul>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    var drawer=null;
+    $('#filter_btn').click(function() {
+        if(!drawer) {
+            drawer = new $.m_drawer('#filter_box');
+        }
+        drawer.open();
+    });
+});
+</script>
+{include mobile_template('footer')}

@@ -1,0 +1,210 @@
+{eval
+	$_HEAD[title] = "个人设置";
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+	<div class="panel-body">
+		<div class="form-box">
+			<form action="{url member/mobile/do/myset/op/save}" method="POST">
+				<div class="form-item">
+					<label>手机号码：</label>
+					{if $usdmobile}
+						{if $user->mobile}
+						<span id="mymobile">
+							$user->mobile
+							<a href="javascript:change_mobile();"><span class="label-comm label-mycolor">更改</span></a>
+						</span>
+						{else}
+						<span id="mymobile">
+							未设置
+							<a href="javascript:change_mobile();"><span class="label-comm label-mycolor">添加</span></a>
+						</span>
+						{/if}
+					{else}
+						<span class="font_3">系统未开启手机短信功能</span>
+					{/if}
+				</div>
+				<div class="form-item">
+					<label>支付密码：</label>
+					<span id="paypw">
+						{if $user->paypw}
+						已设置（修改密码，请到电脑端修改）
+						{else}
+						未设置
+						<a href="javascript:create_paypw();"><span class="label-comm label-mycolor">创建支付密码</span></a>
+						{/if}
+					</span>
+				</div>
+				<div class="form-item">
+					<label>真实姓名：
+						<input name="profile[realname]" id="realname" placeholder="请输入真实姓名" value="$user->realname" type="text">
+					</label>
+				</div>
+				<div class="form-item">
+					<label>性别：</label>
+					<select name="profile[gender]" id="gender" style="display:block;">
+						<option value="0">保密</option>
+						<option value="1"{if $user->gender==='1'}selected="selected"{/if}>男性</option>
+						<option value="2"{if $user->gender==='2'}selected="selected"{/if}>女性</option>
+					</select>
+				</div>
+				<div class="form-item">
+					<label>生日：</label>
+					<input name="profile[birthday]" id="birthday" placeholder="格式：2012-8-1" value="$user->birthday" type="text">
+				</div>
+				<div class="form-item">
+					<label>QQ：</label>
+					<input name="profile[qq]" id="qq" placeholder="请输入QQ账号" value="$user->qq" type="text">
+				</div>
+				<div class="form-item">
+					<label>MSN：</label>
+					<input name="profile[msn]" id="msn" placeholder="请输入MSN账号" value="$user->msn" type="text">
+				</div>
+				<div class="form-item">
+					<label>地址：</label>
+					<input name="profile[address]" id="address" placeholder="请输入联系地址" value="$user->address" type="text">
+				</div>
+				<div class="form-item">
+					<label>邮编：</label>
+					<input name="profile[zipcode]" id="zipcode" placeholder="请输入地址邮编" value="$user->zipcode" type="text">
+				</div>
+				<div class="form-submit">
+					<div class="btn-group btn-group-auto">
+					<div class="btn-group">
+						<button type="submit" value="Y" name="dosubmit" class="btn btn-mycolor">提交</button>
+					</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="panel-comm panel-default none" id="newmobile_seccode">
+	<div class="panel-heading">更换手机号</div>
+	<div class="panel-body">
+		<div class="form-box">
+			<div class="form-item">
+				<input type="text" name="mobile" id="mobile" placeholder="请输入新手机号" style="width:160px;">
+				<a href="javascript:;" onclick="change_mobile_send();"><span class="label-comm label-mycolor">获取验证码</span></a>
+			</div>
+			<div class="form-item">
+				<input type="text" name="mobile" id="mobile" placeholder="请输入验证码" style="width:160px;">
+				<a href="javascript:;" onclick="change_mobile_check();"><span class="label-comm label-mycolor">提交验证码</span></a>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="panel-comm panel-default none" id="createpaywd">
+	<div class="panel-heading">创建支付密码</div>
+	<div class="panel-body">
+		<form method="post" action="{url member/mobile/do/myset/op/change_paypw}">
+		<div class="form-box">
+			<div class="form-item">
+				<input type="text" name="new" id="paypw" placeholder="请输入支付密码">
+			</div>
+			<div class="form-item">
+				<input type="text" name="new2" id="paypw2" placeholder="请再次输入支付密码">
+			</div>
+			<div class="form-submit">
+					<div class="btn-group btn-group-auto">
+						<input type="hidden" name="in_ajax" value="1">
+						<input type="hidden" name="dosubmit" value="yes">
+						<div class="btn-group">
+							<button type="button" class="btn btn-mycolor" data-type="submit">提交</button>
+						</div>
+						<div class="btn-group">
+							<button type="button" class="btn btn-default" data-type="close">关闭</button>
+						</div>
+					</div>
+			</div>
+		</div>
+		</form>
+	</div>
+</div>
+<script>
+var drawer = null;
+var drawer_pw = null;
+function change_mobile () {
+	if(!drawer) {
+		drawer = new $.m_drawer('#newmobile_seccode', {}, {});
+	}
+	drawer.open();
+}
+
+function change_mobile_send () {
+	var mobile = $('#mobile').val().trim();
+	if(!mobile) {
+		alert('对不起，您未填写手机号码。');
+		return;
+	}
+	$.post(Url('member/mobile/do/myset/op/check_mobile'), {mobile:mobile, in_ajax:1}, function(result) {
+		if (result=='OK') {
+			change_mobile_send_verify(mobile);
+		} else if(is_message(result)) {
+			myAlert(result);
+		} else {
+			alert(result);
+		}
+	});
+}
+
+function change_mobile_send_verify (mobile) {
+	$.post(Url('member/mobile/do/myset/op/send_mobile_seccode'), {mobile:mobile, in_ajax:1}, function(result) {
+		if (result=='OK') {
+			alert('手机号验证码已发送，请注意查收。');
+		} else if(is_numeric(result)) {
+			alert('请等待 '+result+' 秒后再发送验证码。');
+		} else if(is_message(result)) {
+			myAlert(result);
+		} else {
+			alert('手机号验证码发送失败。');
+		}
+	});
+}
+
+function change_mobile_check() {
+	var serial = $('#serial').val().trim();
+	if(!serial) {
+		alert('对不起，您未输入验证码。');
+		return;
+	}
+	$.post(Url('member/mobile/do/myset/op/check_mobile_seccode'), {serial:serial, in_ajax:1}, function(result) {
+		if (result=='OK') {
+			$('#mymobile').text($('#mobile').val().trim());
+			$('#newmobile_seccode').hide();
+			alert('手机验证成功！');
+			drawer.close();
+		} else if(is_message(result)) {
+			myAlert(result);
+		} else {
+			alert('手机验证失败！');
+		}
+	});
+}
+
+function create_paypw() {
+	if(!drawer_pw) {
+		drawer_pw = new $.m_drawer('#createpaywd', {}, {
+			onSubmit:function(drawer, area) {
+				var form = area.find('form');
+				var action = form.attr('action').url();
+				var params = form.serialize();
+				$.post(action, params, function(data, textStatus, xhr) {
+					console.debug(data);
+					if (data=='OK') {
+						alert('支付密码创建成功！');
+						$('#paypw').text('已创建');
+						drawer.remove();
+					} else if(is_message(data)) {
+						myAlert(data);
+					} else {
+						alert('支付密码创建失败！');
+					}
+				});
+			}
+		});
+	}
+	drawer_pw.open();
+}
+</script>
+{include mobile_template('footer')}

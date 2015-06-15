@@ -1,0 +1,69 @@
+<!--{eval 
+    $_HEAD['title'] = $subject[name].$subject[subname] . '的相册列表';
+}-->
+{template modoer_header}
+<script type="text/javascript">
+loadscript('swfobject');
+//页面加载结束后执行
+window.onload = function() {
+    //主题图片高度居中
+    $('div.J_subject_thumb').each(function() {
+        var height = $(this).height();
+        var img = $(this).find('img');
+        var top = Math.round((height - img.height()) /2);
+        img.css({"margin-top":top+'px'});
+    });
+}
+</script>
+<div id="body">
+
+<div class="link_path">
+    <em>
+        <!--{loop $links $i $link}-->
+        {if $i}<span class="xsplit"> | </span>{/if}
+        <a href="$link[url]"{if $link[flag]=='item/album'} style="color:#ff6600;"{/if}>$link[title]</a>
+        <!--{/loop}-->
+    </em>
+    <a href="{url modoer/index}">{lang global_index}</a>&nbsp;&raquo;&nbsp;{print implode('&nbsp;&raquo;&nbsp;', $urlpath)}
+</div>
+
+<div id="item_left">
+
+	<div class="mainrail rail-border-3">
+		<h3 class="rail-h-2 rail-h-bm-3">相册列表<span class="font_3">($total)</span></h3>
+		<ul class="albumlist">
+			{dbres $list $val}
+				<li>
+					<a href="{url item/album/id/$val[albumid]}">
+						<div class="J_subject_thumb">
+							{if $val[thumb]}
+							<img src="{URLROOT}/$val[thumb]" alt="$val[name]" title="$val[name]" />
+							{else}
+							<img src="{URLROOT}/static/images/noimg.gif" />
+							{/if}
+						</div>
+						<p>
+							<span>{sublen $val[name],15}</span>
+							<span>{date $val[lastupdate],'Y-m-d'}</span>
+						</p>
+					</a>
+				</li>
+			{/dbres}
+			<div class="clear"></div>
+		</ul>
+		<div class="clear"></div>
+	</div>
+
+</div>
+
+<div id="item_right">
+        <div class="mainrail rail-border-3">
+            <!--{template item_subject_side}-->
+        </div>
+</div>
+
+<div class="clear"></div>
+
+</div>
+
+<!--{eval footer();}-->

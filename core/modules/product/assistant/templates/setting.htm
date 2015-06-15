@@ -1,0 +1,63 @@
+{template modoer_header}
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+        <!--{eval !$mymenu && $mymenu = 'mmenu';}-->
+        <!--{template $mymenu,'member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3><cite>当前操作的主题:<span class="font_2">$_G[manage_subject][name]{if $_G[manage_subject][subname]}($_G[manage_subject][subname]){/if}</span>[<a href="javascript:void(0);" onclick="item_subject_manage();">更换</a>]</cite>商城设置</h3>
+                <div class="mainrail">
+                    <form method="post" name="myform" action="{url product/member/ac/$ac/$_G[random]}" onsubmit="return validator(this);">
+                    <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                        <tr>
+                            <td align="right" valign="top">不允许复制产品：</td>
+                            <td width="*">
+                            {print form_bool('copy_disable',$setting['copy_disable']);}<br />
+                            <span class="font_3">其他商家在添加产品时可以通过产品ID来复制对应的产品内容，简化发布同类产品效率。</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">买家指定发货时间：</td>
+                            <td width="*">
+                            {print form_bool('use_deliverytime',$setting['use_deliverytime']);}<br />
+                            <span class="font_3">由买家下单时指定发货日期。</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">当日发货截止时间:</td>
+                            <td>
+                                <!--{eval $hour=isset($setting['onedaydelivery_limit'])?$setting['onedaydelivery_limit']:16;}-->
+                                <input type="text" name="onedaydelivery_limit" value="$hour" class="t_input" size="5" />
+                                点之前，<span class="font_2">请输入0~23之间的数字(小时)</span><br />
+                                <span class="font_3">买家指定日期发货时使用；超过指定时间后，推迟到第二天发货；默认为16点之前。</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="120" align="right" valign="top">线下支付帐号：</td>
+                            <td width="*">
+                            <textarea name="offlinepay" class="txtarea" style="width:80%;height:80px;display:block;">{print _T($setting['offlinepay'])}</textarea>
+                            <span class="font_3">商家线下收款帐号，用于填写银行卡，邮局汇款；留空表示不使用线下支付。</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                                <input type="hidden" name="sid" value="$sid" />
+                                <button type="submit" name="dosubmit" value="yes" id="subbtn">提交</button>
+                            </td>
+                        </tr>
+                    </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="mybottom"></div>
+</div>
+
+<!--{eval footer();}-->

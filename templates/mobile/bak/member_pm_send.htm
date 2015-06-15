@@ -1,0 +1,46 @@
+{include mobile_template('header')}
+<div class="panel-comm">
+    <div class="panel-body">
+        <div class="form-box">
+            <form id="postform" name="postform" action="{url member/mobile/do/pm/op/send}" method="POST">
+                <div class="form-item">
+                    <label>发送对象(必填):</label>    
+                    <input name="recv_users" id="recv_users" placeholder="请输入对方昵称，多个用逗号分隔" value="$username" type="text" required>
+                </div>
+                <div class="form-item">
+                    <label>短信主题(必填):</label>    
+                    <input name="subject" id="subject" placeholder="请输入短信息的标题，限60个字" value="$subject" type="text" required>
+                </div>
+                <div class="form-item">
+                    <label for="review_content">短信内容(必填):</label>
+                    <textarea name="content" id="content" placeholder="请填写短信内容" required></textarea>
+                </div>
+                <div class="form-submit">
+                    <input type="hidden" name="dosubmit" value="Y">
+                    <div class="btn-group btn-group-auto">
+                        <div class="btn-group">
+                            <a class="btn btn-mycolor" href="javascript:" data-type="submit">提交</a>
+                        </div>
+                        <div class="btn-group">
+                            <a class="btn btn-default" href="javascript:" data-type="close">返回</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+$(function() {
+
+    $('[data-type="submit"]').click(function(){
+        $('#postform').submit();
+    });
+
+    $('[data-type="close"]').click(function(){
+        history.go(-1);
+    });
+
+});
+</script>
+{include mobile_template('footer')}

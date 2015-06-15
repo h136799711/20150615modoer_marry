@@ -1,0 +1,22 @@
+</div>
+<footer>
+    <div class="footer">
+        <div>
+            {if $user->isLogin}
+            <a href="{url member/mobile}">$user->username</a><span style="margin:0 10px;">|</span><a href="{url member/mobile/do/login/op/logout}">退出</a>
+            {else}
+            <a href="{url member/mobile/do/login}">登录</a><span style="margin:0 10px;">|</span><a href="{url member/mobile/do/reg}">注册</a>
+            {/if}
+            <span style="margin:0 10px 0 5px;">|</span><a href="{url mobile/index/goto/web}">电脑版</a>
+            <span style="margin:0 10px 0 5px;">|</span><a href="javascript:"onclick="$(window).scrollTop(0);">回顶部</a>
+        </div>
+        <div class="gray"></div>
+     </div>
+<!--{if DEBUG}-->
+{print $_G['db']->debug_print();}
+{print $_G['loader']->debug_print();}
+<!--{/if}-->
+</footer>
+</body>
+</html>
+<!--{eval output();}-->

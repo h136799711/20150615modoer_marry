@@ -1,0 +1,255 @@
+{include mobile_template('header')}
+{include mobile_template('product_common')}
+<div class="atab-box">
+
+    <div class="atab-box-nav">
+        <a class="atab-box-nav-link atab-box-nav-current" data-id="product_base" href="#">
+            <span>基本信息</span>
+        </a>
+        <a class="atab-box-nav-link" data-id="product_info" href="#">
+            <span>商品详情</span>
+        </a>
+    </div>
+
+    <div class="atab-box-area">
+
+        <div class="atab-box-area-dispay" id="product_base">
+            <div class="panel-comm product-image-group">
+                {eval $piccount=0;}
+                {loop $detail[pictures] $title $pic}
+                {eval $piccount++;}
+                    {if $piccount==1}
+                    <div class="product-image-heading">
+                        <img src="{img $pic}" alt="$title" title="$title" class="J_img">
+                    </div>
+                    {/if}
+                    <input type="hidden" data-url="{img $pic}" name="goods_images">
+                {/loop}
+                {if $piccount>1}
+                <ul class="product-image-index">
+                    {eval $piccount=0;}
+                    {loop $detail[pictures] $title $pic}
+                    {eval $piccount++;}
+                    <li class="product-image-index-li{if $piccount==1} on{/if}"></li>
+                    {/loop}
+                </ul>
+                {/if}
+                {if !$detail[pictures]}
+                <div class="product-image-heading">
+                    <img src="{img static/images/noimg.gif}" />
+                </div>
+                {/if}
+            </div>
+            <div class="panel-comm panel-default panel-fullsize">
+                <ul class="list-group list-group-insertmod">
+                    <li class="list-group-item list-noborder">
+                        <div class="fr">
+                            <span class="txt-comm txt-small txt-grey">
+                                剩余：<span id="stock">$detail[stock]</span> 件
+                            </span>
+                        </div>
+                        <b class="txt-red">&yen;{$myprice}</b>
+                        {if $myprice < $detail['price']}
+                        <s class="txt-grey txt-small">&yen;$detail[price]</s>
+                        {/if}
+                    </li>
+                    <li class="list-group-item product-detail-subject ">
+                        <b>$detail[subject]</b>
+                    </li>
+                    <li class="list-group-item" id="service">
+                        {if $detail['p_style']==2}
+                            <span class="label-comm label-mycolor">自动发货</span>
+                        {else}
+                            {if $detail[is_cod]}<span class="label-comm label-primary">货到付款</span>{/if}
+                            {if !$detail[freight]}<span class="label-comm label-mycolor">卖家承担运费</span>{/if}
+                        {/if}
+                        {if $detail[giveintegral] && S('product:pointgroup')}
+                            <span class="label-comm label-warning">赠送积分</span>
+                        {/if}
+                    </li>
+                </ul>
+                {if !$ownerid || $ownerid > 0 && $ownerid != _G('user')->uid}
+                <div class="product-buy-buttons">
+                    <input type="hidden" id="product_id" value="$id">
+                    <input type="hidden" id="product_stock" value="$detail[stock]">
+                    <input type="hidden" id="product_style" value="$detail[p_style]">
+                    <a class="btn btn-mycolor" id="once_btn" href="{url product/mobile/do/cart/op/once/id/$detail[pid]}">立刻购买</a>
+                    <!--{if $detail['p_style']==2}-->
+                    <a class="btn btn-default txt-gray" href="javascript:alert('虚拟物品请直接购买。');">加入购物车</a>
+                    <!--{else}-->
+                    <a class="btn btn-success" href="javascript:" id="add_cart_btn">加入购物车</a>
+                    <!--{/if}-->
+                </div>
+                {else}
+                <div class="mt10"></div>
+                {/if}
+                <div class="list-group list-group-insertmod mb10">
+                    <a href="{url product/mobile/do/shop/sid/$subject[sid]}" class="list-group-item">
+                        <div class="fr">
+                            <span class="arrow"></span>
+                        </div>
+                        $subject[name]{if $subject[subname]}($subject[subname]){/if}
+                        {if $subject[address]||$subject[c_address]}
+                        <p class="txt-comm txt-small txt-grey">
+                            地址:
+                            $subject[address]
+                            $subject[c_address]
+                        </p>
+                        {/if}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="atab-box-area-dispay none" id="product_info">
+            <div class="txt-comm txt-richtxt picture-content">
+
+                <table class="detail_field" border="0" cellspacing="0" cellpadding="0">
+                    {if $detail[weight]}
+                    <tr>
+                        <td class="key" align="right">重量：</td>
+                        <td width="*">$detail[weight] 克</td>
+                    </tr>
+                    {/if}
+                    {if $detail[shape_code]}
+                    <tr>
+                        <td class="key" align="right">条形码：</td>
+                        <td width="*">$detail[shape_code]</td>
+                    </tr>
+                    {/if}
+                    $detail_field
+                </table>
+            
+                $detail[content]
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="panel-comm panel-default none" id="buy_box">
+    <div class="panel-heading">购买选项</div>
+    <div class="panel-body">
+        <div class="form-box">
+            <div class="form-item">
+                <label>购买数量:</label>
+                <input type="number" name="quantity" s placeholder="请输入购买数量" value="1" min="1" max="$product[stock]" style="width: 100%;">
+                <div class="clear"></div>
+            </div>
+            {get:product attrs=get_buyattr(pid/$detail['pid'])}
+            <div class="form-item">
+                <label>{$attrs[name]}：</label>
+                <select data-type="buyattr_select" data-id="$attrs[id]" data-name="$attrs[name]">
+                    <option value="-1">选择商品{$attrs[name]}</option>
+                    {loop $attrs[value] $i $attr_val}
+                    <option value="$i">$attr_val</option>
+                    {/loop}
+                </select>
+            </div>
+            {/get}
+            <div class="form-submit">
+                <div class="btn-group btn-group-auto">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-mycolor" data-type="submit">提交</button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" data-type="close">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe.js"></script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe_srceen.js"></script>
+<script>
+$(document).ready(function() {
+
+    $('.atab-box').m_nav();
+
+    var tm_distance = 0;
+    $('div.product-image-heading > img').click(function() {
+        swipe_srceen('div.product-image-group', 'input[name="goods_images"]', 0);
+    });
+
+    if(!$('#service > span').length) {
+        $('#service > span').hide();
+    }
+
+    //购物车处理
+    cart();
+});
+
+var cart = function() {
+    var id = Number($('#product_id').val()); //产品ID
+    var stock = Number($('#product_stock').val()); //库存
+    var style = Number($('#product_style').val()); //类型1：实物2：虚拟
+    var btn_type = ''; //once or cart
+
+    function add_cart_callback(cid, quantity, buyattr) {
+        if(btn_type=='once') {
+            jslocation(Url('product/mobile/do/order/cids/'+cid));
+        } else {
+            stock -= quantity;
+            $('#stock').val(stock);
+            $('#product_stock').text(stock);
+            if(window.confirm('成功将该商品加入购物车！是否进入购物车页面？')) {
+                jslocation(Url('product/mobile/do/cart'));
+            } else {
+                mdrawer.close();
+            }
+        }
+    }
+
+    //加入到购物车
+    function add_cart(quantity, buyattr) {
+        if(1 > stock) {
+            alert('无法添加到购物车，产品库存不足。');
+            return;
+        }
+        $.post(Url('product/cart/op/add'), {'pid':id, buyattr:buyattr, 'num':quantity, in_ajax:1 }, 
+        function(result) {
+            if(is_message(result)) {
+                myAlert(result);
+            } else if(is_numeric(result.trim())) {
+                var cid = result.trim();
+                add_cart_callback(cid);
+            } else {
+                console.debug(result);
+                alert('产品读取失败，可能网络忙碌，请稍后尝试。');
+            }
+        });
+    }
+
+    mdrawer = new $.m_drawer('#buy_box', {}, {
+        //提交对话框表单
+        onSubmit:function(obj, applybox) {
+            var quantity = parseInt(applybox.find('input[name="quantity"]').val());
+            if(!is_numeric(quantity) || quantity < 0) {
+                alert('未填写购买数量。');
+            } else if(quantity > stock) {
+                alert('库存不足，商品库存仅剩'+stock+'件。');
+            } else {
+                var buyattr = '';
+                applybox.find('[data-type="buyattr_select"]').each(function() {
+                    var _select = $(this);
+                    buyattr += (buyattr?';':'')+_select.data('id')+':'+_select.val();
+                });
+                add_cart(quantity, buyattr);
+            }
+            return false;
+        }
+    });
+
+    $('#add_cart_btn').click(function(event) {
+        event.preventDefault();
+        btn_type = 'cart';
+        mdrawer.open();
+    });
+    $('#once_btn').click(function(event) {
+        event.preventDefault();
+        btn_type = 'once';
+        mdrawer.open();
+    });
+};
+</script>
+{include mobile_template('footer')}

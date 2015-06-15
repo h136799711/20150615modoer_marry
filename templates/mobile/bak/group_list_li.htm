@@ -1,0 +1,31 @@
+{if !$list}
+<div class="list-group-item center">Sorry，没有找到数据。</div>
+{/if}
+{dbres $list $val}
+<a href="{url group/mobile/do/group/id/$val[gid]}" class="list-group-item">
+    <div class="richtxt-comm">
+        <div class="fl">
+        {eval if(!$val[icon]) $val['icon']='static/images/z_noimg.gif';}
+            <img src="{URLROOT}/$val[icon]" alt="$val[groupname]" class="richtxt-img">
+        </div>
+        <div class="richtxt-body">
+            <h4>
+                $val[groupname]
+                <span class="txt-small">
+                    {if $val[auth]==1}<span class="txt-red">[官]</span>{/if}
+                    {if $val[finer]==1}<span class="txt-success">[荐]</span>{/if}
+                </span>
+            </h4>
+            <div class="txt-comm txt-grey txt-small">
+                有 $val[members] 个成员{if $val[username]}
+                <span class="split"></span>
+                组长：$val[username]{/if}
+                <p>
+                    <!--{sublen strip_tags($val[des]),50,'...'}-->
+                </p>
+            </div>
+        </div>
+    </div>
+</a>
+{/dbres}
+{if $multipage}$multipage{/if}

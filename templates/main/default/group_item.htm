@@ -1,0 +1,37 @@
+<!--{eval
+    $_HEAD['title'] = $subject[name]."的关联小组";
+}-->
+{template modoer_header}
+<div id="body" style="margin-top:10px;">
+    <div class="discussion_left">
+        <div class="mainrail rail-border-3" style="padding-bottom:10px;">
+            <h3 class="rail-h-3 rail-h-bg-3" style="position:relative;">
+                共有 <span class="font_2">$total</span> 个小组
+            </h3>
+            {if $total > 0}
+            {template group_part_list}
+            {/if}
+        </div>
+        {if $multipage}<div class="multipage">$multipage</div>{/if}
+    </div>
+    <div class="discussion_right">
+        <script type="text/javascript">loadscript('item');</script>
+        <div class="mainrail rail-border-3">
+            <h2 class="rail-h-2"><b><a href="{url item/detail/id/$subject[sid]}"><span class="font_2">$subject[name]&nbsp;$subject[subname]</span></a></b></h2>
+            <div class="side_subject">
+                <!--{eval $reviewcfg = $_G['loader']->variable('config','review');}-->
+                <p class="start start{print get_star($subject[avgsort],$reviewcfg[scoretype])}"></p>
+                <table class="side_subject_field_list" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td colspan="2"><span class="font_2">$subject[reviews]</span>点评,
+                        <span class="font_2">$subject[guestbooks]</span>留言,
+                        <span class="font_2">$subject[pageviews]</span>浏览</td>
+                    </tr>
+                    $subject_field_table_tr
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--{eval footer();}-->

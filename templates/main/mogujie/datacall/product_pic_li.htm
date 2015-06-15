@@ -1,0 +1,19 @@
+
+<UL>
+<!--{loop $_QUERY[mydata] $key $val}-->
+						 <LI><A class=fl 
+  href="{url product/detail/pid/$val[pid]}" 
+  target=_blank><IMG class=r5 
+  src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/s_noimg.gif{/if}"></A> 
+
+  <H4 class=ag_t><A class=glink 
+  href="{url product/detail/pid/$val[pid]}" 
+  target=_blank>{sublen $val[subject],14}</A></H4>
+  <P  class="start{print get_star($val[grade], 5)}"  style="height: 16px;
+    line-height: 16px;
+    overflow: hidden; float:left; width:180px"></P>
+	  <P  style="height: 16px;line-height: 16px;overflow: hidden; float:left">{sublen $val[description],20,'...'}</P>
+	</LI>
+                                <!--{/loop}-->
+						
+						</UL>

@@ -1,0 +1,149 @@
+{include mobile_template('header')}
+<div id="mylist-detail" class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <a href="javascript:;" data-name="show_party_des"><h3>$detail[title]</h3></a>
+    </div>
+    <div class="panel-body none" data-name="dv_party_des">
+        <p class="txt-comm">
+            $detail[intro]
+        </p>
+        <div class="fr">
+            <span data-name="lbl_favorite"><a href="javascript:;">收藏</a><span class="txt-small">($detail[favorites])</span></span>
+            <span data-name="lbl_flower"><a href="javascript:;">鲜花</a><span class="txt-small">($detail[flowers])</span></span>
+            <span data-name="lbl_respond">回应<span class="txt-small">($detail[responds])</span></span>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="list-group list-group-insertmod item-subject-list mylist-detail-subjects" id="data_container">
+        <!--{if $list}-->
+            {include mobile_template('mylist_detail_item_li')}
+        <!--{else}-->
+            <li class="list-group-item center">Sorry，榜主还没有来得及添加主题。</li>
+        <!--{/if}-->
+    </div>
+</div>
+
+<div id="page_container" class="mb10"></div>
+<!--{hook 'load_comment', $comment_cfg}-->
+<script>
+$(function() {
+    var drawers = new Array();
+    $('#page_container').m_ajaxpage({
+        container:'#data_container',
+        onInit:function(page, container) {
+            container.find('span[data-name="a_excuse"]').each(function() {
+                var link = $(this);
+                if(!link.data('bind')) {
+                    var id = link.data('id');
+                    link.click(function() {
+                        if(!drawers[id]) {
+                            var excuse = link.parent().find('div.[data-name="dv_excuse"]');
+                            drawers[id] = new $.m_drawer(excuse);   
+                        }
+                        drawers[id].open();
+                        return false;
+                    });
+                    link.data('bind', true);
+                }
+            });
+        }
+    });
+    /*
+    window.setTimeout(function() {
+        $('div.[data-name="dv_party_des"]').slideToggle('fast');
+    }, 1500);
+    */
+    var mylist_id = $detail['id'];
+
+    $('a.[data-name="show_party_des"]').click(function(event) {
+        $('div.[data-name="dv_party_des"]').slideToggle('fast');
+    });
+    $('span.[data-name="lbl_favorite"]').click(function(event) {
+        favorite_add(mylist_id);
+    });
+    $('span.[data-name="lbl_flower"]').click(function(event) {
+        flower_add(mylist_id);
+    });
+
+    var intro_box = $('div.intro');
+    var intro_p = intro_box.find('p');
+    if(intro_box.height()>50) {
+        var expand = $('<a href="#">点击展开</a>').addClass('expand');
+        intro_box.append(expand);
+        intro_box.height(35);
+        intro_box.click(function() {
+            if(intro_box.height()>50) {
+                intro_box.height(35);
+                expand.show();
+            } else {
+                intro_box.css('height','auto');
+                expand.hide();
+            }
+        });
+    }
+});
+
+function favorite_add(mylist_id) {
+    if(!is_id(mylist_id, '榜单ID')) return;
+    $.post(Url("mylist/member/ac/manage/op/favorite/do/add"), { 'id':mylist_id, 'in_ajax':1 }, function (data) {
+        if(is_numeric(data)) {
+            $('span.[data-name="lbl_favorite"]').find('span').text('('+data+')');
+             alert('收藏成功!');
+        } else if(data == "yet") {
+            favorite_del(mylist_id);
+        } else if(is_message(data)) {
+            myAlert(data);
+        } else {
+            alert('对不起，系统错误。');
+        }
+    });
+}
+
+function favorite_del(mylist_id) {
+    if(!confirm('榜单已经收藏，是否要取消收藏？')) return;
+    $.post(Url("mylist/member/ac/manage/op/favorite/do/del"), { 'id':mylist_id, 'in_ajax':1 }, function (data) {
+        if(is_numeric(data)) {
+            $('span.[data-name="lbl_favorite"]').find('span').text('('+data+')');
+            alert('已取消榜单收藏!');
+        } else if(is_message(data)) {
+            myAlert(data);
+        } else {
+            alert('对不起，系统错误。');
+        }
+    });
+}
+
+
+//赠送鲜花
+function flower_add(mylist_id) {
+    if(!is_id(mylist_id, '榜单ID')) return;
+    $.post(Url("mylist/member/ac/manage/op/flower/do/add"), { 'id':mylist_id, 'in_ajax':1 }, function (data) {
+        if(is_numeric(data)) {
+            alert('赠送成功!');
+            $('span.[data-name="lbl_flower"]').find('span').text('('+data+')');
+        } else if(data == "yet") {
+            flower_del(mylist_id);
+        } else if(is_message(data)) {
+            myAlert(data);
+        } else {
+            alert('对不起，系统错误。');
+        }
+    });
+}
+
+//删除鲜花
+function flower_del(mylist_id, show_id) {
+    if(!confirm('已经赠送过鲜花，是否要取消赠送？')) return;
+    $.post(Url("mylist/member/ac/manage/op/flower/do/del"), { 'id':mylist_id, 'in_ajax':1 }, function (data) {
+        if(is_numeric(data)) {
+            $('span.[data-name="lbl_flower"]').find('span').text('('+data+')');
+            alert('已取消赠送鲜花!');
+        } else if(is_message(data)) {
+            myAlert(data);
+        } else {
+            alert('对不起，系统错误。');
+        }
+    });
+}
+</script>
+{include mobile_template('footer')}

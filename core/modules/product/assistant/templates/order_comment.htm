@@ -1,0 +1,78 @@
+{template modoer_header}
+<script type="text/javascript">
+function return_product_list() {
+    $.post(Url('product/member/ac/m_order/op/commented'), {'orderid':'$orderid', 'pid':'$pid', 'in_ajax':1 }, 
+        function(result) {
+            jslocation("{print get_forward()}");
+            // if(result == 'OK') {
+            //     //set_commented
+            // }
+    });
+}
+</script>
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+        <!--{eval $mymenu = 'menu';}-->
+        <!--{template $mymenu,'member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3>产品评价</h3>
+                <div class="mainrail">
+                    <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                        <tr>
+                            <td>
+                                <table width="100%" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td width="80" align="right">
+                                            <img src="{URLROOT}/{if $product[goods_image]}$product[goods_image]{else}static/images/noimg.gif{/if}" width="50" height="50" />
+                                        </td>
+                                        <td width="*" style="padding-left:10px;">
+                                            <div>
+                                                <a href="{url product/detail/id/$product[pid]}" target="_blank">$product[pname]</a>
+                                            </div>
+                                            <div>
+                                                <span class="font_1">&yen;$product[price]</span>
+                                                <span class="font_3">此产品信息和价格为下单时的商品价格信息，属订单快照</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_comment.css");</style>
+                                <script type="text/javascript" src="{URLROOT}/static/javascript/comment.js"></script>
+                                <!--{eval
+                                    $nextjsfun = 'return_product_list';
+                                    $cfg = $_G['loader']->variable('config','comment');
+                                }-->
+                                <!--{if $user->check_access('comment_disable', $_G['loader']->model(':comment'), false)}-->
+                                <!--{if $MOD[post_comment] && !$cfg['disable_comment']}-->
+								<!--{eval
+								    $idtype = 'product';
+								    $id = $pid;
+								    $extra_id = $orderid;
+								    $title = 'Re:' . $product[pname];
+								    $enable_grade = true;
+								}-->
+                                {template comment_post}
+                                <!--{else}-->
+                                <div class="messageborder">评论已关闭</div>
+                                <!--{/if}-->
+                                <!--{/if}-->
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <div class="clear"></div>
+</div>
+<div class="mybottom"></div>
+</div>
+<!--{eval footer();}-->

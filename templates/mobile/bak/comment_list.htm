@@ -1,0 +1,59 @@
+{include mobile_template('header')}
+<script>
+    var page_name = 'comment_list';
+</script>
+<div class="comment-box panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+       <h3>评论：$title</h3>
+    </div>
+    <div class="list-group list-group-insertmod comment-list" id="commentlist">
+        {include mobile_template('comment_list_loop')}
+    </div>
+    <div id="page_container" class="mb10"></div>
+</div>
+<!--{if $access && $enable_post}-->
+<div id="comment_form" class="none">
+    {include mobile_template('comment_post')}
+</div>
+<!--{/if}-->
+<div class="comment-fixed fixed-bottom">
+    <div class="panel-comm panel-default">
+        <div class="panel-body">
+            <div class="fr">
+                <!--{if $access && $enable_post}-->
+                <a href="javascript:;" data-name="post_comment"><span class="label-comm label-mycolor label-big">发表评论</span></a>
+                <!--{elseif !$enable_post}-->
+                <span class="txt-grey">评论已关闭</span>
+                <!--{elseif !$user->isLogin}-->
+                <a href="{url member/mobile/do/login}"><span class="label-comm label-mycolor label-big">登录</span></a>
+                <a href="{url member/mobile/do/reg}"><span class="label-comm label-mycolor label-big">注册</span></a>
+                <!--{/if}-->
+            </div>
+            <span class="txt-grey">{if $total}共有 {$total} 条评论{else}暂无评论{/if}</span>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+
+    $(document.body).css("margin-bottom",$('div.comment-fixed').height());
+    $('#page_container').m_ajaxpage({
+        container:'#commentlist',
+        onInit:function(page, container) {
+            init_reply_event();
+        }
+    });
+
+    var drawer = null;
+    $('a.[data-name="post_comment"]').click(function() {
+        $('#frm_comment_box').find('[data-name="seccode"]').m_seccode();
+        if(!drawer) drawer = new $.m_drawer('#frm_comment_box', {type:'float-bottom'});
+        drawer.open(function(obj, area) {
+            if(!obj.is_first_open) {
+                area.find('[data-name="seccode"] > img').click();
+            }
+        });
+    });
+});
+</script>
+{include mobile_template('footer')}

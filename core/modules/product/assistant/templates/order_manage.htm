@@ -1,0 +1,127 @@
+{template modoer_header}
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_product_mem.css");</style>
+<script type="text/javascript" src="{URLROOT}/static/javascript/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/item.js"></script>
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+        <!--{eval !$mymenu && $mymenu = 'mmenu';}-->
+        <!--{template $mymenu,'member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3><cite>当前操作的主题:<span class="font_2">$_G[manage_subject][name]{if $_G[manage_subject][subname]}($_G[manage_subject][subname]){/if}</span>[<a href="javascript:void(0);" onclick="item_subject_manage();">更换</a>]</cite>商品订单管理</h3>
+                <div class="mainrail">
+                    <!--{if !$sid}-->
+                    <table width="95%" cellspacing="0" cellpadding="0" class="maintable">
+                        <tr>
+                            <td width="100" align="right"><span class="font_1">*</span>所属主题：</td>
+                            <td width="*"><select name="sid" id="sid"{if $detail[sid]} disabled="disabled"{/if} onchange="location.href=Url('product/member/ac/$ac/op/$op/sid/'+this.value);">
+                                    <option value="0" style="color:#CC0000">==选择产品主题==</option>
+                                    <!--{print form_item_mysubject($user->uid, $sid)}-->
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <!--{else}-->
+                    <ul class="tab">
+                        <li{if !$status} class="active"{else} class="normal"{/if}><a href="{url product/member/ac/$ac/sid/$sid}">所有订单</a></li>
+                        <!--{loop $status_name $k $v}-->
+                        <li{if $status==$k} class="active"{else} class="normal"{/if}><a href="{url product/member/ac/$ac/sid/$sid/ordersn/$ordersn/starttime/$starttime/endtime/$endtime/buyername/$buyername/status/$k}">$v</a></li>
+                        <!--{/loop}-->
+                    </ul>
+                    <div class="scarch_order">
+                        <form name="form" method="get" action="{URLROOT}/index.php">
+                        <input type="hidden" name="m" value="product" />
+                        <input type="hidden" name="act" value="member" />
+                        <input type="hidden" name="ac" value="g_order" />
+                        <input type="hidden" name="sid" value="$sid" />
+                        <div style="float:left;">
+                            <span>订单号:</span>
+                            <input class="text_normal" size="25" name="ordersn" value="$ordersn" />
+                            <select name="timetype">
+                                <option value="paytime"{if $timetype=='paytime'} selected="selected"{/if}>付款时间</option>
+                                <option value="addtime"{if $timetype=='addtime'} selected="selected"{/if}>下单时间</option>
+                            </select>
+                            <input class="text_normal width2" type="text" name="starttime" id="starttime" value="$starttime" onfocus="WdatePicker({doubleCalendar:true,maxDate:'%y-%M-{%d-1}',dateFmt:'yyyyMMdd'})" /> – <input class="text_normal width2" id="endtime" type="text" name="endtime" value="$endtime" onfocus="WdatePicker({doubleCalendar:true,maxDate:'%y-%M-%d',dateFmt:'yyyyMMdd'})" />
+                            <span class="title">买家:</span>
+                            <input class="text_normal" type="text" name="buyername" value="$buyername" />
+                            <input type="submit" class="btn" value="搜索" />
+                        </div>
+                        </form>
+                    </div>
+                    <div class="clear"></div>
+                    <!--{if $total}-->
+                    <!--{dbres $list $val}-->
+                    <div class="order_form mt">
+                        <h2>
+                            <p class="num">订单号: $val[ordersn]</p>
+                            <p class="name">
+                                <span>店铺名: <a href="{url product/shop/sid/$val[sid]}" target="_blank">$val[name].$val[subname]</a></span>
+                            </p>
+                            <p class="state">订单状态: <strong>{print lang('product_status_'.$val['status'])}</strong></p>
+                        </h2>
+                        <!--{get:product _val=getproduct(orderid/$val[orderid])}-->
+                        <div class="con">
+                            <p class="ware_pic">
+                                <a href="{url product/detail/pid/$_val['pid']}" target="_blank">
+                                    {eval $image=$_val[goods_image]?$_val[goods_image]:'static/images/noimg.gif';}
+                                    <img src="{img $image}" width="50" height="50"  />
+                                </a>
+                            </p>
+                            <p class="ware_text">
+                                <a href="{url product/detail/pid/$_val['pid']}" target="_blank">$_val[pname]</a>
+                                {eval $buyattr = $_val['buyattr']?unserialize($_val['buyattr']):array();}
+                                {loop $buyattr $attr}
+                                <span class="font_3">{$attr[name]}:{$attr[value]}</span>&nbsp;
+                                {/loop}
+                            </p>
+                            <p class="price">价格: <span>&yen;$_val[price]</span></p>
+                            <p class="amount">数量: <span>$_val[quantity]</span></p>
+                        </div>
+                        <!--{/get}-->
+                        <div class="foot">
+                            <p class="time">
+                                <span>买家: <a href="{url space/index/uid/$val[buyerid]}">$val[buyername]</a></span>
+                                下单时间: {date $val[addtime],'Y-m-d H:i:s'}
+                                {if $val[is_cod]}
+                                    &nbsp;<span class="font_2">货到付款</span>
+                                    {if $val[status]=='1'}(尚未要求发货){/if}
+                                {/if}
+                            </p>
+                            <div class="handle">
+                                <div style="float:left;">
+                                    订单总价: <b>&yen;$val[order_amount]</b>
+                                </div>
+                                {if $val[status]=='1'}
+                                    <a href="javascript:;"onclick="change_amount($val[orderid]);" class="btn1">调整费用</a>
+                                    {if !$val[is_cod]}
+                                    <a href="javascript:;"onclick="product_offline_pay('$val[ordersn]','$val[orderid]');" class="btn1">线下支付</a>
+                                    {/if}
+                                {/if}
+                                {if $val[status]==2||$val[status]==3}<a href="javascript:;"onclick="change_ship($val[orderid]);" class="btn1">发货</a>{/if}
+                                {if $val[status]==4&&$val['orderstyle']!='2'}<a href="javascript:;"onclick="edit_ship($val[orderid]);" class="btn1">修改单号</a>{/if}
+                                {if $val[status]<5}<a href="javascript:;"onclick="cancel_order($val[orderid]);" class="btn1">取消订单</a>{/if}
+                                <a href="{url product/member/ac/g_order/op/detail/orderid/$val[orderid]}" target="_blank" class="btn1">查看订单</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--{/dbres}-->
+                    <!--{else}-->
+                    <div class="messageborder"><span class="msg-ico">暂无订单！</span></div>
+                    <!--{/if}-->
+                    <!--{if $total}-->
+                    <div class="multipage">$multipage</div>
+                    <!--{/if}-->
+                    <!--{/if}-->
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="mybottom"></div>
+</div>
+
+<!--{eval footer();}-->

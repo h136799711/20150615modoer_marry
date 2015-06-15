@@ -1,0 +1,246 @@
+{include mobile_template('header')}
+{include mobile_template('product_common')}
+<div class="panel-comm">
+    <div class="form-box">
+        <form action="{url product/mobile/do/pay}" method="post" name="pay_form">
+            <input type="hidden" name="orderid" value="$orderid">
+            <div class="list-group list-group-insertmod">
+                <div class="list-group-heading">
+                    商品清单
+                </div>
+                {loop $goods $gds}
+                <a class="list-group-item txt-small" href="{url product/mobile/do/detail/id/$gds[pid]}">
+                    <div class="fr">
+                        &yen;{$gds[price]} × {$gds[quantity]}
+                        <span class="arrow"></span>
+                    </div>
+                    <h4>$gds[pname]</h4>
+                    <p class="txt-comm txt-small txt-grey">
+                        {eval $buyattr = $gds['buyattr']?unserialize($gds['buyattr']):array();}
+                        {loop $buyattr $attr}
+                        <span>{$attr[name]}:{$attr[value]}</span>&nbsp;
+                        {/loop}
+                    </p>
+                </a>
+                {/loop}
+
+                <div class="list-group-borderitem mt10">
+                    <div class="list-group-item noborder">
+                        <div class="fr"><span class="txt-small">&yen;$order[goods_amount]</span></div>
+                        商品金额
+                    </div>
+                    <div class="list-group-item noborder">
+                        <div class="fr"><span class="txt-small">&yen;{print $order[order_amount]+$order[integral_amount]-$order[goods_amount]}</span></div>
+                        运费
+                    </div>
+                    <div class="list-group-item noborder">
+                        <div class="fr"><span class="txt-small">- &yen;$order[integral_amount]</span></div>
+                        积分抵换
+                    </div>
+                    <div class="list-group-item">
+                        <div class="fr"><span class="txt-red">&yen;$order[order_amount]</span></div>
+                        应支付金额
+                    </div>
+                </div>
+
+                <div class="list-group-item mt10">
+                    <div>
+                        <div class="fr">
+                            <span class="txt-small txt-grey">Tel：$ship[mobile]</span>
+                        </div>
+                        <span data-name="name">$ship[username]</span>
+                    </div>
+                    <span class="txt-small txt-grey" data-name="addr">$ship[address]</span>
+                </div>
+                <!--{if $order[remark]}-->
+                 <div class="list-group-item">
+                    <h4>给卖家附言</h4>
+                    <p class="txt-comm txt-small txt-grey">$order[remark]</p>
+                </div>
+                <!--{/if}-->
+
+                <!--{if $order[is_cod]}-->
+                <div class="list-group-item mt10">
+                    <input type="hidden" name="payment" value="cod">
+                    货到付款
+                    <p class="txt-comm txt-small txt-preg">
+                        本订单为货到付款模式，在确认发货前，您可以站内短信联系卖家是否支持货到付款，或者调整价格。<br>
+                        <span class="txt-red">提交确认后卖家将会收到发货请求。</span>
+                    </p>
+                </div>
+                <div class="list-group-item">
+                    <div>
+                        <div class="fr">
+                            <input class="product-order-password" type="password" name="password" value="">
+                        </div>
+                        <span>请输入支付密码</span> 
+                        <div class="clear"></div>                       
+                    </div>
+                    <span class="txt-small">支付密码仅做本人操作识别，并不会扣除积分和现金。</span>
+                </div>
+                <!--{else}-->
+                <a class="list-group-item list-mycolor mt10" id="payment_btn" href="#">
+                    <input type="hidden" name="payment" value="">
+                    <div>
+                        <div class="fr">
+                            <span id="payment_title">尚未选择</span>
+                            <span class="arrow"></span>
+                        </div>
+                        支付方式
+                    </div>
+                    <p class="txt-comm txt-small txt-grey" id="payment_des"></p>
+                </a>
+                <div class="list-group-item" id="enter_password">
+                    <div class="fr">
+                        <input class="product-order-password" type="password" name="password" value="">
+                    </div>
+                    请输入帐号支付密码
+                </div>
+                <!--{/if}-->
+
+            </div>
+            <div class="panel-comm" id="submit_box">
+                <div class="panel-body">
+                    <div class="btn-group-vertical full-width">
+                        <button type="submit" class="btn btn-mycolor" id="submit" value="Yes" name="dosubmit">在线支付</button>
+                    </div>                    
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel-comm panel-default none" id="payment_box">
+    <div class="list-group list-group-insertmod">
+        <div class="list-group-heading">余额支付</div>
+        <!--{eval $needprice = get_numeric($order[order_amount]-$user->rmb);}-->
+        <a href="#" class="list-group-item" data-name="balance" data-title="余额支付" data-needprice="$needprice">
+            <div class="fr"><span class="arrow"></span></div>
+            <p class="txt-comm txt-grey">
+                账户余额：<span class="txt-red">&yen;<strong>{print get_numeric($user->rmb)}</strong></span>
+            </p>
+            <!--{if $user->rmb < $detail[order_amount]}-->
+            <p class="txt-comm txt-small txt-grey">
+                支付金额不足，您先充值 <span class="txt-red">&yen;{$needprice}</span>
+            </p>
+            <!--{/if}-->
+        </a>
+        <div class="list-group-heading">在线支付</div>
+        <!--{if check_module('pay') && S('pay:alipay_mobile')}-->
+        <a href="#" class="list-group-item" data-name="alipay_mobile" data-title="手机支付宝">
+            <div class="fr"><span class="arrow"></span></div>
+            手机支付宝
+        </a>
+        <!--{/if}-->
+        <!--{if $offlinepay}-->
+        <div class="list-group-heading">线下支付</div>
+        <a href="#" class="list-group-item" data-name="offlinepay" data-title="线下支付">
+            <div class="fr"><span class="arrow"></span></div>
+            <p class="txt-comm txt-small txt-grey">
+                {print nl2br(_T($offlinepay))}
+            </p>
+        </a>
+        <!--{/if}-->
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    payment();
+});
+
+//收货地址处理
+var payment = function() {
+
+    var lang = {
+            offlinepay_des:'线下支付不用确认提交订单，向商家汇款后，向商家提供订单号，购买的会员帐号等信息，商家确认付款后，会确认订单付款并发货。',
+            balance_needprice:'对不起，您的账户余额不足，不能使用余额支付，请先充值或选择其他支付方式。'
+        }
+
+    var select_addr;
+
+    //初始化
+    var init = function() {
+        $('#enter_password').hide();
+        $('#payment_des').empty().hide();
+        //事件绑定
+        $('#payment_btn').click(function(event) {
+            event.preventDefault();
+            select_addr.open();
+        });
+        //提交支付
+        $('form[name="pay_form"]').bind('submit', submit);
+        //弹出层初始化
+        select_addr = new $.m_drawer('#payment_box', {}, {
+            onInit:function(container, workArea) {
+                workArea.show();
+                workArea.delegate('a.list-group-item', 'click', function(event) {
+                    event.preventDefault();
+                    if(select_payment($(this))) {
+                        container.close();
+                    }
+                });
+            }
+        });
+    }
+
+    //选择支付方式
+    var select_payment = function(my) {
+        $('#enter_password').hide();
+        $('#submit_box').show();
+        $('#payment_des').empty().hide();
+        if(my.data('name')=='balance') {
+            if(my.data('needprice')>0) {
+                alert(lang.balance_needprice);
+                return;
+            }
+            $('#enter_password').show();
+        } else if(my.data('name')=='offlinepay') {
+            $('#payment_des').text(lang.offlinepay_des).show();
+            $('#submit_box').hide();
+        }
+        $('#payment_title').text(my.data('title'));
+        $('input[name="payment"]').val(my.data('name'));
+        return true;
+    }
+
+    var submit = function(e) {
+        var form = $('form[name="pay_form"]');
+        var payment = form.find('input[name="payment"]').val();
+        if(!payment) {
+            alert('您未选择支付方式。');
+            return false;
+        } else if(payment=='cod' || payment=='balance') {
+            if(form.find('input[name="password"]').val()=='') {
+                alert('您未填写支付密码。');
+                return false;                
+            }
+            if(!window.confirm('您确定要支付订单吗？')) return false;
+        }
+        //return true;
+        //
+        form[0].submit();
+        return;
+        var post = form.attr('action').url();
+        $.post(post, form.serialize(), function(data, textStatus, xhr) {
+            if(is_message(data)) {
+                myAlert(data);
+            } else if(is_json(data)) {
+                var json = parse_json(data);
+                if(json.code != 200) {
+                    alert(json.message);
+                } else {
+                    if(json.message) {
+                        alert(json.message);
+                    }
+                    jslocation(json.payurl_mobile);
+                }
+            } else {
+                alert(data);
+            }
+        });
+    }
+
+    init();
+}
+
+</script>
+{include mobile_template('footer')}

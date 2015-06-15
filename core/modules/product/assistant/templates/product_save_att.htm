@@ -1,0 +1,21 @@
+<!--{eval 
+    $att_cats = $_G['loader']->variable('att_cat','item');
+}-->
+<!--{loop $attcats $att_catid}-->
+<!--{if $att_cats[$att_catid]}-->
+<div style="margin:0 0 5px;">
+    <label style="display:block;font-weight:bold;color:#808080;">{$att_cats[$att_catid][name]}:</label>
+    {eval $multi=in_array($att_catid,$attmulti);}
+    <select id="att_{$att_catid}" name="att[]" {if $multi}multiple="true"{/if} style="width:200px;">
+        <!--{get:product val=getatt(catid/$att_catid)}-->
+        <!--{eval $exists = $productatts[$att_catid . '_' . $val[attid]];}-->
+        <option value="{$att_catid}_$val[attid]" {if $exists} selected="checked"{/if}>$val[name]</option>
+        <!--{/get}-->
+    </select>
+    <div class="clear"></div>
+    {if $multi}
+    <script type="text/javascript">$('#att_{$att_catid}').mchecklist({width:'60%',height:60,line_num:2});</script>
+    {/if}
+</div>
+<!--{/if}-->
+<!--{/loop}-->

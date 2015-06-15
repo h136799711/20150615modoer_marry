@@ -1,0 +1,438 @@
+<!--{eval $_HEAD['title'] = $space[spacename] . $_CFG['titlesplit'] . $space['spacedescribe'];}-->
+<!--{eval $httphost = str_replace('127.0.0.1','localhost',$_SERVER[HTTP_HOST]);}-->
+<!--{eval $httphost2 = str_replace('www','',$httphost);}-->
+{template modoer_new_header}
+
+
+    <div id="_vmSetBar" ms-controller="vmSetBar">
+        <div style="display: none;" ms-css-height="bar_h" ms-visible="show" class="set-bar">
+            <ul class="bar-menu">
+                <li>
+                    <a ms-mouseenter="openMedia('theme')" href="javascript:;" class="active menu-item">选择模板</a>
+                    
+                    <div ms-visible="action == 'theme'" class="media-box">
+                        <div style="height:0px;" data-scrollbar-show-bar-header="false" data-scrollbar-show="scrolling" data-scrollbar-position="right" ms-widget="scrollbar,$themeBar" class="theme-bar text-center row">
+                            <div class="oni-scrollbar-scroller" >
+                            	
+	{dbres $stlist $val}
+	<div class="col-xs-4">
+	    <a ms-attr-alt="$val[name]" ms-click="selectTheme($val[id],'{URLROOT}$val[css]',this)" href="javascript:;" ms-class-active="{if $theme[id]==$val[id]}1{/if}" class="mb15">
+	        <img src="{URLROOT}/$val[thumb]" height="100" width="100"></a>
+	</div>
+	{/dbres}
+                            </div>
+                        </div>
+                    </div>
+                    
+                </li>
+                <li>
+                    <a ms-mouseenter="openMedia('music')" class="menu-item" href="javascript:;">选择音乐</a>
+                    <div ms-visible="action == 'music'" class="media-box">
+                        <div data-scrollbar-show-bar-header="false" data-scrollbar-show="scrolling" data-scrollbar-position="right" style="height:0px;overflow:hidden;" ms-widget="scrollbar,$musicBar" class="music-bar" id="_music-box">
+                            <div class="oni-scrollbar-scroller list-box">
+                            	<div {if !$music}class="active"{/if}>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" ms-click="selectMusic(0, '')" ms-attr-checked="{if !$music}1{else}0{/if}" ms-attr-value="0" name="music">
+                                            <span >无</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            	{dbres $smlist $val}
+                            	<div {if $music[id]==$val[id]}class="active"{/if}>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" ms-click="selectMusic($val[id], '{URLROOT}/$val[src]')" ms-attr-checked="{if $music[id]==$val[id]}1{else}0{/if}" ms-attr-value="$val[id]" name="music">
+                                            <span >$val[name]</span>
+                                        </label>
+                                    </div>
+                                </div>
+								{/dbres}
+                                
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <a ms-mouseenter="openMedia('domain')" class="menu-item" href="javascript:;">域名设置</a>
+                    <div ms-visible="action == 'domain'" class="media-box">
+                        <div class="domain-box">
+                            <div class="form-control">
+                                <span>http://</span>
+                                <input type="text" placeholder="域名" ms-duplex="domain" class="no-input">
+                                <span>$httphost2</span>
+                            </div>
+                            <a ms-click="setDomain(domain)" class="ml15 btn btn-primary" href="javascript:;">保存</a>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <a ms-click="setRsvp" class="menu-item" href="javascript:;"> <span ms-text="is_rsvp ? '关闭' : '开启'" ms-attr-data="is_rsvp"></span>宾客回复</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+      <div id="headerVm" ms-controller="vm-header" class="pos-r-t p30">
+             {if $setmode}
+            <a title="主页设置" data-action="theme" class="_theme-set user-btn" href="javascript:;"><i class="iconfont"></i></a>
+            {/if}
+            
+            <!-- 下拉菜单 -->
+            <div ms-mouseleave="leaveMenu" ms-click="dropdownMenu($event)" ms-mouseenter="dropdownMenu($event)" class="_follow-dest dropdown" ms-class="active:is_hove" id="info-menu">
+                <a class="posr" href="{if $user->isLogin}{url space/$uid}{else}{url member/login}{/if}">
+                    <img width="42" height="42" class="img-circle avatar" alt="$user->username" src="{print get_face($user->uid)}">
+                    <span class="msg-tip" ms-visible="notice_count"></span>
+                </a>
+                {if $user->isLogin}
+                <div class="menu-downbox">
+                    <ul class="dropdown-menu">
+                        
+                            <li><a href="{url index}">首页<i class="iconfont drop-icon"></i></a></li>
+                            <li><a href="{url space/new/uid/$user->uid}">婚礼主页<i class="iconfont drop-icon"></i></a></li>
+                             {if $setmode}
+                            <li><a class="_write bg_eee color9" href="javascript:;">写故事</a></li>
+                            <li><a class="_invite color9" href="javascript:;">邀请宾客</a></li>
+                             {/if}
+                            <li><a  href="{url space/member/ac/new}">设置<i class="iconfont drop-icon"></i></a></li>
+                            <li><a href="{url member/index/ac/pm/folder/inbox}">消息<span ms-text="notice_count" class="badge"></span><i class="iconfont drop-icon"></i></a></li>
+                            <li><a href="{url member/login/op/logout}">退出<i class="iconfont drop-icon"></i></a></li>
+                    </ul>
+                </div>
+            	{/if}
+            </div><!-- 下拉菜单 end -->
+        </div>
+    
+    <a title="播放按钮" data-action="music" class="user-btn music-btn" id="musicBtn" href="javascript:;"><i class="iconfont music-icon"></i></a>
+
+    <!-- a end-->
+    <!--other的身份,m为新郎,w为新娘-->
+    <div data-id="$uid" data-gender="{if $newspace[other_id]}m{else}w{/if}" id="theme-box">
+    <link id="themenow" href="{URLROOT}$theme[css]" rel="stylesheet">
+<div data-theme_id="1" id="home" class="container-fluid">
+    <!--<div class="row cover bg" id="cover_bg" style="background-image: url('http://mt-ui.qiniudn.com/cover.jpg')"-->
+    <div data-600="background-position:50% -100px;" data-0="background-position:50% 0px;" style="background-image: url('{if $newspace[cover]}{URLROOT}/$newspace[cover]{else}{URLROOT}/{$_G[tplurl]}space/cover.jpg{/if}')" id="cover_bg" class="row cover bg">
+        <p data-val="{if $newspace[cover]}{URLROOT}/$newspace[cover]{else}{URLROOT}/{$_G[tplurl]}space/cover.jpg{/if}" data-type="cover" class="_theme-edit cover-edit"></p>
+        <div class="text-center couple-infor">
+            <p class="cover-prev-bg decorate"></p>
+            <div id="name_vm" class="couple-name mt20">
+                <h1>
+                <!--男左女友-->
+                {if $newspace[other_id]}
+                    <span data-val="$newspace[my_name]" data-type="my_name" class="bride _theme-edit"><em>$newspace[my_name]</em></span>
+                    <strong class="flag decorate"></strong>
+                    <span data-val="$newspace[other_name]" data-type="other_name" class="groom _theme-edit"><em>$newspace[other_name]</em></span>
+                {else}
+                    <span data-val="$newspace[other_name]" data-type="other_name" class="groom _theme-edit"><em>$newspace[other_name]</em></span>
+                    <strong class="flag decorate"></strong>
+                    <span data-val="$newspace[my_name]" data-type="my_name" class="bride _theme-edit"><em>$newspace[my_name]</em></span>
+                {/if}
+                </h1>
+                <div data-val="{date $newspace[wedding_timestamp],'Y.m.d H:i'}" data-type="wedding_timestamp" class="wedding-time _theme-edit"><em data-time="{date $newspace[wedding_timestamp],'Y.m.d H:i'}" id="wed-time">{if $newspace[wedding_timestamp]}{date $newspace[wedding_timestamp],'Y.m.d'}{else}未设置婚期{/if}</em></div>
+            </div>
+            <p class="cover-next-bg decorate"></p>
+        </div>
+        <p id="cutdonwTxt" class="text-center cutdown-infor">
+        {if $newspace[wedding_timestamp]}
+	        {if $newspace[wedding_timestamp]>time()}
+	         我们的婚礼倒计时
+	        {else}
+	         我们已经结婚了
+	         {/if}
+         {else}
+         我们还没决定婚礼时间
+        {/if}
+        </p>
+        <div id="timeCircle"></div>
+    </div>
+
+    <div class="row">
+        <div class="nav_holder">
+            <ul id="head_nav" class="header-nav clearfix list-inline">
+                <li><a data-action="home" href="javascript:;" id="home-item" class="home header-nav-item active">首页</a></li>
+                <li><a data-action="about" href="javascript:;" class="about header-nav-item">关于我们</a></li>
+                <li><a data-action="story" href="javascript:;" class="story header-nav-item">婚礼故事</a></li>
+                <li><a data-action="invite" href="javascript:;" class="invite header-nav-item">参加婚礼</a></li>
+                <li><a data-action="video" href="javascript:;" class="wedVideo header-nav-item" style="display: none">婚礼视频</a></li>
+                
+            </ul>
+        </div>
+    </div>
+
+    <div class="row space-body">
+        <!-- 关于我们 start -->
+        
+        
+        <div id="about" class="about-bg">
+            <div id="wed-desc" class="wed-about clearfix">
+            	{if $newspace[other_id]}
+                <div data-bottom="opacity:0;transform:translateX(-100px);" data-center="opacity:1;transform:translateX(0px);" class="col-l">
+                    <h2 class="text-center">
+                    <img width="310&quot;" height="310" src="{if is_file(MUDDER_ROOT.'/uploads/'.mc_member_face::get_filename($uid, 'big'))}{URLROOT}/uploads/{print mc_member_face::get_filename($uid, 'big')}{else}{URLROOT}/static/images/headgirlavatar2.0.png{/if}" alt="" class="img-circle">
+                    </h2>
+                    <div id="my_name" class="text-center role-name">$newspace[my_name]</div>
+                    <p id="my_des" class="personal-intro bride-desc">$newspace[my_des]</p>
+                    <div data-val="$newspace[my_des]" data-type="my_des" class="text-center _theme-edit"></div>
+                </div>
+                <p class="decorate couple-decorate"></p>
+                <div data-bottom="opacity:0;transform:translateX(100px);" data-center="opacity:1;transform:translateX(0px);" class="col-r">
+                    <h2 data-val="{if is_file(MUDDER_ROOT.$newspace[other_avatar])}{URLROOT}/$newspace[other_avatar]{else}{URLROOT}/static/images/headboyavatar2.0.png{/if}" data-type="other_avatar" class="text-center _theme-edit"><img width="310" height="310" src="{if is_file(MUDDER_ROOT.$newspace[other_avatar])}{URLROOT}/$newspace[other_avatar]{else}{URLROOT}/static/images/headboyavatar2.0.png{/if}" alt="" class="img-circle"></h2>
+                    <div id="other_name" class="text-center role-name">$newspace[other_name]</div>
+                    <p id="other_des" class="personal-intro groom-desc">$newspace[other_des]</p>
+                    <div data-val="$newspace[other_des]" data-type="other_des" class="text-center _theme-edit"></div>
+                </div>
+                {else}
+                <div data-bottom="opacity:0;transform:translateX(-100px);" data-center="opacity:1;transform:translateX(0px);" class="col-l">
+                    <h2 data-val="{if is_file(MUDDER_ROOT.$newspace[other_avatar])}{URLROOT}/$newspace[other_avatar]{else}{URLROOT}/static/images/headgirlavatar2.0.png{/if}" data-type="other_avatar" class="text-center _theme-edit">
+                    <img width="310&quot;" height="310" src="{if is_file(MUDDER_ROOT.$newspace[other_avatar])}{URLROOT}/$newspace[other_avatar]{else}{URLROOT}/static/images/headgirlavatar2.0.png{/if}" alt="" class="img-circle">
+                    </h2>
+                    <div id="other_name" class="text-center role-name">$newspace[other_name]</div>
+                    <p id="other_des" class="personal-intro bride-desc">$newspace[other_des]</p>
+                    <div data-val="$newspace[other_des]" data-type="other_des" class="text-center _theme-edit"></div>
+                </div>
+                <p class="decorate couple-decorate"></p>
+                <div data-bottom="opacity:0;transform:translateX(100px);" data-center="opacity:1;transform:translateX(0px);" class="col-r">
+                    <h2 class="text-center ">
+                    <img width="310" height="310" src="{if is_file(MUDDER_ROOT.'/uploads/'.mc_member_face::get_filename($uid, 'big'))}{URLROOT}/uploads/{print mc_member_face::get_filename($uid, 'big')}{else}{URLROOT}/static/images/headboyavatar2.0.png{/if}" alt="" class="img-circle">
+                    </h2>
+                    <div id="my_name" class="text-center role-name">$newspace[my_name]</div>
+                    <p id="my_des" class="personal-intro groom-desc">$newspace[my_des]</p>
+                    <div data-val="$newspace[my_des]" data-type="my_des" class="text-center _theme-edit"></div>
+                </div>
+                {/if}
+            </div>
+        </div>
+        <!-- 关于我们 end -->
+
+        <!-- 故事 start -->
+        <div id="storyArea" class="wed-story">
+            <h2 data-bottom="opacity:0;transform:translateY(50px);" data-center="opacity:1;transform:translateY(0px);" data-type="story" class="story-tit text-center tit _theme-edit" id="story">婚礼故事</h2>
+            <p data-bottom="opacity:0;transform:translateY(50px);" data-center="opacity:1;transform:translateY(0px);" class="story-decorate decorate"></p>
+            <div id="galleryVm" ms-controller="galleryCtr" class="story-gallery clearfix">
+                <!--<ul class="clearfix" id="photoWrap" data-center-top="opacity:.5;transform:translateY(0px);" data-top-top="opacity:1;transform:translateY(50px);"></ul>-->
+                <ul ms-visible="showList" class="galleryL">
+                    <li ms-class="mt100:$index===0" ms-repeat="storyImgL">
+                        <div data-bottom-top="opacity:0;transform:translateX(-50px);" data-center="opacity:1;transform:translateX(0px);" class="_trs-item">
+                            <a ms-click="enlarge(el.media, el.title, el.content, el.id)" href="javascript:;"><img ms-attr-width="el.w" ms-src=" el.media  "></a><i class="iconfont dir-icon"></i>
+                            <div ms-css-width="el.w" class="story-txt">
+                                <h3 ms-text="el.title"></h3>
+                                <p ms-text="el.content"></p>
+                            </div>
+                        </div>
+                        <span class="time-dot"></span>
+                    </li>
+                </ul>
+                <div id="mid-holder"><button ms-text="status" ms-visible="showBtn" ms-click="addMore" ms-css-top="btn_t" class="btn btn-sm _addMore">更多</button></div>
+                <ul ms-visible="showList" class="galleryR">
+                    <li ms-class="mt200:$index===0" ms-repeat-el="storyImgR">
+                        <div data-bottom-top="opacity:0;transform:translateX(50px);" data-center="opacity:1;transform:translateX(0px);" class="_trs-item">
+                            <i class="iconfont dir-icon"></i><a ms-click="enlarge(el.media, el.title, el.content, el.id)" href="javascript:;"><img ms-attr-width="el.w" ms-src=" el.media "></a>
+                            <div ms-css-width="el.w" class="story-txt">
+                                <h3 ms-text="el.title"></h3>
+                                <p ms-text="el.content"></p>
+                            </div>
+                        </div>
+                        <span class="time-dot"></span>
+                    </li>
+                </ul>
+                <div ms-widget="dialog, imgDia, $imgDiaOpt" class="dialog-common dialog-img">
+                    <div class="story-detail">
+                        <div class="text-center">
+                            <a ms-click="tabImg(-1)" class="prev controll-btn" href="javascript:;"><i class="iconfont"></i></a>
+                            <img ms-src="iCurImg + '!720' ">
+                            <a ms-click="tabImg(1)" class="next controll-btn" href="javascript:;"><i class="iconfont"></i></a>
+                        </div>
+                        <h3 class="text-center diagTit" ms-text="iCurTit"></h3>
+                        <p class="text-center diagTxt" ms-text="iCurTxt"></p>
+                    </div>
+                </div>
+                <p ms-visible="loading" class="loadList"></p>
+            </div>
+        </div>
+        <!-- 故事 end -->
+
+        <!-- 婚礼视频-->
+        <div id="videoVm" class="wed-video" style="display: none">
+            <div class="video-tit"><h2 data-bottom="opacity:0;transform:translateY(50px);" data-center="opacity:1;transform:translateY(0px);" class="text-center tit" id="video">我们的视频</h2></div>
+            <div class="decorate-bg"><p data-bottom="opacity:0;transform:translateY(50px);" data-center="opacity:1;transform:translateY(0px);" class="video-decorate decorate"></p></div>
+            <div style="background: #ddd url('http://mt-card.qiniudn.com/video_bg.png?imageMogr2/blur/30x2') no-repeat; background-size:cover;" class="video-bg">
+                <div class="dot-bg"></div>
+                <i id="playVideo" data-video="" class="iconfont video-icon"></i>
+            </div>
+        </div>
+        <!-- 婚礼视频 end -->
+
+        <!-- 邀请宾客 start -->
+
+        <div id="inviteVm" class="wed-invite">
+            <h2 data-bottom="opacity:0;transform:translateY(50px);" data-center="opacity:1;transform:translateY(0px);" class="invite-tit text-center tit" id="invite">参加婚礼</h2>
+            <p data-bottom="opacity:0;transform:translateY(50px);" data-center="opacity:1;transform:translateY(0px);" class="invite-decorate decorate"></p>
+            <ul class="invite_detail">
+                <li><span class="des">婚礼时间：</span><span id="time_show">{date $newspace[wedding_timestamp],'Y.m.d H:i'}</span></li>
+                <li><span class="des">婚礼地点：</span><span data-point="$newspace[wedding_map_point]" data-val="$newspace[wedding_address]" id="map_address" data-type="wedding_address" class="content _theme-edit"><em>$newspace[wedding_address]</em></span></li>
+            </ul>
+            {if $newspace[is_rsvp]}
+            <div id="wed_inviteVm" ms-controller="inviteCtr">
+                <div id="radio-join" class="radio">
+                    <span class="radio-click">
+                        <input type="radio" ms-duplex-boolean="is_part" value="true" id="optionsRadios1" class="radio-input">
+                        <label for="optionsRadios1" class="radio-label"><span><s></s></span>出席婚礼</label>
+                    </span>
+                    <span class="radio-click">
+                        <input type="radio" ms-duplex-boolean="is_part" value="false" id="optionsRadios2" class="radio-input">
+                        <label for="optionsRadios2" class="radio-label"><span><s></s></span>有事,不能参加</label>
+                    </span>
+                </div>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" ms-duplex="postData.name" placeholder="姓名">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" ms-duplex="postData.phone" placeholder="联系方式">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" ms-duplex="postData.part_num" placeholder="出席人数">
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control area" ms-duplex="postData.content" placeholder="留下祝福" type="text"></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button data-id="$uid" ms-click="sendMsg" class="btn btn-sm mt10 submit-btn" type="button">提交</button>
+                    </div>
+                </form>
+            </div>
+            {/if}
+
+        </div>
+
+        <!-- 邀请宾客 end -->
+
+        <!--地图-->
+        <div id="mapBox" class="wedding-map"></div>
+        <!--地图 end -->
+
+        <div class="wed-footer">
+            <!--<div class="tali-img"></div>-->
+            <p data-bottom="opacity:0;transform:translateY(50px);" data-center="opacity:1;transform:translateY(0px);" class="thank decorate"></p>
+            <p data-bottom="opacity:0;transform:translateY(50px);" data-center="opacity:1;transform:translateY(0px);" class="bottom-decorate decorate"></p>
+            <div data-relevant_hotel="" data-relevant_su="[]" ms-controller="relevantCtr" id="relevant" class="serivces text-center">
+                <div class="rele_list" ms-repeat="relevant_su" ms-if="relevant_su.length">
+                    <span ms-text="el.relevant_role + '：' " class="item-name"></span><span data-type="relevant_su" ms-class="_theme-edit:$first"><a ms-text="el.relevant_name" class="_relevant-su" ms-attr-href=" '/search/supplier?q=' + el.relevant_name "></a></span>
+                </div>
+                <!--<div class="rele_list" ms-if="!relevant_su.length">
+                    <span class="item-name">服务商添加：</span><span data-type="relevant_su" class="_theme-edit"><em class="_relevant-su"></em></span>
+                </div>
+                <div class="rele_list" ms-if="relevant_hotel.relevant_name">
+                    <span class="item-name">婚礼酒店：</span><span data-type="relevant_hotel" data-val="0" class="_theme-edit"><a ms-text="relevant_hotel.relevant_name" class="_relevant-su" ms-attr-href=" '/hotel/detail/' + relevant_hotel.relevant_id "></a></span>
+                </div>-->
+                <div class="rele_list">
+                    <span class="item-name">婚礼酒店：</span><span data-type="hotel" class="_theme-edit"><em class="_relevant-su">$newspace[hotel]</em></span>
+                </div>
+            </div>
+            <!--底部文字-->
+            <div class="tali-text">&copy; 2014 $httphost All rights reserved</div>
+        </div>
+    </div>
+</div>
+
+<div class="footer-decorate decorate"></div></div>
+
+    <div id="mapBox">
+    </div>
+<a id="$music[id]" href="{URLROOT}/$music[src]" title="&lt;AUDIO&gt;, audio/mpeg@{URLROOT}/$music[src]" class="__noscriptPlaceholder__ __noscriptObjectPatchMe__" style="width: auto; height: 0px; max-width: 32px; max-height: 32px; overflow: visible; float: left; min-width: 32px; min-height: 32px;"><div class="__noscriptPlaceholder__1" style="align-content: stretch; align-items: stretch; align-self: stretch; animation: 0s cubic-bezier(0.25, 0.1, 0.25, 1) 0s normal none 1 running none; backface-visibility: visible; background: none repeat scroll 0% 0% transparent; background-blend-mode: normal; border: 0px none rgb(68, 68, 68); border-radius: 0px; border-collapse: separate; border-spacing: 0px; box-decoration-break: slice; box-shadow: none; box-sizing: border-box; caption-side: top; clear: none; clip: auto; color: rgb(68, 68, 68); content: none; counter-increment: none; counter-reset: none; cursor: auto; direction: ltr; display: none; empty-cells: show; flex: 0 1 auto; flex-flow: row nowrap; float: none; font: 400 14px/20px Helvetica,Arial,&quot;微软雅黑&quot;,&quot;宋体&quot;,&quot;黑体&quot;,sans-serif; height: 0px; image-orientation: 0deg; ime-mode: auto; isolation: auto; justify-content: flex-start; letter-spacing: normal; list-style: outside none disc; margin: 0px; marker-offset: auto; max-height: 32px; max-width: 32px; min-height: 32px; min-width: 32px; mix-blend-mode: normal; object-fit: fill; object-position: 50% 50%; opacity: 1; order: 0; outline: 0px none rgb(0, 0, 0); outline-offset: 0px; overflow: visible; padding: 0px; page-break-after: auto; page-break-before: auto; page-break-inside: auto; perspective: none; perspective-origin: 50% 50%; pointer-events: auto; quotes: &quot;“&quot; &quot;”&quot; &quot;‘&quot; &quot;’&quot;; resize: none; scroll-behavior: auto; table-layout: auto; text-align: start; text-decoration: none rgb(68, 68, 68); text-indent: 0px; text-overflow: clip; text-shadow: none; text-transform: none; transform: none; transform-origin: 50% 50% 0px; transform-style: flat; transition: all 0s cubic-bezier(0.25, 0.1, 0.25, 1) 0s; unicode-bidi: normal; vertical-align: baseline; visibility: visible; white-space: normal; width: auto; will-change: auto; word-break: normal; word-spacing: 0px; word-wrap: normal; z-index: auto; -moz-appearance: none; -moz-binding: none; -moz-box-align: stretch; -moz-box-direction: normal; -moz-box-flex: 0; -moz-box-ordinal-group: 1; -moz-box-orient: horizontal; -moz-box-pack: start; -moz-columns: auto auto; -moz-column-fill: balance; -moz-column-gap: 14px; -moz-column-rule: 0px none rgb(68, 68, 68); -moz-float-edge: content-box; -moz-force-broken-image-icon: 0; -moz-hyphens: manual; -moz-image-region: auto; -moz-orient: auto; -moz-outline-radius: 0px; -moz-stack-sizing: stretch-to-fit; -moz-tab-size: 8; -moz-text-align-last: auto; -moz-text-size-adjust: auto; -moz-user-focus: none; -moz-user-input: auto; -moz-user-modify: read-only; -moz-user-select: auto; -moz-window-dragging: no-drag; -moz-window-shadow: default; clip-path: none; clip-rule: nonzero; color-interpolation: srgb; color-interpolation-filters: linearrgb; dominant-baseline: auto; fill: rgb(0, 0, 0); fill-opacity: 1; fill-rule: nonzero; filter: none; flood-color: rgb(0, 0, 0); flood-opacity: 1; image-rendering: auto; lighting-color: rgb(255, 255, 255); marker: none; mask: none; mask-type: luminance; paint-order: normal; shape-rendering: auto; stop-color: rgb(0, 0, 0); stop-opacity: 1; stroke: none; stroke-dasharray: none; stroke-dashoffset: 0px; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 4; stroke-opacity: 1; stroke-width: 1px; text-anchor: start; text-rendering: auto; vector-effect: none;"><div class="closeButton"></div><div class="__noscriptPlaceholder__2" style="background-position: right bottom; background-image: url(&quot;moz-icon://noscript?size=16&amp;contentType=audio/mpeg&quot;);"></div></div></a><audio loop="loop" data-music="{if $music[src]}{URLROOT}/$music[src]{/if}" src="{if $music[src]}{URLROOT}/$music[src]{/if}" preload="" class=" __noscriptObjectPatchMe__" style="display: none;"></audio>
+
+
+
+
+    
+
+
+
+{if $setmode && !$newspace}
+<script type="text/javascript">
+	if (window.confirm("您的婚礼主页尚未启用,是否现在启用?")) {
+	window.location = "{url space/new/do/start}" ;
+	} else {
+	history.go(-1);
+	}
+</script>
+{/if}
+
+<input type="hidden" value="2n1CLIXQ06UExNWIKJ1cl8urwyfFJCtn" name="csrfmiddlewaretoken" id="csrf" />
+<script src="{URLROOT}/static/javascript/lib/sea2.3.js?t={$_G[modoer][build]}"></script>
+<script src="{URLROOT}/static/javascript/lib/arale.js?t={$_G[modoer][build]}"></script>
+<script src="{URLROOT}/static/javascript/sea.config2.3.js?t={$_G[modoer][build]}"></script>
+<script>
+    var siteConfig = {
+            host: 'http://{$httphost}',
+            siteurl: 'http://{$httphost}{URLROOT}',
+            authWb: 'https://api.weibo.com/oauth2/authorize?scope=email&amp;redirect_uri=http%3A//localhost/u/auth/sina/&amp;response_type=code&amp;client_id=87546181',
+            authQq: 'https://graph.qq.com/oauth2.0/authorize?scope=get_info%2Cadd_t%2Cadd_pic_t%2Cadd_idol&amp;state=default_state&amp;redirect_uri=http%3A//localhost/u/auth/qq/&amp;response_type=code&amp;client_id=101210907'
+            
+            ,user: {
+                group:1,
+                id: $uid,
+                username: 'fex2',
+                fullname: 'None',
+                avatar: 'http://mt-avatar.qiniudn.com/headboyavatar2.0.png',//!50
+                {if $newspace[domain]}
+                domain: '$newspace[domain]',
+                {/if}
+                editor: false
+            }
+            
+        };
+</script>
+<script type="text/javascript">
+	//模块加载
+	seajs.use(["v3_page/head"],function(p){});
+	{if $setmode}
+	 var config = {"style": "style1", "relevant_hotel": {}, "wedd_data": { "wedding_date": {if $newspace[time]}{date $newspace[time],'"Y.m.d H:i"'}{else}null{/if}, "bridegroom_phone": null, "is_link": 0, "bride_desc": null, "bridegroom_email": "wuxiaofengdeemail@126.com", "bride_name": "fex", "id": 21581, "bridegroom_name": "fex2", "bridegroom_avatar": "http://mt-card.qiniudn.com/2015/05/26/38241d10b5d6c5c106c9a80dbebef796.jpg", "content": null, "bride_phone": null, "co_photo": "http://mt-card.qiniudn.com/co_photoco_photo.jpg", "bride_email": null, "create_role": 2, "wedding_city": null, "bride_avatar": "http://mt-card.qiniudn.com/2015/05/26/f356848fc8acf1947d2fc7ed7d4acbfb.jpg",  "bridegroom": 24104, "bride": null, "bridegroom_desc": null, "wedding_address": null, "is_master": true, "card_theme": null{loop $newspace $k $v}{if !in_array($k,array('other_avatar'))},"$k": {if $v}"$v"{else}null{/if}{/if}{/loop}}, "music": {if $music}{"src": "{URLROOT}/$music[src]", "id": $music[id], "name": "$music[name]"}{else}null{/if}, "theme_id": 1, "images": [{"content": "\u6211\u77e5\u9053\uff0c\u6211\u4eec\u7684\u7231\u662f\u5f7c\u6b64\u751f\u547d\u91cc\u4e00\u7b14\u771f\u6b63\u73cd\u8d35\u7684\u8d22\u5bcc\uff0c\u4e00\u7b14\u6c38\u8fdc\u53ea\u4f1a\u592a\u5c11\u800c\u4e0d\u4f1a\u592a\u591a\u7684\u8d22\u5bcc\u3002", "media": "http://mt-card.qiniudn.com/2015/05/26/a4b82ed008c1c351db4adcfe22c21e97.jpg", "id": 1, "title": ""}, {"content": "\u6c38\u6052\u7684\u5b9a\u4e49\u592a\u591a\uff0c\u5bf9\u4e8e\u6211\u7684\u6c38\u6052\uff0c\u53ea\u4e0d\u8fc7\u662f\u89c1\u4f60\u7684\u6bcf\u4e2a\u77ac\u95f4\u3002", "media": "http://mt-card.qiniudn.com/2015/05/26/3752d1e9c3bdf7dae0f021a5841c6bae.jpg", "id": 2, "title": ""}, {"content": "\u65f6\u95f4\u4f1a\u544a\u8bc9\u6211\u4eec \uff1a\u7b80\u5355\u7684\u559c\u6b22\uff0c\u6700\u957f\u8fdc\uff1b\u5e73\u51e1\u4e2d\u7684\u966a\u4f34\uff0c\u6700\u5fc3\u5b89\uff1b\u61c2\u4f60\u7684\u4eba\uff0c\u6700\u6e29\u6696\uff1b\u5f7c\u6b64\u76f8\u7231\u5c31\u662f\u5e78\u798f\u3002", "media": "http://mt-card.qiniudn.com/2015/05/26/66de1cde662afbedf270b284951dd08a.jpg", "id": 3, "title": ""}, {"content": "\u65f6\u95f4\u662f\u8ba9\u4eba\u731d\u4e0d\u53ca\u9632\u7684\u4e1c\u897f\uff0c\u6674\u65f6\u6709\u98ce\u9634\u6709\u65f6\u96e8\uff0c\u4e89\u4e0d\u8fc7\u671d\u5915\uff0c\u53c8\u5ff5\u7740\u5f80\u6614\uff0c\u5077\u8d70\u4e86\u9752\u4e1d\u5374\u7559\u4f4f\u4e00\u4e2a\u4f60\u3002\u5c81\u6708\u662f\u4e00\u573a\u6709\u53bb\u65e0\u56de\u7684\u65c5\u884c\uff0c\u597d\u7684\u574f\u7684\u90fd\u662f\u98ce\u666f\uff0c\u522b\u602a\u6211\u8d2a\u5fc3\uff0c\u53ea\u662f\u4e0d\u613f\u9192\uff0c\u56e0\u4e3a\u4f60\uff0c\u53ea\u4e3a\u4f60\u613f\u548c\u6211\u4e00\u8d77\uff0c\u770b\u4e91\u6de1\u98ce\u8f7b...", "media": "http://mt-card.qiniudn.com/2015/05/26/d7da1e3b8a087644aa9059baa3182095.jpg", "id": 4, "title": ""}, {"content": "Nothing\u2019s gonna change my love for you\uff0c\u613f\u7231\u4e0e\u65f6\u95f4\u4e00\u6837\uff0c\u4e00\u5206\u4e00\u79d2\u8d70\u7740\uff0c\u4e0d\u65ad\u91cd\u590d\uff0c\u6c38\u4e0d\u892a\u53bb\u3002", "media": "http://mt-card.qiniudn.com/2015/05/26/088d5d78028a968ddb32e35aeb94ad3d.jpg", "id": 5, "title": ""}, {"content": "\u6625\u6c34\u521d\u751f\uff0c\u6625\u6797\u521d\u76db\uff0c\u6625\u98ce\u5341\u91cc\uff0c\u4e0d\u5982\u4f60\u3002", "media": "http://mt-card.qiniudn.com/2015/05/26/abab4beb5c3b095ac7a2412daff7c9fc.jpg", "id": 6, "title": ""}], "video": [], "relevant_suppliers": []};
+	$(window).load(function() {
+		seajs.use('v3_page/user/set_space', function (p) {
+	            p.render({
+	                name: null,
+	                is_rsvp: $newspace[is_rsvp],
+                	domain: {if $newspace[domain]}'$newspace[domain]'{else}''{/if},
+	            });
+	        })
+	});
+	{else}
+	
+            seajs.use('v3_page/home/timeShow', function (p) {
+                p.render();
+            });
+	{/if}
+</script>
+{if $setmode}
+<script src="{URLROOT}/static/javascript/lib/moment/min/moment.min.js?t={$_G[modoer][build]}" type="text/javascript"></script>
+<script src="{URLROOT}/static/javascript/lib/bootstrap3-datetimepicker/src/js/bootstrap-datetimepicker.js?t={$_G[modoer][build]}" type="text/javascript"></script>
+<script src="{URLROOT}/static/javascript/lib/collapse.js?t={$_G[modoer][build]}" type="text/javascript"></script>
+<script src="{URLROOT}/static/javascript/lib/moment/locale/zh-cn.js?t={$_G[modoer][build]}" type="text/javascript"></script>
+<script id="editDialog-tpl" type="text/html"><div id="editDialog" ms-controller="dialogCtr"> <div class="edit-dialog" ms-widget="dialog, edit_theme, ${opt}"> <div id="themeEdit" ms-controller="editCtr"> <div class="form-group" ms-visible="my_name_s"> <textarea type="text" class="form-control nameArea" ms-duplex="my_name" placeholder="姓名"></textarea> </div> <div class="form-group" ms-visible="other_name_s"> <textarea type="text" class="form-control nameArea" ms-duplex="other_name" placeholder="姓名"></textarea> </div> <div class="form-group" ms-visible="wedding_timestamp_s" style="position: relative"> <input type="text" readonly id="datetimepicker" class="form-control" ms-duplex="wedding_timestamp" placeholder="婚礼时间" data-date-format="YYYY.MM.DD HH:mm"> </div> <div class="form-group" ms-visible="my_des_s"> <textarea type="text" class="form-control descArea" ms-duplex="my_des" placeholder="描述"></textarea> <span id="_limit1" class="colorff8"></span> </div> <div class="form-group" ms-visible="other_des_s"> <textarea type="text" class="form-control descArea" ms-duplex="other_des" placeholder="描述"></textarea> <span id="_limit2" class="colorff8"></span> </div> <div class="form-group" ms-visible="relevant_su_s"> <div class="col-sm-4 no-pd"> <select id="role" name="role" class="form-control no-r-bor " ms-duplex="relevant_id"> <option value="0">服务分类</option> <option value="6">婚礼策划</option> <option value="7">婚礼摄影</option> <option value="8">化妆造型</option> <option value="9">婚纱礼服</option> <option value="10">花艺设计</option> <option value="11">婚纱写真</option> <option value="12">婚礼摄像</option> <option value="14">婚礼主持</option> <option value="17">甜品婚品</option> <option value="22">海外婚礼</option> </select> </div> <div class="form-group col-sm-6 no-pd"> <input type="text" class="form-control no-l-bor no-r-bor" placeholder="输入服务商名" ms-duplex="relevant_name"> </div> <div class="col-sm-2 no-pd"> <a href="javascript:;" class="btn btn-grey btn-xs no-l-bor btn-add" ms-click="addRole" >添加</a> </div> <table class="table" id="origin_list"> <tbody> <tr class="edit_service" ms-repeat="relevant_su"> <td class="fir no-pd" > <div ms-text="el.relevant_role"></div> </td> <td class="sec no-pd no-l-bor"> <span ms-text="el.relevant_name"></span> </td> <td class="thir text-right"> <a href="javascript:;" class="del-role ml5" ms-click="${remove}"><i class="iconfont color9">&#xe621;</i></a> </td> </tr> </tbody> </table> </div> <div class="form-group" id="_hotel-wrap" ms-visible="hotel_s"> <input  class="form-control" placeholder="输入所在酒店"　ms-duplex="hotel" > </div> <div class="wed-map" ms-visible="wedding_address_s"> <p class="fillAddress mb10"><input class="form-control map-input" placeholder="设置婚礼地点" type="text" id="map-autocomplete2" ms-duplex="wedding_address" ms-keyup="confirm(${event})"></p> <div id="mapcontain"></div> </div> <div class="upload-box" id="upload-box" ms-visible="img_s"> <div id="upload"> <img class="img-circle" id="imgUrl" src="about:blank" width="220" height="220"> </div> </div> <p id="progress"></p> </div> </div> </div></script>
+{/if}
+<script type="text/javascript">
+    seajs.use('v3_page/home/pageView', function (p) {
+        var story_data = [ 
+        	{eval $sstotal = $sstotal>=$pageoffset?$pageoffset:$sstotal; $i=0;}
+            {dbres $sslist $val}
+                {
+                    content: '$val[content]',
+                    media: '{if $val[path]}$val[path]{/if}',
+                    id: '$val[id]',
+                    title: '$val[title]'
+                }{eval $i++;}{if $sstotal>$i},{/if}
+            {/dbres}
+            
+        ];
+        p.render(story_data);
+    });
+</script>
+<script>
+   // var _hmt = _hmt || [];
+    //(function(){var hm = document.createElement("script");hm.src = "//hm.baidu.com/hm.js?272a7b3a299f7ac648a2c34d55d98cf1";var s = document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm, s);})();
+</script>
+
+
+</body></html>

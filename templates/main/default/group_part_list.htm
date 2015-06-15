@@ -1,0 +1,22 @@
+{dbres $list $val}
+<div class="grouplist">
+    <div class="gbox">
+        {eval if(!$val[icon]) $val['icon']='static/images/z_noimg.gif';}
+        <div class="gicon">
+            <a href="{url group/$val[gid]}" title="$val[groupname]"><img src="{URLROOT}/$val[icon]" alt="$val[groupname]" /></a>
+            <div class="join"><a href="javascript:;" onclick="group_join($val[gid]);">+ 加入小组</a></div>
+        </div>
+        <div class="gcontent">
+            <h3>
+                {if $val[auth]=='1'}<img src="{URLROOT}/static/images/common/auth_1.png" title="官方小组" />&nbsp;{/if}<a href="{url group/$val[gid]}" title="$val[groupname]">$val[groupname]</a>
+            </h3>
+            <div class="info">
+                有 $val[members] 个成员
+                {if $val[username]} · 组长：<a href="{url space/index/uid/$val[uid]}">$val[username]</a>{/if}
+            </div>
+            <p>{sublen $val[des],40,'...'}</p>
+        </div>
+    </div>
+</div>
+{/dbres}
+<div class="clear"></div>

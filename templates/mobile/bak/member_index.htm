@@ -1,0 +1,27 @@
+{eval
+    $_HEAD[title] = "我的助手";
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-mycolor panel-fullsize">
+    <div class="panel-heading">
+        <div class="richtxt-comm">
+            <div class="fl"><img src="{print get_face2($user->uid)}" alt="$user->username" class="richtxt-img"></div>
+            <div class="richtxt-body">
+                <h2>欢迎您回来，$user->username</h2>
+                <p class="txt-comm txt-small">
+                    UID：$user->uid&nbsp;&nbsp;
+                    会员组：{print:member group(groupid/$user->groupid)}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="list-group list-group-insertmod">
+        {loop $links $link}
+        <a class="list-group-item" href="$link[url]">
+            <div class="fr"><span class="arrow"></span></div>
+            $link[title]
+        </a>
+        {/loop}
+    </div>
+</div>
+{include mobile_template('footer')}

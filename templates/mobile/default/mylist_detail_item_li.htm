@@ -1,0 +1,37 @@
+<!--{dbres $list $val}-->
+<a class="list-group-item" href="{url item/mobile/do/detail/id/$val[sid]}">
+    <div class="fr">
+        <!--{if $val[excuse]}-->
+        <span data-name="a_excuse" data-id="$val[sid]"><span class="badge">推荐理由</span></span>
+        <div class="panel-comm panel-default none" data-name="dv_excuse" data-type="close">
+            <div class="panel-heading">
+                <h6 class="panel-title">推荐理由</h6>
+            </div>
+            <div class="panel-body">
+                <p class="text-comm text-default">$val[excuse]</p>
+            </div>
+        </div>
+        <!--{/if}-->
+        <span class="arrow"</span>
+    </div>
+    <div class="richtxt-comm richtxt-img-defaultsize">
+        <div class="fl">
+            <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name]" class="richtxt-img">
+        </div>
+        <div class="richtxt-body">
+            <h4>$val[name]{if $val[subname]}($val[subname]){/if}</h4>
+            <p class="txt-comm txt-small list_start list_start_price s{print get_star($val[avgsort],S('review:scoretype'))}">
+                {if $catcfg[useprice] && $val[avgprice]}
+                    ￥$val[avgprice]
+                {/if}
+            </p>
+            <p class="txt-comm txt-small">
+                <span>{$val[reviews]}个点评</span>
+                <span class="split"></span>
+                <span>{$val[favorites]}个关注</span>
+            </p>
+        </div>
+    </div>
+</a>
+<!--{/dbres}-->
+<!--{if $multipage}-->$multipage<!--{/if}-->

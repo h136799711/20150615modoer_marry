@@ -1,0 +1,79 @@
+{template modoer_header}
+<div id="body" class="mt10">
+    <!--{eval $reviewcfg = $_G['loader']->variable('config','review');}-->
+
+    <!--{get:item cate=category(pid/0)}-->
+    <div class="item-ix-box ">
+        <h4 class="cate_title">
+            <span>$cate[name]</span>
+            <div class="right_title">
+                <!--{eval $i=1;}-->
+                <!--{get:item cate2=category(pid/$cate[catid])}-->
+                <a href="{url item/list/catid/$cate2[catid]}">$cate2[name]</a>
+                <span class="xsplit">|</span>
+                <!--{eval if($i++>5)break;}-->
+                <!--{/get}-->
+                <a href="{url item/list/catid/$cate[catid]}">全部&nbsp;&raquo;</a>
+            </div>
+        </h4>
+        <div class="rail-border-3">
+            <div class="category-info">
+                <ul class="category-tabs">
+                    <li><span class="icomoon icon-medal2 ic-yellow"></span><a href="{url item/tops/catid/$cate[catid]}">{$cate[name]}排行榜</a></li>
+                    <div class="clear"></div>
+                </ul>
+                <!--{eval 
+                    $model = $_G['loader']->model('item:itembase')->get_model($cate[catid],true);
+                    $where_cityid=$model['usearea']?$_CITY[aid]:0;
+                }-->
+                <ul class="rail-list">
+                    {get:item val=top(city_id/$where_cityid/pid/$cate[catid]/orderby/avgsort DESC/row/9)}
+                    <li>{$val[index]}.&nbsp;<a href="{url item/detail/id/$val[sid]}" title="$val[fullname]">{sublen $val[fullname],15}</a></li>
+                    {getempty(val)}
+                    <li>暂无信息</li>
+                    {/get}
+                </ul>
+            </div>
+            <div class="category-finer">
+                <ul class="subjects">
+                    {get:modoer val=table(table/dbpre_subject/index/finer/select/sid,pid,catid,aid,name,subname,avgsort,thumb,reviews,favorites/where/status=1 AND pid=$cate[catid] AND city_id IN (_NULL_CITYID_)/orderby/finer DESC/rows/4/cachetime/1000)}
+                    <li>
+                        {eval $fullname = $val[name].($val[subname]?("(".$val[subname].")"):'');}
+                        <div class="J_subject_thumb">
+                            <a href="{url item/detail/id/$val[sid]}"><img alt="$fullname" title="$fullname" src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name].$val[subname]" title="$val[name].$val[subname]" /></a>
+                        </div>
+                        <p class="title">
+                            <a href="{url item/detail/id/$val[sid]}" title="$fullname">{sublen $fullname,10,'...'}</a>
+                        </p>
+                        <p class="gary start start{print get_star($val[avgsort],$reviewcfg[scoretype]);}">
+                            <a href="{url item/detail/id/$val[sid]}#review">{$val[reviews]}点评</a>
+                        </p>
+                        <p class="gary scate">
+                            <a href="{url item/list/catid/$val[catid]}">{print:item category(catid/$val[catid])}</a>
+                            {if $val[aid]>0}
+                            <a href="{url item/list/catid/$val[catid]/aid/$val[aid]}">{print:modoer area(aid/$val[aid])}</a>
+                            {/if}
+                        </p>
+                    </li>
+                    {/get}
+                </ul>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+    <!--{/get}-->
+
+</div>
+<script type="text/javascript">
+//页面加载结束后执行
+window.onload = function() {
+    //主题图片高度居中
+    $('div.J_subject_thumb').each(function() {
+        var height = $(this).height();
+        var img = $(this).find('img');
+        var top = Math.round((height - img.height()) /2);
+        img.css({"margin-top":top+'px'});
+    });
+}
+</script>
+<!--{eval footer();}-->

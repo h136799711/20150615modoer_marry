@@ -1,0 +1,52 @@
+<!--{include space_template('header', $templateid)}-->
+
+<div class="container-box pages p-group-topics clear">
+
+	<div class="pages-main">
+
+        <div class="modbox p-tabs-box">
+            <div class="tab clear">
+                <a {if $_GET['pr']=='group_topics'}class="active"{/if} href="{url space/$space->uid/pr/group_topics}">我发表的话题($topic_total)</a>
+                <a {if $_GET['pr']=='group_replies'}class="active"{/if} href="{url space/$space->uid/pr/group_replies}">我回复的话题($reply_total)</a>
+            </div>
+        </div>
+
+        <div class="modbox">
+            <table class="group-topics-table">
+                <tr class="th">
+                    <th class="topic">话题</th>
+                    <th class="total">回应/人气</th>
+                    <th class="time">发帖时间</th>
+                    <th class="time">回帖时间</th>
+                </tr>
+                <!--{dbres $list $val}-->
+                <tr class="item">
+                    <td class="topic"><a href="{url group/topic/id/$val[tpid]}">$val[subject]</a></td>
+                    <td class="total">$val[replies]/$val[pageview]</td>
+                    <td class="time">{date $val[dateline],'m-d H:i'}</td>
+                    <td class="time">{date $val[replytime],'m-d H:i'}</td>
+                </tr>
+                <!--{/dbres}-->
+            </table>
+            <div class="multipage">$multipage</div>
+        </div>
+
+	</div>
+
+	<div class="pages-aside">
+        <div class="modebox">
+            <div class="hd">
+                <h4>什么是小组？</h4>
+            </div>
+            <div class="con">
+                <div class="txt">
+                    <p>如果想就某一类话题跟别人交流，可以创建一个小组。小组是对同一个话题感兴趣的人的聚集地。</p>
+                    <a href="{url group/index}" target="_blank">加入我感兴趣的小组&nbsp;&raquo;</a>
+                </div>
+            </div>
+        </div>
+	</div>
+
+</div>
+
+<!--{include space_template('footer', $templateid)}-->

@@ -1,0 +1,21 @@
+<form method="post"name="frm_post" id="frm_post" action="{url group/member/ac/$ac/op/join/in_ajax/$_G[in_ajax]}">
+ <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+    <tr>
+        <td>小组管理员需要验证你的身份，请输入你的请求信息。</td>
+    </tr>
+    <tr>
+        <td>
+            <textarea name="message" style="width:98%;height:98px;"></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="hidden" name="dosubmit" value="Y">
+            <input type="hidden" name="gid" value="$gid">
+            <button type="button" onclick="ajaxPost('frm_post','$gid','group_join_after',1);">提交</button>&nbsp;
+            <button type="button" onclick="dlgClose();">关闭</button>
+        </td>
+    </tr>
+</table>
+</form>
+<!--{eval footer();}-->

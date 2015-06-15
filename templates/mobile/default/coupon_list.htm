@@ -1,0 +1,34 @@
+{eval
+    $_HEAD[title] = "优惠券列表";
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        <div class="fr right">
+            <select name="catid" id="catid">
+                <option value="{url coupon/mobile/do/list}">分类</option>
+                <!--{get:coupon val=category(pid/$catid)}-->
+                <option value="{url coupon/mobile/do/list/catid/$val[catid]}"{if $catid==$val[catid]} selected="selected"{/if}>$val[name]</option>
+                <!--{/get}-->
+            </select>
+        </div>
+        <h3>$MOD[name]</h3>
+    </div>
+    <div class="list-group list-group-insertmod" id="data_container">
+        {include mobile_template('coupon_list_li')}
+    </div>
+</div>
+<div id="page_container" class="mb10"></div>
+<script>
+$(function() {
+    page = $('#page_container').m_ajaxpage({
+        container:'#data_container'
+    });
+
+    $('#catid').change(function() {
+         var url = $(this).val().url();
+         page.get(url, true);
+    });
+});
+</script>
+{include mobile_template('footer')}

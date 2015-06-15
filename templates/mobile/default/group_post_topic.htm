@@ -1,0 +1,110 @@
+{eval
+    $_HEAD[title] = "发布话题";
+}
+{include mobile_template('header')}
+<div class="panel-common panel-default panel-fullsize">
+    <div class="panel-body">
+        <div class="form-box">
+            <form action="{url group/mobile/do/post/op/post_topic}" method="POST" onsubmit="return checkPostTopic(this)">
+                <input name="gid" type="hidden" value="$gid">        
+                {if $needtypeid>=1 && $typecount>0}
+                <div class="form-item">
+                    <label>分类{if $needtypeid=='2'}<span class="txt-warning">(必选)</span>{/if}：</label>
+                    {eval $_G['loader']->helper('form','group');}
+                    <select name="typeid">
+                        <option>=话题分类=</option>
+                        {print form_group_type($gid)}
+                    </select>
+                </div>
+                {/if}
+                <div class="form-item">
+                    <label>标题<span class="txt-warning">(必选)</span>：</label>
+                    <input name="subject" id="subject" placeholder="请输入话题标题" value="$topic[subject]" type="text" required>
+                </div>
+                <div class="form-item">
+                    <label>内容<span class="txt-warning">(必选)</span>：</label>
+                    <textarea name="content" id="content" placeholder="请输入话题内容" required>$topic[content]</textarea>
+                </div>
+                <div class="form-item">
+                    <fieldset>
+                        <legend>上传图片:</legend>
+                        <div>
+                            <span class="abtn" id="fileSelect"><a href="javascript:;">选择图片</a></span>
+                            <span class="abtn" id="fileSubmit"><a href="javascript:;">上传图片</a></span>
+                            <input type="file" id="fileImage" name="fileselect[]" multiple style="visibility:hidden;">
+                        </div>
+                        <div id="uploadMessage" class="upload_message"></div>
+                        <ul id="uploadPreview" class="upload_preview"></ul>
+                        <div class="uploaded_box">
+                            <h3>已上传(点击图片插入)</h3>
+                            <ul id="uploaded" class="upload_preview">
+                            </ul>
+                        </div>
+                    </fieldset>
+                </div>
+                <!--{if $MOD[topic_seccode] && $user->isLogin}-->
+                <div class="form-item">
+                    <label>验证码<span class="txt-warning">(必选)</span>：</label>
+                    <input name="seccode" placeholder="请输入右侧验证码" type="text" style="width:200px">
+                    <span data-name="seccode"></span>
+                </div>
+                <!--{/if}-->
+                <div class="form-submit">
+                    <div class="btn-group-vertical btn-comm full-width">
+                        <button type="submit" name="dosubmit" value="Y" class="btn btn-mycolor">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/upfile.js"></script>
+<script>
+var Upimg = null;
+$(document).ready(function() {
+
+    $('span.[data-name="seccode"]').m_seccode();
+
+    $('#fileSelect').click(function() {
+        $("#fileImage").click();
+    });
+    //上传图片组件
+    Upimg = mUpImage({
+        fileInput:  'fileImage',
+        upButton:   'fileSubmit',
+        message:    'uploadMessage',
+        preview:    'uploadPreview',
+        uploaded:   'uploaded',
+        postUrl:    '{url index/upload/in_ajax/1}',
+        postName:   'pictures',
+        maxSize:    {print (int)S('picture_upload_size')*1024},
+        maxNum:     20,
+        onClick:    insertContent
+    })
+});
+
+function insertContent(src,filename) {
+    var imgname = basename(filename);
+    imgname = imgname.substr(0,imgname.lastIndexOf('.'));
+    var text = "[/img:" + imgname + "/]";
+    $('#content').insertAtCaret(text);
+}
+
+function checkPostTopic(form) {
+    if(Upimg.getQueueCount() > 0) {
+        if(!window.confirm("图片上传内还有未上传的图片？\n\n需要处理未上传图片，请选择“取消”。\n\n不处理未上传图片，提交表单，请点击“确定”。")) {
+            return false;
+        }
+    }
+    if($('#subject').val().trim()=='') {
+        alert('未填写话题标题！');
+        return false;
+    }
+    if($('#content').val().trim()=='') {
+        alert('未填写话题内容！');
+        return false;
+    }
+    return true;
+}
+</script>
+{include mobile_template('footer')}

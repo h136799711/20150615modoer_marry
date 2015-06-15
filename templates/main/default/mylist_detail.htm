@@ -1,0 +1,171 @@
+{template modoer_header}
+<script type="text/javascript">
+mo.mylist.page.name         = 'detail';
+mo.mylist.page.mylist_id    = $id;
+mo.mylist.page.myself       = {if $myself}true{else}false{/if};
+mo.mylist.page.edit_id      = $editid;
+mo.mylist.page.index_url    = "{url mylist/index}";
+mo.mylist.page.detail_url     = "{url mylist/$id}";
+mo.mylist.page.edit_url     = "{url mylist/$id/editid/_EDITID_}";
+$(document).ready(function() {
+    $('.mylist-intro').mscorllbar({'showbox':'.J_article'});
+});
+</script>
+<script type="text/javascript" src="{URLROOT}/static/javascript/item.js"></script>
+<div id="body" style="margin-top:10px;">
+
+    <div class="link_path">
+        <a href="{url modoer/index}">{lang global_index}</a>&nbsp;&raquo;&nbsp;{print implode('&nbsp;&raquo;&nbsp;', $urlpath)}
+    </div>
+    <div class="mylist-header">
+        <div class="mylist-info">
+            <h1 class="mylist-title">$detail[title]</h1>
+            <div class="mylist-intro">
+                <p class="J_article">$detail[intro]</p>
+            </div>
+            <div class="mylist-operation">
+                <div class="float_left">
+                    <!--{if $myself}-->
+                    <span class="icomoon icon-plus-circle"></span><a href="javascript:;" onclick="mo.mylist.item.add_ui($id);">添加主题</a>
+                    <span class="icomoon icon-pencil2"></span><a href="{url mylist/member/ac/manage/op/edit/id/$id}">修改榜单</a>
+                    <span class="icomoon icon-remove"></span><a href="javascript:;" onclick="mo.mylist.del($id);">删除</a>
+                    <!--{else}-->
+                    <span class="icomoon icon-star"></span><a href="javascript:;" onclick="mo.mylist.favorite.add($id);">收藏(<span id="favorites_$id">$detail[favorites]</span>)</a>
+                    <span class="icomoon icon-flower"></span><a href="javascript:;" onclick="mo.mylist.flower.add($id);">送鲜花(<span id="flowers_$id">$detail[flowers]</span>)</a>
+                    <span class="icomoon icon-bubbles"></span><a href="#respondAdd">回应(<span id="responds_$id">$detail[responds]</span>)</a>
+                    <!--{/if}-->
+                </div>
+                <div class="float_right">
+                    $_CFG[sharecode]
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <ul class="mylist-tags">
+            <!--{loop $detail[tags] $tag_id $tag_name}-->
+            <li><a href="{url mylist/index/tagid/$tag_id}">$tag_name</a></li>
+            <!--{/loop}-->
+        </ul>
+        <div class="mylist-data">
+            <div class="float_left">榜主：<a href="{url mylist/index/uid/$detail[uid]}">$detail[username]</a></div>
+            <div class="float_right">{date $detail[createtime],'Y-m-d'} 创建 / {date $detail[modifytime],'Y-m-d'} 更新 / {$detail[pageviews]} 人浏览过</div>
+            <div class="clear"></div>
+        </div>
+        <!--{if $detail[digest]}-->
+        <div class="mylist-digest"></div>
+        <!--{/if}-->
+    </div>
+
+    <div class="mylist-content-a">
+        <div class="mylist-items">
+            <ul>
+                <!--{eval 
+                    $i=($_GET['page']-1)*$offset;
+                    $reviewcfg = $_G['loader']->variable('config','review');
+                }-->
+                <!--{dbres $list $val}-->
+                <li class="J_item" id="item_$val[id]" style="{if $i++%2==1}margin-left:26px;{/if}">
+                    <a id="item_edit_$val[id]"></a>
+                    <div class="J_hide J_item_thumb item-thumb">
+                        <a href="{url item/detail/id/$val[sid]}" target="_blank">{if $val[thumb]}<img src="{URLROOT}/$val[thumb]" title="$val[name]" alt="$val[name]" class="J_item_thumb_use" />{else}<img src="{URLROOT}/static/images/m_noimg.gif" />{/if}</a>
+                    </div>
+                    <div class="J_item_main item-info">
+                        <div class="item-opt">
+                            <!--{if $myself}-->
+                            <div class="J_item_opt">
+                                <a href="javascript:;" class="J_item_edt">编辑</a>
+                                <span class="font_3">|</span>
+                                <a href="javascript:;" class="J_item_del">删除</a>
+                            </div>
+                            <!--{else}-->
+                            <a href="javascript:;" class="J_item_fav" id="subject_$val[sid]">关注</a>
+                            <span class="font_3">|</span>
+                            <a href="{url item/detail/id/$val[sid]}#review">点评</a>
+                            <!--{/if}-->
+                        </div>
+                        <div class="J_item_data item-data">
+                            <!--{if $i<=10}-->
+                            <span class="item-order"{if $i>9}style="font-size:32px;"{/if}>{$i}</span>
+                            <!--{/if}-->
+                            <div class="item-data-a"{if $i<=10}style="margin-left:45px;"{/if}>
+                                <h3><a href="{url item/detail/id/$val[sid]}" target="_blank">$val[name]{if $val[subname]}($val[subname]){/if}</a></h3>
+                                <div class="start{print get_star($val[avgsort],$reviewcfg[scoretype]);} item-start">
+                                    <a href="{url item/detail/id/$val[sid]}#review">{$val[reviews]}点评</a>
+                                    <a href="{url item/album/sid/$val[sid]}#review">{$val[pictures]}图片</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="J_hide item-excuse" id="excuse_{$val[id]}">
+                            {if $val[excuse]}<p>推荐理由：{print nl2br($val[excuse])}</p>{/if}
+                        </div>
+                        <div class="J_edit item-edit none">
+                            <label for="ta_excuse_{$val[id]}">推荐理由:</label>
+                            <textarea class="item-edit-ta" id="ta_excuse_$val[id]">$val[excuse]</textarea>
+                            <div class="item-edit-opt">
+                                <button type="button" class="J_btn_submit">提交</button>
+                                <button type="button" class="J_btn_cancel">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <!--{/dbres}-->
+                <li class="J_item" style="{if $i++%2==1}margin-left:26px;{else}width:100%;{/if}">
+                    <div class="item-addbtn">
+                        <!--{if $myself}-->
+                        <p>还有主题要分享？</p>
+                        <a href="javascript:;" onclick="mo.mylist.item.add_ui($id);" class="addbtn">添加主题</a>
+                        <!--{else}-->
+                        <p>{if $detail[num]>0}没有了：）{else}啊哦，榜主还没来得及分享主题呢。{/if}</p>
+                        <!--{/if}-->
+                    </div>
+                </li>
+            </ul>
+            <div class="clear"></div>
+            <div class="multipage">$multipage</div>
+        </div>
+
+        <a name="respondAdd"></a>
+        <!--{hook 'load_comment', $comment_cfg}-->
+        
+    </div>
+
+    <div class="mylist-aside-a">
+        <div class="mainrail rail-border-4">
+            <h3 class="rail-h-3 rail-h-bg-6">榜主的其他榜单</h3>
+            <ul class="rail-list aside_mylist">
+                <!--{get:mylist val=get_mylist(uid/$detail[uid]/orderby/m.modifytime desc/rows/10/cachetime/2150)}-->
+                <li><a href="{url mylist/$val[id]}" title="$val[title]">$val[title]</a></li>
+                <!--{/get}-->
+                <!--{if $val_k>=9}-->
+                <li><a href="{url mylist/index/uid/$detail[uid]}">查看全部</a>&nbsp;&raquo;</li>
+                <!--{/if}-->
+            </ul>
+        </div>
+        <div class="mainrail rail-border-4 mt10">
+            <p class="mylist-aside-adddes">
+                去过很多商户？怎可不跟大家分享？选个主题建个榜单！
+            </p>
+            <div class="text_center mb10">
+                <a class="abtn2" href="{url mylist/member/ac/manage/op/add}"><span>新建榜单</span></a>
+            </div>
+        </div>
+        <!--{if $detail[flowers]}-->
+        <div class="mainrail rail-border-4 mt10">
+            <h3 class="rail-h-3 rail-h-bg-6">{$detail[flowers]}人鲜花支持</h3>
+            <ul class="rail-faces">
+                <!--{get:modoer val=table(table/dbpre_flowers/where/idtype='mylist' AND id='$detail[id]'/orderby/dateline DESC/rows/9)}-->
+                <li>
+                    <div><img src="{print get_face($val[uid])}" /></div>
+                    <span><a href="{url space/index/uid/$val[uid]}" target="_blank">$val[username]</a></span>
+                </li>
+                <!--{/get}-->
+            </ul>
+        </div>
+        <!--{/if}-->
+
+    </div>
+
+    <div class="clear"></div>
+
+</div>
+<!--{eval footer();}-->

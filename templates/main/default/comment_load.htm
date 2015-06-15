@@ -1,0 +1,40 @@
+﻿<div class="comment_foo">
+    <a name="commentend"></a>
+    <!--{if $use_local_comment}-->
+    <style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_comment.css");</style>
+    <script type="text/javascript" src="{URLROOT}/static/javascript/comment.js"></script>
+    <script type="text/javascript">
+        mo.comment.page.name = 'load_comment';
+        mo.comment.page.idtype = '$idtype';
+        mo.comment.page.id = '$id';
+        mo.comment.page.comment_interval = {if $cfg[comment_interval]>=5}$cfg[comment_interval]{else}10{/if};
+        mo.comment.page.content_max = {$cfg['content_max']};
+    </script>
+    <div class="mainrail comment-{$idtype}">
+        <div id="comment_form">
+            <!--{if $access && $enable_post}-->
+                {template comment_post}
+            <!--{elseif !$access}-->
+                <div class="messageborder">对不起，您所在的会员组没有评论权限。</div>
+            <!--{elseif !$enable_post}-->
+                <div class="messageborder">评论已关闭</div>
+            <!--{else}-->
+                <div class="messageborder">如果您要进行评论信息，请先<a href="{url member/login}">登录</a>或者<a href="{url member/reg}">注册</a>。</div>
+            <!--{/if}-->
+        </div>
+        <div class="rail-h-3 mt10">{if $comments}总共有{$comments}条评论{else}网友评论{/if}</div>
+        <div id="commentlist" style="margin-bottom:10px;"></div>
+    </div>
+    <!--{else}-->
+        <!-- 使用社会化评论插件-->
+        <!--{if $access && $enable_post}-->
+            {print $ITF->display($params)}
+        <!--{elseif !$access}-->
+            <div class="messageborder">对不起，您所在的会员组没有评论权限。</div>
+        <!--{elseif !$enable_post}-->
+            <div class="messageborder">评论已关闭</div>
+        <!--{else}-->
+            <div class="messageborder">如果您要进行评论信息，请先<a href="{url member/login}">登录</a>或者<a href="{url member/reg}">注册</a>。</div>
+        <!--{/if}-->
+    <!--{/if}-->
+</div>

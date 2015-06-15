@@ -1,0 +1,66 @@
+<!--{eval
+    if(SCRIPTNAV != 'index' && $_G[show_sitename]):
+        $_HEAD[title] .= $_G['cfg']['titlesplit'] . $_G['cfg']['sitename'];
+    endif;
+    if(!$_HEAD['keywords']):
+        $_HEAD[keywords] = $_G['cfg']['meta_keywords'];
+    endif;
+    if(!$_HEAD['description']):
+        $_HEAD[description] = $_G['cfg']['meta_description'];
+    endif;
+}-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="$_G[charset]" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" >
+<title>$_HEAD[title] - 手机版</title>
+<meta name="description" content="$_HEAD[keywords]" /> 
+<meta name="keywords" content="$_HEAD[description]" />
+<link rel="stylesheet" href="{URLROOT}/{$_G[tplurl_mobile]}/css/base.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" href="{URLROOT}/{$_G[tplurl_mobile]}/css/module.css?{$_G[modoer][build]}" />
+<script src="{URLROOT}/data/cachefiles/config.js?{$_G[cfg][js_cache_flag]}"></script>
+<script>
+mo = new Object;
+mo.in_mobile = true;
+<!--{if !empty($MOD)}-->
+mo.module_flag = modules['{$MOD[flag]}'];
+<!--{/if}-->
+</script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/jquery.js"></script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/common.js?{$_G[modoer][build]}"></script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/jquery.plugin.js?{$_G[modoer][build]}"></script>
+<link rel="stylesheet" href="{URLROOT}/{$_G[tplurl_mobile]}/css/plugin.css?{$_G[modoer][build]}" />
+</head>
+<body id="body">
+<a name="top"></a>
+<header>
+    <div class="header">
+        <a class="header-left" href="{if $header_forward}$header_forward{else}javascript:pageBack();{/if}">
+            <span class="icon18-white icon18-stand icon18-lt"></span>后退
+        </a>
+        {if $header_title}
+            <p class="header-title">
+                $header_title
+            </p>
+        {/if}
+        {if !$header_frbtn_hide}
+        <div class="header-right">
+            <a href="{url member/mobile}" class="header-btn">
+                <img src="{URLROOT}/{$_G[tplurl_mobile]}/images/avatar.png" class="header-img">
+                {if $user->isLogin}
+                {eval 
+                    $msg_num=$user->newmsg+_G('loader')->model('member:notice')->get_count();
+                    $msg_num>99&&$msg_num='99+';
+                }
+                {if $msg_num>0}<span class="num">$msg_num</span>{/if}
+                {/if}
+            </a>
+            <a href="{url mobile/index}" class="header-btn">
+                <img src="{URLROOT}/{$_G[tplurl_mobile]}/images/home.png" class="header-img">
+            </a>
+        </div>
+        {/if}
+    </div>
+</header>
+<div class="container module-{$MOD[flag]}" id="mobile_body">

@@ -1,0 +1,110 @@
+<!--{eval 
+    $_HEAD['title'] = $title ? $title : '产品搜索';
+}-->
+{template modoer_header}
+<script type="text/javascript">
+loadscript('item');
+</script>
+<div id="body">
+    <div class="link_path">
+        <em>筛选结果(<i class="font_1">$total</i>)</em>
+        <a href="{url modoer/index}">首页</a><span>&gt;</span>{print implode('<span>&gt;</span>', $urlpath)}
+    </div>
+    <div id="left_box">
+        <div class="p_title">
+			<h2>热销商品排行榜</h2>
+			<div class="hot_p">
+				<!--{eval $i=1;}-->
+				<!--{get:modoer val=sql(sql/SELECT pid,subject,picture,thumb,price,promote,promote_start,promote_end FROM dbpre_product WHERE status=1 AND is_on_sale=1 AND city_id IN (0,$_CITY[aid]) ORDER BY sales DESC/rows/10)}-->
+				<dl>
+					<dt><a href="{url product/detail/pid/$val[pid]}" title="$val[subject]">$val[subject]</a></dt>
+					<dd class="pic">
+						<a href="{url product/detail/pid/$val[pid]}">
+							{eval $image=$val[thumb]?$val[thumb]:'static/images/noimg.gif';}
+                        	<img src="{img $image}" alt="$val[subject]" />
+						</a>
+						<sup {if $i>=4} class="gray"{/if}>$i</sup>
+					</dd>
+					<dd class="price">
+						<strong>&yen;{print:product price(product/$val)}</strong>
+					</dd>
+				</dl>
+				<!--{eval $i++;}-->
+				<!--{/get}-->
+			</div>
+		</div>
+    </div>
+    <div class="list_right_box">
+		<div class="rankop clear">
+			<ul class="rank clear">
+				<!-- 排序方式 -->
+				<li{if $orderby=="sales"} class="down"{else} class="default"{/if}><a href='{url product/search/orderby/sales/filter/$filter/num/$num/$params}'><span>销量</span></a></li>
+				<!--{if !$sort}-->
+				<li class="defaultprice"><a href='{url product/search/orderby/price/sort/asc/filter/$filter/num/$num/$params}'> <span>价格</span></a></li>
+				<!--{elseif $orderby=="price" && $sort=="asc"}-->
+				<li class="defaultprice priceup"><a href='{url product/search/orderby/price/sort/desc/filter/$filter/num/$num/$params}'> <span>价格</span></a></li>
+				<!--{elseif $orderby=="price" && $sort=="desc"}-->
+				<li{if $orderby=="price"} class="defaultprice pricedown"{/if}><a href='{url product/search/orderby/price/sort/asc/filter/$filter/num/$num/$params}'> <span>价格</span></a></li>
+				<!--{/if}-->
+				<li{if $orderby=="comments"} class="down"{else} class="default"{/if}><a href='{url product/search/orderby/comments/filter/$filter/num/$num/$params}'><span>评价</span></a></li>
+				<li{if $orderby=="last_update"} class="down"{else} class="default"{/if}><a href='{url product/search/orderby/last_update/filter/$filter/num/$num/$params}'><span>上架时间</span></a></li>
+				{if $filter}
+                <li class="filter">
+                <input type="checkbox" name="filter" checked="checked" id="list_filter" value="" onClick="location.href='{url product/search/catid/$catid/att/$atturl/orderby/$orderby/sort/$sort/num/$num/keyword/$keyword}'"/><label for="list_filter">促销商品</label></li>
+                {else}
+                <li class="filter"><input type="checkbox" name="filter" id="list_filter" value="1" onClick="location.href='{url product/search/catid/$catid/att/$atturl/orderby/$orderby/sort/$sort/filter/1/num/$num/keyword/$keyword}'"/><label for="list_filter">促销商品</label></li>
+                {/if}
+			</ul>
+			<ul class="page">
+				<li>每页显示数量：</li>
+				<li><a {if !$num} class="cur"{else} href="{url product/search/orderby/$orderby/sort/$sort/filter/$filter/$params}"{/if}>24</a></li>
+				<li><a {if $num=="36"} class="cur"{else} href="{url product/search/orderby/$orderby/sort/$sort/filter/$filter/num/36/$params}"{/if}>36</a></li>
+				<li><a {if $num=="64"} class="cur"{else} href="{url product/search/orderby/$orderby/sort/$sort/filter/$filter/num/64/$params}"{/if}>64</a></li>
+			</ul>
+		</div>
+
+		<!--{if $total}-->
+		<div class="productresult">
+			<ul>
+				<!--{eval $i=1;}-->
+				<!--{dbres $list $val}-->
+				<li>
+					<a href="{url product/detail/pid/$val[pid]}">
+						{eval $image=$val[thumb]?$val[thumb]:'static/images/noimg.gif';}
+                        <img src="{img $image}" title="$val[subject]" />
+					</a>
+					<a class="title" href="{url product/detail/pid/$val[pid]}" title="$val[subject]">$val[subject]</a>
+					<p class="price"><strong>&yen;{print mc_product_cart::calc_myprice($val)}</strong></p>
+					<p>
+						<span class="start start{print get_star($val[grade],5)}"></span>
+						<a class="grade_s" href="{url product/detail/pid/$val[pid]}#commentend">&nbsp;&nbsp;$val[comments]条评论</a>
+					</p>
+					<p>
+						<a href="{url product/member/ac/order/pid/$val[pid]}" class="buy" data-name="once_order_btn" data-pid="$val[pid]">立即购买</a>
+						<a href="{url product/detail/pid/$val[pid]}" class="fav">查看</a>
+					</p>
+					<!--{if in_expiry_date(_G('timestamp'), $val['promote_start'], $val['promote_end'])}-->
+                        <sup>促销</sup>
+                    <!--{/if}-->
+				</li>
+				<!--{if $i++%4==0}-->
+			</ul>
+		</div>
+		<div class="productresult">
+			<ul>
+				<!--{/if}-->
+				<!--{/dbres}-->
+			</ul>
+		</div>
+		<!--{else}-->
+		<div class="messageborder">
+        	<span class="msg-ico">暂时没有相关产品信息，<a href="{url product/index}">点此返回重新查找您喜欢的商品</a>。</span>
+    	</div>
+		<!--{/if}-->
+		<!--{if $multipage}-->
+		<div class="multipage">$multipage</div>
+		<!--{/if}-->
+    </div>
+    <div class="clear"></div>
+</div>
+<!--{eval footer();}-->

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="$_G[charset]" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>$_CFG[sitename] - 手机版</title>
+<link rel="stylesheet" href="{URLROOT}/{$_G[tplurl_mobile]}/css/base.css?{$_G[modoer][build]}" />
+<link rel="stylesheet" href="{URLROOT}/{$_G[tplurl_mobile]}/css/index.css?{$_G[modoer][build]}" />
+<script src="{URLROOT}/data/cachefiles/config.js?{$_G[cfg][js_cache_flag]}"></script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/jquery.js?{$_G[modoer][build]}"></script>
+</head>
+<body id="body">
+<a name="top"></a>
+<header>
+    <div class="header">
+        <a href="{url mobile/citys}" class="header-left">
+            <img width="172" height="32" src="{URLROOT}/{$_G[tplurl_mobile]}/images/logo.png">
+        </a>
+        <p class="header-title">
+            me marry
+        </p>
+        <a href="{url member/mobile}" class="header-right">
+            <img src="{URLROOT}/{$_G[tplurl_mobile]}/images/avatar.png" class="header-img">
+        </a>
+    </div>
+</header>
+
+<div class="panel-body search">
+    <form action="{print U('item/mobile',true,'normal')}" method="get">
+        <input type="hidden" name="act" value="mobile">
+        <input type="hidden" name="do" value="search">
+        <input name="keyword" type="search" class="search-keyword" placeholder="搜索主题" autocomplete="off">
+        <input type="submit" value="搜主题" class="icon18 icon18-search search-button">
+    </form>
+</div>
+
+<!-- 图片尺寸 640X239 -->
+<div class="swipe-box">
+    <div id="slider" class="swipe">
+        <div class="swipe-wrap">
+            {eval $piccount=0;}
+            {get:modoer val=bcastr(groupname/mobile/city_id/_NULL_CITYID_)}
+            {eval $piccount++;}
+            <figure>
+                <div class="wrap">
+                    <div class="image">
+                        <a href="$val[item_url]" title="$val[itemtitle]">
+                            <img src="{URLROOT}/$val[link]" alt="$val[itemtitle]" style="z-index: 1;height: auto;max-width: 640px;min-width: 320px;width: 100%;">
+                        </a>
+                    </div>
+                </div>
+            </figure>
+            {/get}
+        </div>
+    </div>
+</div>
+
+<div class="package-box" id="page_container">
+    <ul>
+        {get:modoer val=table(table/dbpre_product/select/pid,gcatid,subject,price,thumb/where/gcatid=3 AND city_id IN(_NULL_CITYID_)/orderby/dateline DESC/rows/6/cachetime/1000)}
+        <li class="package-list">      
+            <a href="{url product/mobile/do/detail/id/$val[sid]}"><img class="imgwh" src="$val[thumb]" alt=""></a>
+            <p><a href="{url product/mobile/do/detail/id/$val[sid]}">$val[subject]</a>
+            <br><span class="posi-price">￥$val[price]</span>
+            <em class="fav-btn " data="28134">81</em>
+            </p>
+        </li>
+        {/get}
+    </ul>
+</div>
+
+<div class="activities" style="display:none;">
+    <div class="container">
+        <!-- 九宫格 -->
+        <div class="list">
+            <ul>
+                <li class="one-img">
+                    <div class="app">
+                        <ul>
+                            {loop $links $link}
+                            <li><dl><a href="$link[url]"><dt><img src="{URLROOT}/{$_G[tplurl_mobile]}/images/menu/$link[icon].png" width="46" height="46" alt=""></dt></a><dd>$link[title]</dd></dl></li>
+                            {/loop}
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            <div class="clear"></div>
+        </div>
+        <!-- 内容聚合 -->
+        <div class="tabbox">
+            <div class="tabs-hd">
+                    <ul class="tabs">
+                    <li class="selected" data-tab="finer"><a href="javascript:;">推荐商家</a></li>
+                    <li data-tab="hot"><a href="javascript:;">热门商家</a></li>
+                    <li data-tab="new"><a href="javascript:;">最新加入</a></li>
+                </ul>
+                <div class="clear"></div>
+            </div>
+            <div class="tab-show" data-tab="finer">
+                <ul class="subjects">
+                    {get:modoer val=table(table/dbpre_subject/select/sid,aid,name,subname,avgsort,thumb/where/status=1 AND finer>0 AND city_id IN(_NULL_CITYID_)/orderby/finer DESC/rows/6/cachetime/1000)}
+                    <li>
+                        <div class="subject-item">
+                            <a href="{url item/mobile/do/detail/id/$val[sid]}"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name].$val[subname]" title="$val[name].$val[subname]" /></a>
+                            <span class="subject-title"><a href="{url item/mobile/do/detail/id/$val[sid]}" title="$val[name].$val[subname]">{sublen $val[name].$val[subname],10}</a></span>
+                        </div>
+                    </li>
+                    {/get}
+                </ul>
+            </div>
+            <div class="tab-show none" data-tab="hot">
+                <ul class="subjects">
+                    {get:modoer val=table(table/dbpre_subject/select/sid,aid,name,subname,avgsort,thumb/where/status=1 AND reviews>0 AND city_id IN(_NULL_CITYID_)/orderby/reviews DESC/rows/6/cachetime/1000)}
+                    <li>
+                        <div class="subject-item">
+                            <a href="{url item/mobile/do/detail/id/$val[sid]}"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name].$val[subname]" title="$val[name].$val[subname]" /></a>
+                            <span class="subject-title"><a href="{url item/mobile/do/detail/id/$val[sid]}" title="$val[name].$val[subname]">{sublen $val[name].$val[subname],10}</a></span>
+                        </div>
+                    </li>
+                    {/get}
+                </ul>
+            </div>
+            <div class="tab-show none" data-tab="new">
+                <ul class="subjects">
+                    {get:modoer val=table(table/dbpre_subject/select/sid,aid,name,subname,avgsort,thumb/where/status=1 AND city_id IN(_NULL_CITYID_)/orderby/addtime DESC/rows/6/cachetime/1000)}
+                    <li>
+                        <div class="subject-item">
+                            <a href="{url item/mobile/do/detail/id/$val[sid]}"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name].$val[subname]" title="$val[name].$val[subname]" /></a>
+                            <span class="subject-title"><a href="{url item/mobile/do/detail/id/$val[sid]}" title="$val[name].$val[subname]">{sublen $val[name].$val[subname],10}</a></span>
+                        </div>
+                    </li>
+                    {/get}
+                </ul>
+            </div>
+            <script>
+                $(document).ready(function() {
+                    $('div.tabbox .tabs a').each(function(index, el) {
+                        $(this).click(function(event) {
+                            var tabname = $(this).parent().data('tab');
+                            var tabs =  $(this).parent().parent();
+                            tabs.find('li').each(function(index, el) {
+                                if($(this).data('tab')==tabname) {
+                                    $(this).addClass('selected');
+                                } else {
+                                    $(this).removeClass('selected');
+                                }                            
+                            });
+                            tabs.parent().parent().find('div.tab-show').each(function(index, el) {
+                                if($(this).data('tab')==tabname) {
+                                    $(this).show();
+                                } else {
+                                    $(this).hide();
+                                } 
+                            });
+                        });
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
+<style>
+#footer {border: none;border-top: 1px solid #eaeaea;position: fixed;width: 100%;height: 50px;z-index: 99;background-color: #fcfcfc;opacity: .96;filter: alpha(opacity=96);margin-left: 0px;bottom: 0;left: 0%;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;-webkit-transition: left 0.3s ease, right 0.3s ease;-moz-transition: left 0.3s ease, right 0.3s ease;transition: left 0.3s ease, right 0.3s ease;}
+#footer a {padding: 0px;}
+.vk_grid_4 {clear: left;}
+.vk_color_fff {color: #fff;}
+.vk_grid_4 li {width: 19.925%;display: inline-block;margin: 0;padding: 0;border: 0;float: left;text-align: center;height: 50px;line-height: 80px;background: none;}
+.vk_grid_4 li a {display: inline-block;width: 100%;height: 100%;font-size: 10px;color: #9e9e9e;font-weight: normal;text-shadow: none;}
+.vk_icon_home {background: url(http://c.5wed.com/m/index/index/vk_icon_home.png) no-repeat 50% 12%;background-size: 28px 28px;}
+.vk_icon_butler {background: url(http://c.5wed.com/m/index/index/vk_icon_butler.png) no-repeat 50% 12%;background-size: 28px 28px;}
+.vk_icon_loan {background: url(http://c.5wed.com/m/index/index/vk_icon_loan.png) no-repeat 50% 12%;background-size: 28px 28px;}
+.vk_icon_bbs {background: url(http://c.5wed.com/m/index/index/vk_icon_bbs.png) no-repeat 50% 12%;background-size: 28px 28px;}
+.vk_icon_tool {background: url(http://c.5wed.com/m/index/index/vk_icon_tool.png) no-repeat 50% 12%;background-size: 28px 28px;}
+</style>
+<footer>
+   <div id="footer" class="mm-fixed-bottom">
+      <div class="vk_grid_4  vk_color_fff">
+         <ul>
+         <li><a href="/mobile.php" class="vk_icon_home">首页</a></li>
+         <li><a href="/item.php?act=mobile&do=list&catid=4" class="vk_icon_butler">管家</a></li>
+         <li><a href="/product.php?act=mobile&do=list&catid=2" class="vk_icon_loan">套餐</a></li>
+         <li><a href="/group.php?act=mobile&do=list" class="vk_icon_bbs">新人说</a></li>
+         <li id="usermsg"><a href="/member.php?act=mobile" class="vk_icon_tool">我的</a></li>
+         </ul>
+      </div>
+   </div>
+</footer>
+
+
+
+<footer style="display:none;">
+    <div class="footer">
+        <div>
+            {if $user->isLogin}
+            <a href="{url member/mobile}">$user->username</a><span style="margin:0 10px;">|</span><a href="{url member/mobile/do/login/op/logout}">退出</a>
+            {else}
+            <a href="{url member/mobile/do/login}">登录</a><span style="margin:0 10px;">|</span><a href="{url member/mobile/do/reg}">注册</a>
+            {/if}
+            <span style="margin:0 10px 0 5px;">|</span><a href="{url mobile/index/goto/web}">电脑版</a>
+        </div>
+        <div class="gray"></div>
+     </div>
+</footer>
+
+<link rel="stylesheet" href="{URLROOT}/{$_G[tplurl_mobile]}/css/plugin.css?{$_G[modoer][build]}" />
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/common.js?{$_G[modoer][build]}"></script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/jquery.plugin.js?{$_G[modoer][build]}"></script>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/swipe.js?{$_G[modoer][build]}"></script>
+<script>
+$(document).ready(function() {
+    Swipe(document.getElementById('slider'), {
+        auto: 5000,
+        continuous: true
+    });
+});
+</script>
+
+</body>
+</html>
+<!--{eval output();}-->

@@ -1,0 +1,209 @@
+{template modoer_header}
+<div id="body">
+<div class="myhead"></div>
+<div class="mymiddle">
+    <div class="myleft">
+        <!--{template 'menu','member','member'}-->
+    </div>
+    <div class="myright">
+        <div class="myright_top"></div>
+        <div class="myright_middle">
+            <h3>小组管理($group[groupname])</h3>
+            <div class="mainrail">
+                <ul class="optabs">
+                    <li><a href="{url group/member/ac/group/op/edit/gid/$gid}">编辑小组</a></li>
+                    <li class="active"><a href="{url group/member/ac/memberlist/gid/$gid}">成员管理</a></li>
+                    <li><a href="{url group/member/ac/type/gid/$gid}">话题分类</a></li>
+                    <li><a href="{url group/member/ac/setting/gid/$gid}">参数设置</a></li>
+                </ul>
+                <div class="clear"></div>
+                {if $checkcount > 0 && $_GET['status']!='0'}
+                <div style="border-top:2px solid #eee; padding:10px 0;">
+                    <a href="{url group/member/ac/memberlist/gid/$gid/status/0}">有 <span class="font_2"><strong>$checkcount</strong></span> 名会员申请加入，请及时进行处理。</a>
+                </div>
+                {/if}
+                <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                    <tr class="thbg">
+                        <th width="80">角色</th>
+                        <th width="120">名称</th>
+                        <th width="110">加入时间</th>
+                        <th width="110">最近发帖</th>
+                        <th width="80">状态</th>
+                        <th width="180">操作</th>
+                    </tr>
+                    {dbres $list $val}
+                    <tr>
+                        {eval $langtype='group_member_type_'.$val[usertype];}
+                        <td>{print lang($langtype)}</td>
+                        <td><a href="{url space/$val[uid]}">$val[username]</a></td>
+                        <td>{date $val[jointime]}</td>
+                        <td>{if $val[lastpost]}{date $val[lastpost]}{else}未发帖{/if}</td>
+                        {eval $langstatus='group_member_status_'.$val[status];}
+                        <td>{print lang($langstatus)}</td>
+                        <td>
+                            {if $user->uid==$val[uid]}
+                            -
+                            {else}
+                            <a href="javascript:;"onclick="group_delete_member($val[gid],$val[uid]);">删除</a>
+                            {if $val[status]=='-1'}
+                            <a href="javascript:;"onclick="group_unban_post($val[gid],$val[uid],'{date $val[bantime],Y-m-d}');">解禁</a>({date $val[bantime],Y-m-d})
+                            {elseif $val[status]=='0'}
+                            <a href="javascript:;"onclick="group_check_join_ui($val[gid],$val[uid]);">审核</a>
+                            {else}
+                            <a href="javascript:;"onclick="group_ban_post($val[gid],$val[uid]);">禁言</a>
+                            {/if}
+                            {/if}
+                        </td>
+                    </tr>
+                    {/dbres}
+                    {if !$list}
+                    <tr>
+                        <td colspan="7"><div style="padding:30px 0;text-align:center;">暂无信息.</div></td>
+                    </tr>
+                    {/if}
+                </table>
+                {if $multipage}<div class="multipage">$multipage</div>{/if}
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="mybottom"></div>
+</div>
+<script type="text/javascript" src="{URLROOT}/static/javascript/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+function group_delete_member(gid,uid) {
+    if (!is_numeric(gid)) {
+        alert('无效的小组ID'); 
+        return;
+    }
+    if (!is_numeric(uid)) {
+        alert('无效的会员ID'); 
+        return;
+    }
+    if(!window.confirm('您确定要删除这个会员吗？')) {
+        return;
+    }
+    $.post(Url('group/member/ac/memberlist/op/delete'), 
+    { 'gid':gid, 'uid':uid, 'in_ajax':1, 'empty':getRandom() },
+    function(result) {
+        if(result == null) {
+            alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+        } else if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+            myAlert(result);
+        } else if(result == 'OK') {
+            document_reload();
+        } else {
+            alert('操作失败。');
+        }
+    });
+}
+function group_ban_post(gid,uid) {
+    if (!is_numeric(gid)) {
+        alert('无效的小组ID'); 
+        return;
+    }
+    if (!is_numeric(uid)) {
+        alert('无效的会员ID'); 
+        return;
+    }
+    $.post(Url('group/member/ac/memberlist/op/ban'), 
+    { 'gid':gid, 'uid':uid, 'in_ajax':1, 'empty':getRandom() },
+    function(result) {
+        if(result == null) {
+            alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+        } else if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+            myAlert(result);
+        } else {
+            dlgOpen('禁言', result, 400);
+        }
+    });
+}
+function group_unban_post(gid,uid,bantime) {
+    if (!is_numeric(gid)) {
+        alert('无效的小组ID'); 
+        return;
+    }
+    if (!is_numeric(uid)) {
+        alert('无效的会员ID'); 
+        return;
+    }
+    if(!window.confirm("您确定要手动解除该会员的经验状态吗？\n会员在 "+bantime+" 后登录时，将会自动解禁。")) return;
+    $.post(Url('group/member/ac/memberlist/op/unban'), 
+    { 'gid':gid, 'uid':uid, 'in_ajax':1, 'empty':getRandom() },
+    function(result) {
+        if(result == null) {
+            alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+        } else if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+            myAlert(result);
+        } else if(result == 'OK') {
+            document_reload();
+        } else {
+            alert('操作失败。');
+        }
+    });
+}
+
+function group_check_join_ui(gid,uid) {
+    if (!is_numeric(gid)) {
+        alert('无效的小组ID'); 
+        return;
+    }
+    if (!is_numeric(uid)) {
+        alert('无效的会员ID'); 
+        return;
+    }
+    $.post(Url('group/member/ac/memberlist/op/get_applydes'), 
+    { 'gid':gid, 'uid':uid, 'in_ajax':1, 'empty':getRandom() },
+    function(result) {
+        if(result == null) {
+            alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+        } else if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+            myAlert(result);
+        } else {
+            var ui = $('<div></div>');
+            var opobx = $('<div style="margin:10px 0;text-align:center"></div>');
+            var btn_ok = $('<button type="button"></button>').text('通过审核').click(function(){
+                $.post(Url('group/member/ac/memberlist/op/checkup_join'), 
+                { 'status':1, 'gid':gid, 'uid':uid, 'in_ajax':1, 'empty':getRandom() },
+                function(result) {
+                    if(result == null) {
+                        alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+                    } else if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+                        myAlert(result);
+                    } else if(result == 'OK') {
+                        alert('操作成功！');
+                        document_reload();
+                    } else {
+                        alert('操作失败。');
+                    }
+                });
+            });
+            var btn_no = $('<button type="button"></button>').text('拒绝加入').click(function(){
+                $.post(Url('group/member/ac/memberlist/op/checkup_join'), 
+                { 'status':-1, 'gid':gid, 'uid':uid, 'in_ajax':1, 'empty':getRandom() },
+                function(result) {
+                    if(result == null) {
+                        alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+                    } else if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+                        myAlert(result);
+                    } else if(result == 'OK') {
+                        alert('操作成功！');
+                        document_reload();
+                    } else {
+                        alert('操作失败。');
+                    }
+                });
+            });
+            var btn_cancel = $('<button type="button"></button>').text('关闭').click(function(){dlgClose()});
+            ui.append('<div>会员提交的验证信息：<br />' + '<p>' + result + '</p>');
+            opobx.append(btn_ok);
+            opobx.append(btn_no);
+            opobx.append(btn_cancel);
+            ui.append(opobx);
+            dlgOpen('加入审核', ui, 400);
+        }
+    });
+}
+</script>
+<!--{eval footer();}-->

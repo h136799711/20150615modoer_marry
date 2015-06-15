@@ -1,0 +1,130 @@
+{template modoer_header}
+<div id="body">
+    <div class="myhead"></div>
+    <div class="mymiddle">
+        <div class="myleft">
+        <!--{eval !$mymenu && $mymenu = 'mmenu';}-->
+        <!--{template $mymenu,'member','member'}-->
+        </div>
+        <div class="myright">
+            <div class="myright_top"></div>
+            <div class="myright_middle">
+                <h3>购买属性管理($product[subject])</h3>
+                <div class="mainrail">
+                    <form method="post" name="myform" action="{url product/member/ac/$ac/rand/$_G[random]}">
+                    <table width="100%" cellspacing="0" cellpadding="0" class="maintable" trmouse="Y">
+                        <tr>
+                            <th width="25"><input type="checkbox" id="allcheck" onclick="checkbox_checked('ids[]',this);" /></th>
+                            <th width="60">排序</th>
+				            <th width="120">属性名</th>
+				            <th width="*">属性值</th>
+				            <th width="80">操作</th>
+                        </tr>
+                        <!--{dbres $list $val}-->
+                        <tr>
+                            <td><input type="checkbox" name="ids[]" value="$val[id]" /></td>
+                            <td><input type="text" class="t_input" size="5" name="listorder[{$val[id]}]" value="$val[listorder]" /></td>
+				            <td data-name="name">$val[name]</td>
+				            <td data-name="value">$val[value]</td>
+				            <td><a href="#" data-type="edit">编辑</a></td>
+                        </tr>
+                        <!--{/dbres}-->
+                        <!--{if !$list}-->
+                        <tr><td colspan="6">暂无信息。</td></tr>
+                        <!--{/if}-->
+                    </table>
+                    <!--{if $total}-->
+                    <div class="multipage">$multipage</div>
+                    <!--{/if}-->
+                    <div class="text_center">
+                        <input type="hidden" name="forward" value="{print get_forward()}" />
+                        <input type="hidden" name="pid" value="$pid">
+                        <button type="button" id="add_btn">增加</button>&nbsp;
+                        <!--{if $list}-->
+                        <input type="hidden" name="dosubmit" value="yes" />
+                        <input type="hidden" name="op" value="delete" />
+                        <button type="button" onclick="easy_submit('myform','listorder');">更新排序</button>&nbsp;
+                        <button type="button" onclick="easy_submit('myform','delete','ids[]');">删除所选</button>&nbsp;
+                        <!--{/if}-->
+                        <button type="button" onclick="jslocation('{url product/member/ac/g_product/op/edit/pid/$pid}')">返回</button>&nbsp;
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="mybottom"></div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('a[data-type="edit"]').click(function(event) {
+        var box = $(this).parents('tr');
+        buyattr_edit(box.find('[name="ids[]"]').val(), box.find('[data-name="name"]').text(), box.find('[data-name="value"]').text());
+    });
+
+    $('#add_btn').click(function(event) {
+        buyattr_add();
+    });
+
+    function buyattr_edit(id, name, value) {
+
+        console.debug(id, name, value);
+
+        var input = function(caption, name, value) {
+            var lbl = $('<label for="">'+caption+'：</label><br />');
+            var txt = $('<input type="text" class="t_input" style="width:95%;" />').attr('name',name).val(value);
+            return $('<div></div>').append(lbl).append(txt);
+        }
+
+        var button = function(caption, name, value, type, click_callback) {
+            if(!name) name = '';
+            if(!type) type = 'button';
+            var btn = $('<button type="'+type+'" class="btn"></button>').attr({'name':name}).text(caption);
+            if(click_callback) btn.click(function(){click_callback()});
+            return btn;
+        }
+
+        var hidden = function(name, value) {
+            return $('<input type="hidden" />').attr('name', name).val(value);
+        }
+
+        var form = $('<form></form>').attr({action:"{url product/member/ac/buyattr/op/edit}",method:'post'});
+        form.append(input('属性名','name', name)).append(input('属性值','value', value));
+        form.append(button('提交编辑', 'dosubmit', 'yes', 'submit'));
+        form.append(button('关闭', '', '', 'button', dlgClose));
+        form.append(hidden('pid', $pid));
+        form.append(hidden('id', id));
+        form.bind('submit',function() {
+            if(form.find('[name="name"]').val().trim()=='') {
+                alert('未填写属性名称。');
+            } else if(form.find('[name="value"]').val().trim()=='') {
+                alert('未填写属性值。');
+            } else {
+                return true;
+            }
+            return false;
+        });
+        dlgOpen('编辑', form, 400);
+    }
+
+    function buyattr_add () {
+        var form = $("<form action=\"{url product/member/ac/buyattr/op/add}\" method=\"post\"></form>");
+        form.append("<textarea name=\"buyattr\" rows=\"6\" cols=\"65\" id='post_buyattr'></textarea>");
+        form.append("<div class=\"font_1\" style='margin:5px 0;width:100%;'>一行一条购买属性。格式：属性名=属性值1,属性值2,属性值3&nbsp;&nbsp;例如：颜色=红色,蓝色,白色,黑色</div>");
+        form.append("<input type=\"submit\" class=\"btn\" name=\"dosubmit\" value=\"提交\">&nbsp;&nbsp;");
+        form.append("<input type=\"button\" class=\"btn\" value=\"关闭\" onclick='dlgClose()'>");
+        form.append("<input type=\"hidden\" name=\"pid\" value=\"$pid\">");
+        form.bind('submit',function(){
+            if($('#post_buyattr').val()=='') {
+                alert('对不起，您尚未填写购买属性。');
+                return false;
+            }
+            return true;
+        });
+        dlgOpen('增加', form, 500);
+    }
+
+});
+</script>
+<!--{eval footer();}-->

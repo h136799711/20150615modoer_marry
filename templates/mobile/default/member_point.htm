@@ -1,0 +1,53 @@
+{include mobile_template('header')}
+<div class="panel-body">
+
+    {if $flash_message}
+        <div class="panel-body bg-success mb10" id="flash_message">$flash_message</div>
+        <script>
+        $(function() {
+            window.setTimeout(function() {
+                $('#flash_message').slideUp();
+            }, 2000);
+        });
+        </script>
+    {/if}
+
+    <ul class="list-group">
+        <li class="list-group-item list-mycolor">
+            <div class="fr">
+                <span class="txt-red">$user->rmb</span>&nbsp;元
+            </div>
+            <b>账户现金</b>
+        </li>
+    </ul>
+
+    <ul class="list-group mt10">
+        <li href="{url member/mobile/do/notice}" class="list-group-item">
+            <div class="fr">
+                <span>$user->point</span>
+            </div>
+            等级积分
+        </li>
+        {get:member val=point_groups()}
+            {if $val[enabled]}
+            <li class="list-group-item">
+                <div class="fr">
+                    <span>{print $user->$val_k}</span>
+                </div>
+                $val[name]
+            </li>
+            {/if}
+        {/get}
+    </ul>
+
+    {if check_module('pay')}
+    {eval $cz_type = S('pay:cz_type'); if($cz_type)$cz_type=unserialize ($cz_type);}
+    {if is_array($cz_type) && in_array('rmb', $cz_type) && S('pay:alipay_mobile')}
+    <div class="mt10">
+        <a href="{url pay/mobile/do/recharge}" class="btn btn-mycolor block">账户现金充值</a>
+    </div>
+    {/if}
+    {/if}
+
+</div>
+{include mobile_template('footer')}

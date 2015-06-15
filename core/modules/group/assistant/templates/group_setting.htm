@@ -1,0 +1,71 @@
+{template modoer_header}
+<div id="body">
+<div class="myhead"></div>
+<div class="mymiddle">
+    <div class="myleft">
+        <!--{template 'menu','member','member'}-->
+    </div>
+    <div class="myright">
+        <div class="myright_top"></div>
+        <div class="myright_middle">
+        <h3>小组管理(<a href="{url group/$gid}">$group[groupname]</a>)</h3>
+            <div class="mainrail">
+                <ul class="optabs">
+                    <li><a href="{url group/member/ac/group/op/edit/gid/$gid}">编辑小组</a></li>
+                    <li><a href="{url group/member/ac/memberlist/gid/$gid}">成员管理</a></li>
+                    <li><a href="{url group/member/ac/type/gid/$gid}">话题分类</a></li>
+                    <li class="active"><a href="{url group/member/ac/setting/gid/$gid}">参数设置</a></li>
+                </ul>
+                <div class="clear"></div>
+                <div style="height:1px;*height:1px;_font-size:1px;border-top:2px solid #eee;margin-bottom:5px;"></div>
+                <form method="post" name="myform" action="{url group/member/ac/$ac/op/post/rand/$_G[random]}">
+                <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                    <tr>
+                        <td width="80" align="right" valign="top">浏览权限：</td>
+                        <td width="*">
+                            {print form_radio('readaccess',array('0'=>'任何人都可以浏览',1=>'仅允许小组成员浏览'),$setting[readaccess],'','<br />')}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="85" align="right" valign="top">发帖模式：</td>
+                        <td width="*">
+                            {eval !$setting[postaccess]&&$setting[postaccess]=1;}
+                            {print form_radio('postaccess',array('1'=>'常规模式(仅小组成员可发帖)','2'=>'自由模式(网站已登录用户无需加入小组即可发帖)','3'=>'只读模式(除组长外，其他人都不能发帖)'),$setting[postaccess],'','<br />')}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="85" align="right" valign="top">加入方式：</td>
+                        <td width="*">
+                            {print form_radio('jointype',array('0'=>'任何人都可以加入',1=>'申请加入需要管理员审核'),$setting[jointype],'','<br />')}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="80" align="right" valign="top">话题分类：</td>
+                        <td width="*">
+                            {print form_radio('needtypeid',array('0'=>'不使用',1=>'允许使用(发布话题允许不选择)',2=>'强制使用(发布话题必须选择)'),$setting[needtypeid],'','<br />')}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="80" align="right" valign="top">黑名单：</td>
+                        <td width="*">
+                            <div>禁止列表内填写的会员加入本小组，多个会员请用逗号","分割</div>
+                            <textarea name="blacklist" style="width:500px;height:80px;">$setting[blacklist]</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="hidden" name="gid" value="$gid" />
+                            <button type="submit" name="onsubmit" value="yes">提交</button>
+                        </td>
+                    </tr>
+                </table>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="mybottom"></div>
+</div>
+<!--{eval footer();}-->

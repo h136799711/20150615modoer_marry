@@ -1,0 +1,38 @@
+<!--{if !$_G[in_ajax]}-->
+<div class="mainrail rail-border-3 subject forums">
+
+    <ul class="subtab" id="subtab">
+        <li id="tab_review"><a href="{url item/detail/id/$sid}#review" onfocus="this.blur()" onclick="return get_review('item_subject',$detail[sid]);">会员点评</a></li>
+        <li id="tab_guestbook"><a href="{url item/guestbook/sid/$subject[sid]}" onfocus="this.blur()">会员留言</a></li>
+        <!--{if check_module('group') && $groups > 0}-->
+        <script type="text/javascript" src="{URLROOT}/static/javascript/group.js"></script>
+        <li id="tab_group"><a href="{url group/item/sid/$sid/view/group}#group" onfocus="this.blur()" onclick="return group_topics_subject($detail[sid]);">小组话题</a></li>
+        <!--{/if}-->
+		<li id="tab_forum" class="selected"><a href="{url item/detail/id/$sid/view/forum}#forum" onfocus="this.blur()" onclick="return get_forum_threads($detail[forumid],1,$detail[sid]);">论坛讨论</a></li>
+        <li style="float:right;"><a href="$_CFG[forum_url]" target="_blank">进入论坛</a></li>
+    </ul>
+    <div class="clear"></div>
+
+    <div id="display" style="margin-top:10px">
+<!--{/if}-->
+
+    <!--{if $forums}-->
+		<ul class="forum">
+			<li class="title"><cite>回复/点击</cite><a href="$_CFG[forum_url]" target="_blank">进入论坛区</a></li>
+        <!--{loop $forums $val}-->
+			<li><cite>$val[replies]/$val[views]</cite><a href="$val[url]" target="_blank">$val[subject]</a></li>
+        <!--{/loop}-->
+		</ul>
+        <!--{if $multipage}-->
+        <div class="multipage">$multipage</div>
+        <!--{/if}-->
+
+    <!--{else}-->
+        <div class="messageborder"><span class="msg-ico">暂无论坛帖子，<a href="$_CFG[forum_url]" target="_blank">发表您的帖子</a>！</span></div>
+    <!--{/if}-->
+
+<!--{if !$_G[in_ajax]}-->
+    </div>
+
+</div>
+<!--{/if}-->

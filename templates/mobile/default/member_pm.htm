@@ -1,0 +1,125 @@
+{include mobile_template('header')}
+<style>
+.pm-content {
+    margin:0 5px 5px; padding:5px 5px;background:#f1f1f1; display: none;font-size:12px;
+}
+.pm-content p {
+    line-height:16px;color:#808080;
+}
+.pm-operation {
+    margin-top:10px;
+}
+</style>
+<div class="panel-comm">
+
+    <div class="atab-box">
+        <div class="atab-box-nav">
+            <a class="atab-box-nav-link{if $folder=='inbox'} atab-box-nav-current{/if}" href="{url member/mobile/do/pm/folder/inbox}"><span>收件箱</span></a>
+            <a class="atab-box-nav-link{if $folder=='outbox'} atab-box-nav-current{/if}" href="{url member/mobile/do/pm/folder/outbox}"><span>发件箱</span></a>
+            <a class="atab-box-nav-link" href="{url member/mobile/do/pm/op/send}" style="color:red;"><span>发信息</span></a>
+        </div>
+    </div>
+
+    <div class="list-group list-group-insertmod">
+        <!--{if !$list}-->
+        <div class="list-group-item center">暂无信息</div>
+        <!--{/if}-->
+        <!--{dbres $list $val}-->
+        <a class="list-group-item" href="javascript:" data-name="message" data-pmid="{$val[pmid]}">
+            <div class="txt-comm">
+                <!--{if $folder=='inbox'}-->
+                    来自 {if empty($val[uid])}<span class="txt-red">系统</span>{else}{$val[username]}{/if}：$val[subject]
+                    {if $val['new']}<span class="label-comm label-success" id="read_tag_{$val[pmid]}">未读</span>{/if}
+                <!--{else}-->
+                    发给 {$val[username]}：$val[subject]
+                <!--{/if}-->
+                <span class="label-comm label-grey">{date $val[posttime],'w2style'}</span>                    
+            </div>
+        </a>
+        <div class="panel-comm panel-default none" id="message_$val[pmid]" data-isload="0">
+            <div class="panel-heading">短信内容</div>
+            <div class="panel-body">
+                <p>{print nl2br(_T($val[content]))}</p>
+            </div>
+            <div class="panel-footer">
+                <div class="fr">
+                    <a href="#" onclick="pm_delete({$val[pmid]}, '$folder');">
+                        <span class="label-comm label-warning label-big">删除</span>
+                    </a>
+                    <span class="split"></span>
+                    <a href="#" onclick="$('#pm_comtent_{$val[pmid]}').hide();">
+                        <span class="label-comm label-default label-big" data-type="close">关闭</span>
+                    </a>
+                </div>
+                <!--{if $folder=='inbox'&&!empty($val[uid])}-->
+                <a href="{url member/mobile/do/pm/op/send/re_pmid/$val[pmid]}">
+                    <span class="label-comm label-mycolor label-big">回复</span>
+                </a>
+                <span class="split"></span>
+                <!--{/if}-->
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!--{/dbres}-->
+    </div>
+
+</div>
+<script>
+$(function()
+{
+    $('.atab-box').m_nav();
+
+    $('a.[data-name="message"]').click(function() {
+        var pmid = $(this).data('pmid');
+        pm_set_read(pmid);
+    });
+});
+
+var drawers = new Array();
+function pm_set_read(pmid) {
+
+    var content_box = $('#message_'+pmid);
+    if(!drawers[pmid]) {
+        drawers[pmid] = new $.m_drawer(content_box,{width:'90%'},{});
+    }
+    drawers[pmid].open();
+    if(content_box.data('isload')=="1") return;
+    $.post(Url('member/mobile/do/pm/op/read'), { "pmid":pmid, "in_ajax":1 }, function(data) {
+        if(is_message(data)) {
+            myAlert(data);
+        } else if(is_json(data)) {
+            data = parse_json(data);
+            if(data.code != 200) {
+                alert('error code:'+data.code+'message:'+data.message);
+            } else {
+                $('#read_tag_'+pmid).remove();
+            }
+        } else {
+            alert('未知错误。');
+        }
+    });
+}
+
+function pm_delete(pmid, folder) {
+    $.post(Url('member/mobile/do/pm/op/delete'), { "pmid":pmid, "folder":folder, "in_ajax":1 }, function(data) {
+        if(is_message(data)) {
+            myAlert(data);
+            return;
+        } else if(is_json(data)) {
+            data = parse_json(data);
+            if(data.code == 200) {
+                $('a[data-pmid="'+pmid+'"]').remove();
+                $('#message_'+pmid).remove();
+                drawers[pmid].close();
+                drawers[pmid].remove();
+                drawers[pmid] = null;
+            } else {
+                alert('error code:'+data.code+'message:'+data.message);
+            }
+        } else {
+            alert('未知错误。');
+        }
+    });
+}
+</script>
+{include mobile_template('footer')}

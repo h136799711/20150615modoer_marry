@@ -1,0 +1,73 @@
+<!--{if !defined('IN_AJAX')}-->
+<!--{eval 
+    $_HEAD['title'] = $subject['name'].$subject['subname'] . '的产品' . ($catid ? $_CFG['titlesplit'] . $category[$catid]['name'] : '');
+}-->
+{template modoer_header}
+<script type="text/javascript">
+loadscript('item');
+</script>
+<div id="body">
+    <div class="link_path">
+        <a href="{url modoer/index}">首页</a>
+        &raquo;
+        {print implode(' &raquo; ', $urlpath)}<span class="font_3">($total)</span>
+    </div>
+<!--{/if}-->
+
+<!--{if $total}-->
+<!--{eval !isset($cinfo_width) && $cinfo_width=500;}-->
+<ul class="comment_list">
+<!--{loop $comment_list $cmmt}-->
+    <li class="comment_data" id="comment_$cmmt[cid]">
+        <div class="cface">
+            <!--{if $cmmt[uid]}-->
+            <a href="{url space/index/uid/$cmmt[uid]}"><img src="{print get_face($cmmt[uid])}" alt="$cmmt[username]" /></a>
+            <!--{else}-->
+            <img src="{print get_face($cmmt[uid])}" />
+            <!--{/if}-->
+        </div>
+        <div class="J_comment_main cinfo" >
+            <!--{if $cmmt[grade] > 0}-->
+            <div class="start start{print get_star($cmmt[grade],5)}"></div>
+            <!--{/if}-->
+            <div class="ctitle">$cmmt[username]{if !$cmmt[uid]}(游客){/if}</div>
+            <div class="ccontent">$cmmt[content]</div>
+            <div class="coperation">
+                <span>{date $cmmt[dateline], 'w2style'}</span>
+                <span class="J_opt"><span class="icomoon icon-bubble-dots2"></span><a href="javascript:;"onclick="mo.comment.reply.show($cmmt[cid]);">回应</a></span>
+                <!--{if $user->isLogin && $cmmt[uid]==$user->uid}-->
+                <span class="J_opt "><span class="icomoon icon-remove"></span><a href="javascript:;"onclick="mo.comment.del($cmmt[cid]);">删除</a></span>
+                <!--{/if}-->
+            </div>
+            <div id="reply_comment_form_$cmmt[cid]"></div>
+            <!--{if $cmmt[reply_list]}-->
+            <ul class="reply_comment_list" id="reply_root_$cmmt[cid]" data='{"total":$cmmt[root_subtotal]}'>
+                <!--{if $is_asc && $cmmt[root_subtotal] > $reply_offset}-->
+                <li class="reply_data_hide reply-data">
+                    <a href="javascript:;"onclick="mo.comment.reply.get($cmmt[cid]);">已隐藏 <span id="reply_hide_$cmmt[cid]">{print $cmmt[root_subtotal]-$reply_offset}</span> 条回应...</a>
+                </li>
+                <!--{/if}-->
+                <!--{eval $reply_list =& $cmmt[reply_list];}-->
+                <!--{template comment_reply_li}-->
+                <!--{if !$is_asc && $cmmt[root_subtotal] > $reply_offset}-->
+                <li class="reply_data_hide reply-data">
+                    <a href="javascript:;"onclick="mo.comment.reply.get($cmmt[cid]);">已隐藏 <span id="reply_hide_$cmmt[cid]">{print $cmmt[root_subtotal]-$reply_offset}</span> 条回应...</a>
+                </li>
+                <!--{/if}-->
+            </ul>
+            <!--{/if}-->
+        </div>
+        <div class="clear"></div>
+    </li>
+<!--{/loop}-->
+    <a name="commentend"></a>
+</ul>
+{if $multipage}<div class="multipage">$multipage</div>{/if}
+<!--{else}-->
+<div class="messageborder">暂时没有评论信息。</div>
+<!--{/if}-->
+
+<!--{if !defined('IN_AJAX')}-->
+</div>
+<!--{eval footer();}-->
+<!--{/if}-->

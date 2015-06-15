@@ -1,0 +1,491 @@
+{include mobile_template('header')}
+{include mobile_template('product_common')}
+<div class="panel-comm">
+    <div class="form-box">
+        <!--{if $total}-->
+            <!--{dbres $list $sval}-->
+            <form action="{url product/cart/op/checkout/in_ajax/1}" method="post">
+                <input type="hidden" name="cartid" value="$cartid">
+                <input type="hidden" name="sid" value="$sval[sid]">
+                <input type="hidden" name="in_mobile" value="1">
+                <ul class="list-group list-group-insertmod product-cart" id="subject_{$sval[sid]}" data-sid="$sval[sid]">
+                    <li class="list-group-heading">商家：$sval[name]</li>
+                    <!--{get:product val=getcartlist(cartid/$cartid/sid/$sval[sid])}-->
+                    <li class="list-group-item txt-small J_goods_item" data-sid="$sval[sid]" data-cid="$val[cid]" data-pid="$val[pid]">
+                        <input type="hidden" id="pid_{$val[pid]}" value="$val[pid]" data-sid="$sval[sid]" data-cid="$val[cid]" data-pid="$val[pid]" data-price="$val[price]" data-stock="$val[stock]">
+                        <div class="fr right">
+                            <p><span class="txt-red">&yen;{$val[price]}</span></p>
+                            <p class="mt10"><span><a href="#" data-name="change_cart_btn">修改</a></span></p>
+                        </div>
+                        <div class="richtxt-comm richtxt-img-defaultsize">
+                            <div class="fl">
+                                <label class="product-cart-checkbox" for="cids_{$val[pid]}">
+                                    <input type="checkbox" name="cids[]" id="cids_{$val[pid]}" value="{$val[cid]}" checked>
+                                    {eval $image = $val['p_image']?$val['p_image']:'/static/images/noimg.gif';}
+                                    <img src="{img $image}" alt="$val[subject]" class="richtxt-img">
+                                </label>
+                            </div>
+                            <div class="richtxt-body">
+                                <h4><a href="{url product/mobile/do/detail/id/$val[pid]}">$val[subject]</a></h4>
+                                <p class="txt-comm">
+                                    数量：<span class="J_quantity" data-name="quantity" data-price="$val[price]">{$val[quantity]}</span> 件<br>
+                                    <span class="J_buyattr"></span>
+                                </p>
+                                <!--
+                                <div class="product-cart-goods-quantity">
+                                    <a class="btn btn-ls btn-default" data-type="quantity_dec" href="#">-</a>
+                                    <span class="label-comm quantity J_quantity" data-pid="$val[pid]" data-price="$val[price]" data-stock="{$val[stock]}">{$val[quantity]}</span>
+                                    <a class="btn btn-ls btn-default" data-type="quantity_add" href="#">+</a>
+                                </div>
+                                -->
+                            </div>
+                        </div>
+                        <div class="panel-comm panel-default none J_change_frm">
+                            <div class="panel-body">
+                                <div class="form-box">
+                                    <div class="form-item">
+                                        <label>购买数量:</label>
+                                        <input type="number" name="quantity" splaceholder="请输入购买数量" value="{$val[quantity]}" min="1" max="$val[stock]" style="width: 100%;">
+                                    </div>
+                                    {get:product attrs=get_buyattr(pid/$val['pid'])}
+                                    <div class="form-item">
+                                        <label>{$attrs[name]}：</label>
+                                        <select data-type="buyattr_select" data-id="$attrs[id]" data-name="$attrs[name]">
+                                            <option value="-1">选择商品{$attrs[name]}</option>
+                                            {loop $attrs[value] $index $attr_val}
+                                            {eval $selected_index = $val['buyattr'][$attrs['id']];}
+                                            <option value="$index"{if isset($selected_index)&&$index==$selected_index}selected="selected"{/if}>$attr_val</option>
+                                            {/loop}
+                                        </select>
+                                    </div>
+                                    {/get}
+                                    <div class="form-submit">
+                                        <div class="btn-group btn-group-auto">
+                                            <input type="hidden" name="in_ajax" value="1">
+                                            <input type="hidden" name="dosubmit" value="apply">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-mycolor" data-type="submit">提交</button>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default" data-type="close">关闭</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!--{/get}-->
+                    <li class="list-group-item">
+                        <div class="fr">
+                            <a href="#" class="J_checkout_btn"><span class="label-comm label-big label-mycolor">&nbsp;结算&nbsp;</span></a>
+                        </div>
+                        共 <span class="txt-primary" id="{$sval[sid]}_goods_num">-</span> 件商品，合计：
+                        <span class="txt-red">&yen;<span id="$sval[sid]_goods_amount">-</span></span>
+                    </li>
+                </ul>
+            </form>
+            <!--{/dbres}-->
+        <!--{else}-->
+            <div class="panel-body">
+                <p class="txt-comm">
+                    您的购物车还是空的。<br><br>
+                    您还没有添加任何商品。 马上去 [ <a href="{url product/mobile/do/category}">挑选商品</a> ]，或者点此 [ <a href="{url product/mobile/do/myorder}">我的订单</a> ] 查看您的订单。 <br><br>
+                    您可能还未登录，可能导致购物车的商品没有显示。马上 [ <a href="{url member/mobile/do/login}">登录</a> ] 。
+                </p>
+            </div>
+        <!--{/if}-->
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+
+    goods_cart.cartid = '$cartid';
+    goods_cart.init();
+
+    $('.product-cart').m_list_touch({
+        item_exp:'li.J_goods_item',
+        tool:
+        [
+            {
+                title:'删除',
+                css_class:'bg-mycolor',
+                click:goods_cart.delete
+            }
+        ]
+    });
+
+});
+
+var goods_cart = {
+    
+    cartid:0,
+    //元素事件初始化
+    init:function() {
+        var _this = this;
+        $('.product-cart').each(function() {
+            var my = $(this);
+            var sid = my.data('sid');
+            //计算价格
+            _this.amount_calc(sid);
+            //绑定选择产品事件
+            my.find('[name="cids[]"]').click(function(event) {
+                _this.amount_calc(sid);
+            });
+            //下单数量加减事件绑定
+            my.find('a[data-type^="quantity"]').click(function(event) {
+                event.preventDefault();
+                var J_quantity = $(this).parent().find('.J_quantity'); //数量显示元素
+                _this.quantity_calc(sid, $(this).data('type').replace('quantity_', ''), J_quantity);
+            });
+            my.find('.J_goods_item').each(function() {
+                var item = $(this);
+                //修改商品属性
+                item.find('a[data-name="change_cart_btn"]').click(function(event) {
+                    event.preventDefault();
+                    _this.change_show(this, item);
+                });
+                //购买属性显示
+                var buyattr_str = '';
+                item.find('[data-type="buyattr_select"]').each(function() {
+                    var _select = $(this);
+                    buyattr_str += (buyattr_str?'；':'')+_select.data('name')+'：'+_select.find(':selected').text();
+                });
+                item.find('.J_buyattr').text(buyattr_str);
+            });
+            //结算按钮事件绑定
+            my.find('a.J_checkout_btn').click(function(event) {
+                event.preventDefault();
+                _this.checkout(sid);
+            });
+        });
+    },
+    //展示购买属性内容
+    display_buyattr:function() {
+
+    },
+    //显示修改对话框
+    change_show:function(myobj, item) {
+        var _this = $(this);
+        var mdrawer = $(myobj).data('mdrawer');
+        if(mdrawer) {
+            mdrawer.open();
+            return;
+        }
+        var data = item.find('input[type="hidden"]').data();
+        console.debug(data);
+        mdrawer = new $.m_drawer(item.find('.J_change_frm'), {}, {
+            //提交对话框表单
+            onSubmit:function(obj, applybox) {
+                var quantity = Number(applybox.find('input[name="quantity"]').val());
+                if(!is_numeric(quantity) || quantity <= 0) {
+                    alert('未填写购买数量。');
+                } else if(quantity > data.stock) {
+                    alert('库存不足，商品库存仅剩'+data.stock+'件。');
+                } else {
+                    var buyattr = {};
+                    buyattr.exp = buyattr.str = '';
+                    applybox.find('[data-type="buyattr_select"]').each(function() {
+                        var _select = $(this);
+                        buyattr.exp += (buyattr.exp?';':'')+_select.data('id')+':'+_select.val();
+                        buyattr.str += (buyattr.str?'；':'')+_select.data('name')+'：'+_select.find(':selected').text();
+                    });
+                    var element = { quantity:item.find('.J_quantity'), buyattr:item.find('.J_buyattr') };
+                    var post = {quantity:quantity, buyattr:buyattr};
+                    goods_cart.cart_change(mdrawer, data, post, element);
+                }
+                return false;
+            }
+        });
+        mdrawer.open();
+        $(myobj).data('mdrawer', mdrawer);
+    },
+    //商品总价计算
+    amount_calc:function(sid) {
+        var _calc = function(item) {
+            if(item.find('[name="cids[]"]').attr('checked')) {
+                var J_quantity = item.find('.J_quantity');
+                var data = J_quantity.data();
+                var quantity = Number(J_quantity.text());
+                if(!is_numeric(quantity)) quantity = 1;
+                item.find('.J_quantity').text(quantity);
+                goods_num += quantity;
+                goods_amount += data.price*quantity;
+            }
+        }
+        var subject = $('#subject_'+sid);
+        var goods_num = goods_amount = 0;
+        subject.find('li.J_goods_item').each(function(index, el) {
+            _calc($(this));
+            $('#'+sid+'_goods_num').text(goods_num);
+            $('#'+sid+'_goods_amount').text(goods_amount);            
+        });
+    },
+    //数量增减计算
+    cart_change:function(mdrawer, data, post, element) {
+        var _this = this;
+        console.debug(data);
+        var _change = function() {
+            $.post(Url('product/cart/op/change'), { cid:data.cid, num:post.quantity, buyattr:post.buyattr.exp, 'in_ajax':1 },
+            function(result) {
+                if(result == null) {
+                    alert('产品读取失败，可能网络忙碌，请稍后尝试。');
+                } else if (is_message(result)) {
+                    myAlert(result);
+                } else if (result == 'OK') {
+                    element.quantity.text(post.quantity);
+                    element.buyattr.text(post.buyattr.str);
+                    _this.amount_calc(data.sid);
+                    mdrawer.close();
+                }
+            });
+        }
+        //提交更新数据库
+        _change();
+    },
+    //删除商品
+    delete:function(group, item, event) {
+        var post_action = "{url product/cart/op/delete}";
+        $.post(post_action.url(), {'cids':item.element.data('cid'), in_ajax:1}, function(data) {
+            if(is_message(data)) {
+                myAlert(data);
+            } else if(data.trim()=='OK') {
+                group.items.delete(item.element.data('index'));
+                if(group.items.length()<1) {
+                    group.remove();
+                }
+                return;
+            } else {
+                alert(data);
+            }
+            item.tool.hide();
+        });
+    },
+    //提交结算
+    checkout:function(sid) {
+        var num = Number($('#'+sid+'_goods_num').text());
+        if(!is_numeric(num)) num = 0;
+        if(!num) {
+            alert('没有选择要购买的商品。');
+            return;
+        }
+        var subject = $('#subject_'+sid);
+        var form = $('#'+sid+'_goods_num').parents('form');
+        //var action = form.attr('action').url();
+        var action = Url('product/cart/op/checkout');
+        var params = form.serializeArray();
+        $.post(action, params, function(data) {
+            if(is_message(data)) {
+                myAlert(data);
+            } else {
+                var json = parse_json(data);
+                if(json.code != 200) {
+                    alert(json.message);
+                } else {
+                    jslocation(json.url_mobile);
+                }
+            }
+        });
+        //console.debug(action,form.serialize());
+
+    }
+};
+
+//表单元素生成
+var product_form = {
+    input:function(caption, name, value) {
+        var lbl = $('<label for="">'+caption+'：</label><br />');
+        var txt = $('<input type="text" class="t_input" style="width:95%;" />').attr('name',name).val(value);
+        return $('<div class="form-item"></div>').append(lbl).append(txt);
+    },
+    select:function(caption, name, array, value) {
+        var lbl = $('<label for="">'+caption+'：</label><br />');
+        var select = $('<select></select>');
+        if(typeof(name)=='object') {
+            $.each(name, function(n, v) { select.attr('data-'+n, v); });
+        } else {
+            select.attr('name', name);
+        }
+        if(array && array.length > 0) {
+            for (var i = 0; i < array.length; i++) {
+                select.append($('<option></option>').val(i).text(array[i]));
+            };
+        }
+        return $('<div class="form-item"></div>').append(lbl).append(select);
+    },
+    button:function(caption, name, value, type, click_callback) {
+        if(!name) name = '';
+        if(!type) type = 'button';
+        var btn = $('<button type="'+type+'" class="btn"></button>').attr({'name':name}).text(caption);
+        if(click_callback) btn.click(function(){click_callback()});
+        return btn;
+    },
+    hidden:function(name, value) {
+        return $('<input type="hidden" />').attr('name', name).val(value);
+    }
+};
+
+//列表项目滑动按钮显示
+(function($) {
+
+    $.fn.m_list_touch = function(options) {
+
+        var defaults = {
+            item_exp:'list-group-item', //列表项查找条件
+            tool:null   //滑动工具条数组对象 { [{title:string,css_class:string,click:callback}] }
+        };
+
+        return this.each(function() {
+            
+            var container = $(this);
+            var itemlist = new Array();
+            var overflow = $(document.body).css('overflow');
+
+            var data = container.data();
+            if (!data) data = {};
+            var opts = $.extend({}, defaults, options, data);
+
+            var tool = function(tool_setting) {
+
+                this.element = null;
+                this.buttons = new Array();
+                
+                //工具栏是否打开
+                var is_show = false;
+
+                //按钮控件
+                var button = function(setting) {
+                    this.setting = setting;
+                    this.element = $('<a href="javascript:;">'+setting.title+'</a>').addClass('list-group-touch-item');
+                    if(setting.css_class) {
+                        this.element.addClass(setting.css_class)
+                    }
+                }
+
+                this.show = function() {
+                    is_show = true;
+                    this.element.show();
+                    //$(document.body).css('overflow','hidden');
+                    //this.element.css('right', -this.element.width()).show();
+                    //this.element.animate({right: 0},"fast",function() {
+                    //    $(document.body).css('overflow', overflow);
+                    //});
+                }
+
+                this.hide = function () {
+                    is_show = false;
+                    this.element.hide();
+                    /*
+                    $(document.body).css('overflow','hidden');
+                    this.element.animate({right: -this.element.width()},"fast",function(){
+                        this.element.hide();
+                        $(document.body).css('overflow', overflow);
+                    });
+                    */
+                }
+
+                this.is_show = function() { return is_show; }
+
+                //生成 tool 按钮组
+                this.element = $('<div class="list-group-touch"></div>').hide();
+                for(var i in tool_setting) {
+                    if(typeof(tool_setting[i])=='object') {
+                        var btn = new button(tool_setting[i]);
+                        this.element.append(btn.element);
+                        this.buttons.push(btn);
+                    }
+                }
+            };
+
+            var item = function(element) {
+
+                this.element = $(element);
+                this.data = this.element.data();
+
+                var myclientX = 0;
+                var mytool = null;
+
+                var touchmove = function(event) {
+
+                    var clientX = event.originalEvent.touches[0].clientX;
+                    if(myclientX == 0 && !mytool.is_show()) {
+                        myclientX = clientX;
+                    }
+
+                    if(myclientX - clientX > 50) {
+                        itemlist.hide_all_tool();
+                        myclientX = 0;
+                        mytool.show();
+                    }
+                };
+
+                mytool = new tool(opts.tool);
+                for (var i = 0; i < mytool.buttons.length; i++) {
+                    var btn=mytool.buttons[i];
+                    var mythis = this;
+                    btn.element.click(function(event) {
+                        btn.setting.click(group, mythis, event);
+                    });
+                };
+                this.element.append(mytool.element);
+                this.element.bind('touchmove', touchmove);
+
+                this.remove = function() {
+                    this.element.remove();
+                    return true;
+                }
+
+                this.tool = function() { return mytool; }
+
+            };
+
+            var item_list = function() {
+
+                this.list = new Array();
+
+                this.add = function(item) {
+                    this.list.push(item);
+                    item.element.attr('data-index',this.list.length-1);
+                };
+
+                this.delete = function(index) {
+                    this.list[index].remove();
+                    this.list.splice(index,1);
+                    for (var i = 0; i < this.list.length; i++) {
+                        this.list[i].element.attr('data-index',i);
+                    };
+                }
+
+                this.hide_all_tool = function(i) {
+                    for (var i = 0; i < this.list.length; i++) {
+                        this.list[i].tool().hide();
+                    };
+                }
+
+                this.length = function() { return this.list.length; }
+            }
+
+            var itemlist = new item_list();
+
+            var group = {
+                items:itemlist,
+                remove:function() {
+                    container.remove();
+                }
+            }
+
+            container.find(opts.item_exp).each(function(index) {
+                itemlist.add(new item(this));
+            });
+
+            container.delegate(opts.item_exp, 'click', function(event) {
+                itemlist.hide_all_tool();
+            });
+            
+        });
+
+    }
+})(jQuery);
+
+</script>
+{include mobile_template('footer')}

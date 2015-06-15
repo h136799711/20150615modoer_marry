@@ -1,0 +1,97 @@
+{eval
+    $_HEAD[title] = "回复话题";
+}
+{include mobile_template('header')}
+<div class="panel-comm panel-default panel-fullsize">
+    <div class="panel-heading">
+        回复话题：$topic[subject]
+    </div>
+    <div class="panel-body">
+        <div class="form-box">
+            <form action="{url group/mobile/do/post/op/post_reply}" method="POST" onsubmit="return checkPostReply(this)">
+                <input name="tpid" type="hidden" value="$tpid">
+                <div class="form-item">
+                    <label>回复内容：</label>
+                    <textarea name="content" id="content" placeholder="请输入回复内容">{if $reuser}[/@$reuser[username]/]:{/if}</textarea>
+                </div>
+                <div class="form-item">
+                    <fieldset>
+                        <legend>上传图片:</legend>
+                        <div class="btn-group">
+                            <a href="javascript:;"><span class="btn btn-mycolor btn-sm" id="fileSelect">选择图片</span></a>
+                            <a href="javascript:;"><span class="btn btn-mycolor btn-sm" id="fileSubmit">上传图片</span></a>
+                            <input type="file" id="fileImage" name="fileselect[]" multiple style="visibility:hidden;">
+                        </div>
+                        <div id="uploadMessage" class="upload_message"></div>
+                        <ul id="uploadPreview" class="upload_preview"></ul>
+                        <div class="uploaded_box">
+                            <h3>已上传(点击图片插入)</h3>
+                            <ul id="uploaded" class="upload_preview">
+                            </ul>
+                        </div>
+                    </fieldset>
+                </div>
+                <!--{if $MOD[reply_seccode] && $user->isLogin}-->
+                <div class="form-item">
+                    <label>验证码：</label>
+                    <input name="seccode" id="seccode" placeholder="请输入右侧验证码" type="text" style="width:200px">
+                    <span data-name="seccode"></span>
+                </div>
+                <!--{/if}-->
+                <div class="form-submit">
+                    <div class="btn-group-vertical btn-comm full-width">
+                        <button type="submit" name="dosubmit" value="Y" class="btn btn-mycolor">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{URLROOT}/{$_G[tplurl_mobile]}/js/upfile.js"></script>
+<script>
+$(document).ready(function() {
+
+    $('span.[data-name="seccode"]').m_seccode();
+
+    $('#fileSelect').click(function() {
+        $("#fileImage").click();
+    });
+
+    //上传图片组件
+    Upimg = mUpImage({
+        fileInput:  'fileImage',
+        upButton:   'fileSubmit',
+        message:    'uploadMessage',
+        preview:    'uploadPreview',
+        uploaded:   'uploaded',
+        postUrl:    '{url index/upload/in_ajax/1}',
+        postName:   'pictures',
+        maxSize:    {print (int)S('picture_upload_size')*1024},
+        maxNum:     20,
+        onClick:    insertContent
+    });
+
+});
+
+function insertContent(src,filename) {
+    var imgname = basename(filename);
+    imgname = imgname.substr(0,imgname.lastIndexOf('.'));
+    var text = "[/img:" + imgname + "/]";
+    $('#content').insertAtCaret(text);
+}
+
+function checkPostReply(form) {
+    if(Upimg.getQueueCount() > 0) {
+        if(!window.confirm("图片上传内还有未上传的图片？\n\n需要处理未上传图片，请选择“取消”。\n\n不处理未上传图片，提交表单，请点击“确定”。")) {
+            return false;
+        }
+    }
+    if($('#content').val().trim()=='') {
+        alert('未填写回复内容！');
+        return false;
+    }
+    return true;
+}
+
+</script>
+{include mobile_template('footer')}

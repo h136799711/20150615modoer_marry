@@ -1,0 +1,68 @@
+<!--{include space_template('header', $templateid)}-->
+
+<div class="container-box pages p-mylist clear">
+
+    <div class="pages-main">
+
+        <div class="modbox p-tabs-box">
+            <div class="tab clear">
+                <a {if $_GET['pr']=='mylist'}class="active"{/if} href="{url space/$space->uid/pr/mylist}">
+                    我发布的榜单{if !$n}($total){/if}
+                </a>
+                <a {if $_GET['pr']=='mylist_favorites'}class="active"{/if} href="{url space/$space->uid/pr/mylist_favorites}">
+                    我收藏的榜单{if $n=='favorites'}($total){/if}
+                </a>
+            </div>
+        </div>
+
+        <div class="modbox mylist-list">
+            {dbres $list $val}
+            <div class="mylist-item">
+                <div class="mylist-item-thumb">
+                    <a href="{url mylist/$val[id]}" target="_blank">
+                        {if $val[thumb]}
+                        <img src="{URLROOT}/$val[thumb]" alt="$val[title]" title="$val[title]" />
+                        {else}
+                        <img src="{URLROOT}/static/images/m_noimg.gif" />
+                        {/if}
+                    </a>
+                </div>
+                <div class="mylist-item-body">
+                    <h4 class="title">
+                        <a href="{url mylist/$val[id]}" target="_blank">$val[title]</a>
+                    </h4>
+                    <p class="content">{sublen $val[intro],50,'...'}</p>
+                    <div class="bottom">
+                        <div class="float-right">
+                            主题({$val[num]})
+                            回应({$val[responds]})
+                            收藏({$val[favorites]})
+                            鲜花({$val[flowers]})
+                        </div>
+                        <span class="clr-grey">{date $val[modifytime],'w2style'}</span>
+                    </div>
+                </div>
+            </div>
+            {/dbres}
+            <div class="multipage">$multipage</div>
+        </div>
+        
+    </div>
+
+    <div class="pages-aside">
+        <div class="modebox">
+            <div class="hd">
+                <h4>什么是榜单？</h4>
+            </div>
+            <div class="con">
+                <div class="txt">
+                    <p>作为点评达人的你一定有很多商户想与大家分享，创建属于自己的商户排行，让大家看看你的经验和品位吧！</p>
+                    <a href="{url mylist/index}" target="_blank">查看人气榜单&nbsp;&raquo;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--{include space_template('footer', $templateid)}-->

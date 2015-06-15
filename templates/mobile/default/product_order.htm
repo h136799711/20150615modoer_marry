@@ -1,0 +1,382 @@
+{include mobile_template('header')}
+{include mobile_template('product_common')}
+<div class="panel-comm">
+    <div class="form-box">
+        <form action="{url product/ajax/do/order}" method="post" name="order_form">
+            <input type="hidden" name="sid" value="{print $checkout_obj->subject[sid]}" />
+            <input type="hidden" name="cids" value="{print implode(',', $checkout_obj->cids)}" />
+            <div class="list-group list-group-insertmod">
+                <div class="list-group-heading">
+                    购物清单
+                </div>
+                {loop $checkout_obj->goods $goods}
+                <a class="list-group-item txt-small" href="{url product/mobile/do/detail/id/$goods[pid]}">
+                    <input type="hidden" name="product_ids[]" value="{$goods[id]}">
+                    <div class="fr">
+                        <span class="txt-red">&yen;{$goods[price]}</span> × {$goods[quantity]}
+                        <span class="arrow"></span>
+                    </div>
+                    <h4>$goods[pname]</h4>
+                    <p class="txt-comm txt-small txt-grey">
+                        {loop $goods['buyattr'] $buyattr}
+                        {$buyattr[name]}：{$buyattr[value]}&nbsp;
+                        {/loop}
+                    </p>
+                </a>
+                {/loop}
+
+                <div class="list-group-heading">
+                    收货人信息
+                </div>
+                <a class="list-group-item" id="address" href="#">
+                    <input type="hidden" name="addressid" value="">
+                    <div class="fr"><span class="arrow"></span></div>
+                    <div class="J_address"></div>
+                </a>
+                <a class="list-group-item" id="add_address" href="#" >
+                    <div class="fr">
+                        <span class="arrow"></span>
+                    </div>
+                    新增收货地址
+                </a>
+
+                <div class="list-group-heading">
+                    选择配送方式
+                </div>
+                <!--{loop $checkout_obj->express $exp}-->
+                <label class="list-group-item" data-name="shipp">
+                    <div>
+                        <div class="fr">
+                            <input type="radio" name="shipid" data-price="$exp[price]" value="$exp[shipid]">
+                        </div>
+                        $exp[shipname]&nbsp;
+                        <span class="txt-small txt-grey"><span class="txt-red">&yen;$exp[price]</span></span>
+                    </div>
+                    {if $exp[des]}<span class="txt-small txt-grey">$exp[des]</span>{/if}
+                </label>
+                <!--{/loop}-->
+
+                <!--{if $checkout_obj->integral && $checkout_obj->integral[ex_integral]>0}-->
+                <div class="list-group-heading">
+                    积分抵换现金
+                </div>
+                <div class="list-group-item">
+                    <div class="fr">
+                        <input class="product-order-integral" data-rate="{print $checkout_obj->integral['rate']}" type="number" min="0" max="{print $checkout_obj->integral[ex_integral]}" name="integral" value="0">
+                    </div>
+                    使用{print $checkout_obj->integral['point_name']} <span class="txt-small txt-grey">(最多可用{print $checkout_obj->integral[ex_integral]}个)</span>
+                </div>
+                <!--{/if}-->
+
+                <div class="list-group-heading">
+                    给卖家附言
+                </div>
+                 <div class="list-group-item">
+                    <textarea name="remark" style="width:100%;height:50px;"></textarea>
+                </div>
+
+                <div class="list-group-heading">
+                    订单价格
+                </div>
+                <input type="hidden" name="goods_amount" value="$checkout_obj->goods_amount">
+                <input type="hidden" name="order_amount" value="$checkout_obj->goods_amount">
+                <div class="list-group-borderitem">
+                    <div class="list-group-item">
+                        <div class="fr">&yen; <span id="goods_amount">$checkout_obj->goods_amount</span></div>
+                        商品总价 +
+                    </div>
+                    <div class="list-group-item">
+                        <div class="fr">&yen; <span id="ship_price">0</span></div>
+                        运费 +
+                    </div>
+                    <!--{if $checkout_obj->integral && $checkout_obj->integral[ex_integral]>0}-->
+                    <div class="list-group-item">
+                        <div class="fr">&yen; <span id="integral_price">0</span></div>
+                        积分抵换 -
+                    </div>
+                    <!--{/if}-->
+                <div class="list-group-item">
+                    <div class="fr">
+                        <span class="txt-red">&yen;<span id="order_amount">$checkout_obj->goods_amount</span></span>
+                    </div>
+                    应支付金额 =
+                </div>
+                </div>
+            </div>
+            <div class="panel-comm">
+                <div class="panel-body">
+                    <div class="btn-group-vertical full-width">
+                        <button type="button" value="Yes" name="dosubmit" class="btn btn-mycolor">提交订单</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel-comm panel-default none" id="add_addr_box">
+    <div class="panel-heading">增加收货地址</div>
+    <div class="panel-body">
+        <form action="{url product/ajax/do/address/op/add}">
+            <div class="form-box">
+                <div class="form-item">
+                    <label for="">姓名<span class="txt-small">(必填)</span>：</label>
+                    <input type="text" name="name">
+                </div>
+                <div class="form-item">
+                    <label for="">地址<span class="txt-small">(必填)</span>：</label>
+                    <input type="text" name="addr">
+                </div>
+                <div class="form-item">
+                    <label for="">邮编：</label>
+                    <input type="text" name="zipcode">
+                </div>
+                <div class="form-item">
+                    <label for="">手机号<span class="txt-small">(必填)</span>：</label>
+                    <input type="text" name="mobile">
+                </div>
+                <div class="form-submit">
+                    <div class="btn-group btn-group-auto">
+                        <div class="btn-group">
+                            <a class="btn btn-mycolor" id="submit_btn" href="javascript:" data-type="submit">提交</a>
+                        </div>
+                        <div class="btn-group">
+                            <a class="btn btn-default" href="javascript:" data-type="close">取消</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel-comm panel-default none" id="select_addr_box">
+    <div class="panel-heading">选择收货地址</div>
+    <div class="list-group list-group-insertmod J_addr"></div>
+</div>
+<div class="none" id="addr_tpl">
+    <a class="list-group-item" href="#">
+        <div data-address_id="">
+            <div class="fr">
+                <span class="txt-small txt-grey">Tel：<span data-name="mobile"></span></span>
+            </div>
+            <span data-name="name">$address[name]</span><br>
+        </div>
+        <span class="txt-small txt-grey" data-name="addr">$address[addr]</span>
+    </a>
+</div>
+<script>
+var address_arr = new Array();
+<!--{loop $address_list $address}-->
+address_arr.push({
+    id:$address['id'],
+    mobile:"$address['mobile']",
+    name:"$address['name']",
+    addr:"$address['addr']",
+    is_default:$address['is_default']
+});
+<!--{/loop}-->
+$(document).ready(function() {
+    if(address_arr.length > 0) {
+        var is_default = false;
+        for (var i = address_arr.length - 1; i >= 0; i--) {
+            if(address_arr[i].is_default) is_default = true;
+        };
+        if(!is_default) address_arr[0].is_default=1;
+    }
+    //地址选择和新建
+    address();
+    //订单价格计算和提交
+    order();
+});
+
+//收货地址处理
+var address = function() {
+
+    var select_addr;
+    var add_addr;
+
+    var init = function() {
+        $('#address').hide();
+        //生成地址列表
+        insertHtml();
+        //事件绑定
+        $('#address').click(function(event) {
+            event.preventDefault();
+            select_addr.open();
+        });
+        $('#add_address').click(function(event) {
+            event.preventDefault();
+            add_addr.open();
+        });
+        //弹出层初始化
+        select_addr = new $.m_drawer('#select_addr_box', {}, {
+            onInit:function(container, workArea) {
+                workArea.delegate('a.list-group-item', 'click', function(event) {
+                    _addr.select(this);
+                    container.close();
+                });
+            }
+        });
+        add_addr = new $.m_drawer('#add_addr_box', {}, {
+            onSubmit:function(container, workArea) {
+                _addr.add(workArea.find('form'));
+            }
+        });
+    }
+
+    var insertHtml = function(data) {
+        //生成地址选择列表
+        if(address_arr.length>0) {
+            for (var i = 0; i < address_arr.length; i++) {
+                _addr.insertHtml(address_arr[i]);
+            };
+        }
+    }
+
+    //地址选择
+    var _addr = {
+        select:function(my) {
+            var html = $(my).html();
+            $('#address .J_address').html(html);
+            var address_id = $('#address [data-address_id]').data('address_id');
+            $('input[name="addressid"]').val(address_id);
+            $('#address').show();
+        },
+        add:function(form) {
+            var post = form.attr('action').url();
+            $.post(post, form.serialize(), function(data, textStatus, xhr) {
+                if(is_message(data)) {
+                    myAlert(data);
+                } else if(is_json(data)) {
+                    var json = parse_json(data);
+                    if(json.code!=200) {
+                        alert(json.message);
+                    } else {
+                        //加入到页面
+                        //选择使用
+                        json.data.is_default = 1;
+                        _addr.insertHtml(json.data);
+                        form[0].reset();
+                        add_addr.close();
+                    }
+                } else {
+                    alert(data);
+                }
+            });
+        },
+        insertHtml:function(data)
+        {
+            var box = $('#addr_tpl > a').clone();
+            var cmp = box.find('div.[data-address_id]').attr('data-address_id', data.id);
+            for(var key in data) {
+                var value = eval('data.'+key);
+                box.find('span[data-name="'+key+'"]').text(value);
+            }
+            $('#select_addr_box > .J_addr').append(box);
+            if(data.is_default > 0) {
+                _addr.select(box[0]);
+            }
+        }
+    }
+
+    init();
+}
+
+//订单价格计算
+var order = function() {
+
+    var goods_amount = 0;
+    var ship_price = 0;
+    var integral_price = 0;
+
+    var get_shipp_price = function(my, e) {
+        var price = Number($(my).data('price'));
+
+        if(!is_numeric(price)) price = 0;
+
+        ship_price = price;
+        calculate_price();
+    }
+
+    var get_integral_price = function(my, e) {
+        my = $(my);
+        var rate = Number(my.data('rate'));
+        var point = Number(my.val());
+        var min = Number(my.attr('min'));
+        var max = Number(my.attr('max'));
+
+        if(!is_numeric(point)) point = 0;
+        point = Math.min(point,max);
+        if(point < min) point = min;
+        my.val(point);
+
+        integral_price = point/rate;
+        calculate_price();
+    }
+
+    var calculate_price = function() {
+        console.debug(goods_amount,ship_price,integral_price);
+        var order_amount = goods_amount + ship_price - integral_price;
+        $('#ship_price').text(ship_price);
+        $('#integral_price').text(integral_price);
+        $('#order_amount').text(order_amount);
+        $('input[name="order_amount"]').val(order_amount);
+    }
+
+    var init = function() {
+        goods_amount = Number($('input[name="goods_amount"]').val());
+        if(typeof(goods_amount)!='number') {
+            goods_amount = 0;
+        }
+        $('[name="shipid"]').each(function() {
+            $(this).click(function(event) {
+                get_shipp_price(this, event);
+            });
+        });
+        $('input[name="integral"]').change(function(event) {
+            get_integral_price(this, event);
+        });
+        //提交订单
+        var form = $('form[name="order_form"]');
+        form.submit(function(event) {
+            return submit();
+        });
+        $('button[name="dosubmit"]').click(function(event) {
+            form.submit();
+        });
+    }
+
+    var submit = function() {
+        var form = $('form[name="order_form"]');
+        if(!form.find('input[name="addressid"]').val()) {
+            alert('未选择收货地址。');
+            return false;
+        } else if(!form.find('input[name="shipid"]:checked').val()) {
+            alert('未选择物流方式。');
+            return false;
+        }
+        if(!window.confirm('您确定要提交订单吗？')) return false;
+        var post = Url("product/ajax/do/order");
+        //var post = form.attr('action').url();
+        $.post(post, form.serialize(), function(data) {
+            console.debug(data);
+            if(is_message(data)) {
+                myAlert(data);
+            } else if(is_json(data)) {
+                var json = parse_json(data);
+                if(json.code != 200) {
+                    alert(json.message);
+                } else {
+                    alert('订单提交成功，点击确定进入支付页面。');
+                    jslocation(json.url_mobile);
+                }
+            } else {
+                alert(data);
+            }
+        });
+        return false;
+    }
+
+    init();
+}
+</script>
+{include mobile_template('footer')}

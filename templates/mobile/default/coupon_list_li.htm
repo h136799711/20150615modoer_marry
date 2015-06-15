@@ -1,0 +1,21 @@
+<!--{if !$list}-->
+<li class="list-group-item center">Sorry，没有找到数据。</li>
+<!--{/if}-->
+{eval $i=0;}
+{dbres $list $val}
+<a href="{url coupon/mobile/do/detail/id/$val[couponid]}" class="list-group-item">
+    <div class="richtxt-comm richtxt-img-defaultsize">
+        <div class="fl">
+            <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name]" class="richtxt-img">
+        </div>
+        <div class="richtxt-body">
+            <h4>$val[subject]</h4>
+            <div class="txt-comm txt-small">
+                <p>有效期限：{date $val[starttime], 'm-d'} ~ {date $val[endtime], 'm-d'}</p>
+                优惠说明：$val[des]
+            </div>
+        </div>
+    </div>
+</a>
+{/dbres}
+{if $multipage}$multipage{/if}

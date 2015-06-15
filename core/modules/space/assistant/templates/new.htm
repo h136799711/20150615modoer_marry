@@ -1,0 +1,49 @@
+{template modoer_header}
+<script type="text/javascript">
+function show_style() {
+    var id = $('#space_styleid').val();
+    if(id == 0) { 
+        alert('未选择一个有效的风格。'); return; 
+    }
+    var url = "{url space/$user->uid/templateid/__ID__}";
+    url = url.replace('__ID__', id);
+    window.open(url);
+}
+</script>
+<div id="body">
+<div class="myhead"></div>
+<div class="mymiddle">
+    <div class="myleft">
+        <!--{template 'menu','member','member'}-->
+    </div>
+    <div class="myright">
+        <div class="myright_top"></div>
+        <div class="myright_middle">
+            <h3>婚礼主页</h3>
+            <div class="mainrail">
+                <form method="post" action="{url space/member/ac/$ac/rand/$_G[random]}" name="mysetfrm">
+                <table width="100%" cellspacing="0" cellpadding="0" class="maintable">
+                	<tr style="background:#F6F6F6" ><td align="right" >另一半设置</td><td></td></tr>
+                    <tr>
+                        <td align="right">ta的身份：</td>
+                        <td>{print form_radio('other_id',array(0=>'新娘',1=>'新郎'),$detail[other_id]?$detail[other_id]:0)}</td>
+                    </tr>
+                    <tr>
+                        <td width="80" align="right">ta的称呼：</td>
+                        <td><input type="text" name="other_name" class="t_input" size="50" value="$detail[other_name]" /></td>
+                    </tr>
+                    <tr>
+                        <td width="80" align="right">ta的描述：</td>
+                        <td><input type="text" name="other_des" class="t_input" size="50" value="$detail[other_des]" /></td>
+                    </tr>
+                </table>
+                <div class="text_center"><button type="submit" name="dosubmit" value="yes"> 提交 </button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="mybottom"></div>
+</div>
+<!--{eval footer();}-->

@@ -1,0 +1,23 @@
+{if !$data}
+<div class="list-group-item center">Sorry，没有找到相关数据。</div>
+{/if}
+{eval $i=0;}
+{loop $data $val}
+<a href="{url product/mobile/do/detail/id/$val[pid]}" class="list-group-item">
+    <div class="richtxt-comm richtxt-img-defaultsize">
+        <div class="fl">
+            <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" alt="$val[name]" class="richtxt-img">
+        </div>
+        <div class="richtxt-body">
+            <h4>$val[subject]</h4>
+            <p class="txt-comm txt-red goods-price">
+                &yen;{print:product price(product/$val)}
+            </p>
+             <p class="txt-comm txt-small txt-grey">
+                已销售{$val['sales']}份，{$val['comments']}人评价
+            </p>
+        </div>
+    </div>
+</a>
+{/loop}
+{if $multipage}$multipage{/if}

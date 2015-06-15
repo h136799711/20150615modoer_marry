@@ -1,0 +1,222 @@
+{eval _G('loader')->helper('form'); }
+<!-- 评论表单 -->
+<div class="panel-comm panel-default" id="frm_comment_box">
+    <div class="panel-body">
+        <div class="form-box">
+            <form method="post" action="{url comment/mobile/do/post/op/comment}">
+                <input type="hidden" name="idtype" value="$idtype" />
+                <input type="hidden" name="id" value="$id" />
+                <input type="hidden" name="title" value="$title" />
+                <input type="hidden" name="extra_id" value="$extra_id" />
+                <input type="hidden" name="in_ajax" value="1" />
+                <input type="hidden" name="dosubmit" value="yes" />
+                <!--{if !$user->isLogin}-->
+                <div class="form-item">
+                    <label for="username">昵称:</label>
+                    <input name="username" id="username" placeholder="请输入昵称" value="" type="text" required>
+                </div>
+                <!--{/if}-->
+                <!--{if $enable_grade}-->
+                <div class="form-item">
+                    <label for="grade">评分：</label>
+                    {print form_select('grade',array('0分','1分','2分','3分','4分','5分'),4)}
+                </div>
+                <!--{/if}-->
+                <div class="form-item">
+                    <label for="grade">评论内容：</label>
+                    <textarea name="content" id="comment_content" placeholder="填写您的评论内容" required></textarea>
+                </div>
+                <!--{if ($user->isLogin && S('comment:member_seccode')) || (!$user->isLogin && S('comment:guest_seccode'))}-->
+                <div class="form-item">
+                    <label>验证码：</label>
+                    <div>
+                        <input style="width:200px;" name="seccode" id="seccode" placeholder="请输入验证码" value="" type="text" required>
+                        <span data-name="seccode"></span>
+                    </div>
+                </div>
+                <!--{/if}-->
+                <div class="form-submit">
+                    <div class="btn-group btn-group-auto">
+                        <div class="btn-group">
+                            <a class="btn btn-mycolor" href="javascript:" data-type="submit">提交</a>
+                        </div>
+                        <div class="btn-group">
+                            <a class="btn btn-default" href="javascript:" data-type="close">取消</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- 回复评论表单 -->
+<div class="panel-comm panel-default" id="frm_reply_box">
+    <div class="panel-body">
+        <div class="form-box">
+            <form method="post" action="{url comment/mobile/do/post/op/reply}" method="post">
+                <input type="hidden" name="reply_cid" value="">
+                <input type="hidden" name="title" value="">
+                <input type="hidden" name="in_ajax" value="1">
+                <input type="hidden" name="dosubmit" value="yes">
+                <!--{if !$user->isLogin}-->
+                <div class="form-item">
+                    <label for="review_content">昵称(必填):</label>
+                    <input name="username" placeholder="请输入昵称" type="text" required>
+                </div>
+                <!--{/if}-->
+                <div class="form-item">
+                    <textarea name="content" placeholder="回应内容" required></textarea>
+                </div>
+                <!--{if ($user->isLogin && S('comment:member_seccode')) || (!$user->isLogin && S('comment:guest_seccode'))}-->
+                <div class="form-item">
+                    <div>
+                        <input style="width:200px;" name="seccode" placeholder="请输入右侧的验证码" value="" type="text" required>
+                        <span data-name="seccode"></span>
+                    </div>
+                </div>
+                <!--{/if}-->
+                <div class="form-submit">
+                    <div class="btn-group btn-group-auto">
+                        <div class="btn-group">
+                            <a class="btn btn-mycolor" href="javascript:" data-type="submit">回应</a>
+                        </div>
+                        <div class="btn-group">
+                            <a class="btn btn-default" href="javascript:" data-type="close">取消</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+$(function() {
+    $('#frm_comment_box a.[data-type="submit"]').click(function() {
+        comment_form_submit();
+        return false;
+    });
+    init_reply_event();
+});
+
+function comment_form_submit() {
+    var frm = $('#frm_comment_box form');
+    var url = frm.attr('action').url();
+    $.post(url, frm.serialize(), function(data) {
+        if(is_message(data)) {
+            myAlert(data);
+            return;
+        } else if(is_json(data)) {
+            var ret = parse_json(data);
+            if(ret.code!=200) {
+                alert(ret.message+'('+ret.code+')');
+                return;
+            } else {
+                frm.find('a.[data-type="close"]').click();
+                frm[0].reset();
+                alert('评论提交成功！');
+                if(page_name == 'comment_list') {
+                    //读取新的回复内容
+                    comment_append(ret.data);
+                }
+                return;
+            }
+        } else { 
+            alert(data);
+        }
+    });
+}
+
+function comment_append(data) {
+    //生成HTML
+    var a = $('<a></a>').addClass('list-group-item').data({id:data.cid, username:data.username});
+    var rich = $('<div>').addClass('richtxt-comm');
+    rich.append('<div class="fl"><img src="'+data.face+'" class="richtxt-img"></div>');
+    var body = $('<div>').addClass('richtxt-body');
+    body.append('<div class="fr"><span class="txt-grey">刚刚</span></div>'
+        +'<span class="txt-small">'+data.username+'</span>'
+        +'<p class="txt-comm">'+data.content+'</p>');
+    //是回应评论
+    if(data.reply_cid > 0) {
+        reply_append(body, data.reply_data);
+    }
+    rich.append(body);
+    //绑定事件
+    a.click(function() {
+        show_reply_form(a);
+    });
+    // 插入列表
+    $('#commentlist').prepend(a.append(rich));
+    $(window).scrollTop(0);
+}
+
+function init_reply_event() {
+    $('a.[data-name="reply_comment"]').each(function() {
+        var link = $(this);
+        if(!link.data('bind')) {
+            link.data('bind', true).click(function() {
+                show_reply_form(link);
+            });
+        }
+    });
+}
+
+var drawers = new Array();
+function show_reply_form(link) {
+    var id = link.data('id');
+    if(!drawers[id]) {
+        var frmbox = $('#frm_reply_box').clone();
+        frmbox.find('[name="reply_cid"]').val(id);
+        frmbox.find('[name="title"]').val('回应:'+link.data('username'));
+        frmbox.find('[name="content"]').attr('placeholder', '回应:'+link.data('username'));
+        frmbox.find('[data-type="submit"]').click(function() {
+            reply_form_submit(frmbox);
+        });
+        frmbox.find('[data-name="seccode"]').m_seccode();
+        drawers[id] = new $.m_drawer(frmbox, {type:'float-bottom'});
+    }
+    drawers[id].open(function(obj, area) {
+        if(!obj.is_first_open) {
+            area.find('[data-name="seccode"] > img').click();
+        }
+    });
+}
+
+function reply_form_submit(frmbox) {
+    var frm = frmbox.find('form');
+    var url = frm.attr('action').url();
+    $.post(url, frm.serialize(), function(data) {
+        if(is_message(data)) {
+            myAlert(data);
+            return;
+        } else if(is_json(data)) {
+            var ret = parse_json(data);
+            if(ret.code!=200) {
+                alert(ret.message+'('+ret.code+')');
+                return;
+            } else {
+                frm.find('a.[data-type="close"]').click();
+                frm[0].reset();
+                alert('评论提交成功！');
+                if(page_name == 'comment_list') {
+                    //读取新的回复内容
+                    comment_append(ret.data);
+                }
+                return;
+            }
+        } else { 
+            alert(data);
+        }
+    });
+}
+
+function reply_append(container, data) {
+    var reply = $('<div>').addClass('comment-reply-content txt-grey txt-small');
+    if(data) {
+        reply.append('回应：'+data.username)
+        .append($('<p>').addClass('txt-comm').html(data.content));
+    } else {
+        reply.append('<i>原评论已删除</i>');
+    }
+    container.append(reply);
+}
+</script>

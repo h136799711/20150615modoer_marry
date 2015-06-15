@@ -1,0 +1,20 @@
+<!--{dbres $list $val}-->
+<a href="{url item/mobile/do/detail/id/$val[id]}" class="list-group-item">
+    <div class="txt-comm">
+        <div class="fr">{date $val[posttime],'w2style'}</div>
+        评: $val[subject]
+    </div>
+    <p class="txt-comm txt-small">
+        <!--{get:review _val=reviewopt(catid/$val[pcatid])}-->
+        $_val[name]:<span class="sorce">{print cfloat($val[$_val[flag]])}</span>
+        <!--{/get}-->
+    </p>
+    <div class="txt-comm">
+        <!--{if $val[voice_file]}-->
+        <audio src="{URLROOT}/$val[voice_file]" controls="controls">您的浏览器不支持语音播放</audio>
+        <!--{/if}-->
+        <p class="txt-small">$val[content]</p>
+    </div>
+</a>
+<!--{/dbres}-->
+<!--{if $multipage}-->$multipage<!--{/if}-->

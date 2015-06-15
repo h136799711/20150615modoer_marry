@@ -1,0 +1,19 @@
+<!--{if $total}-->
+<!--{eval !isset($cinfo_width) && $cinfo_width=500;}-->
+<!--{dbres $list $val}-->
+<div class="p_commonts_l mt20">
+	{if $val[uid]}<a href="{url space/index/uid/$val[uid]}"><img src="{print get_face($val[uid])}" alt="$val[username]" /></a>{else}<img src="{print get_face($val[uid])}" />{/if}
+</div>
+<div class="p_commonts_r mt20">
+	<div class="titex">
+		<p><em class="float_right">{date $val[dateline],'Y-m-d'}</em>$val[content]</p>
+		<h3>$val[title]</h3>
+		<span class="float_left">评 分：</span><span class="float_left mr start start{print get_star($val[grade],5)}"></span> <b class="float_left">{if $val[grade]>=5}$val[grade]分非常满意{elseif $val[grade]=4}4分基本满意{elseif $val[grade]=3}3分一般{elseif $val[grade]=2}2分一般{elseif $val[grade]=1}1分不满意{elseif $val[grade]=0}0分很不满意{/if}</b>
+	</div>
+</div>
+<!--{/dbres}-->
+<a name="commentend"></a>
+{if $multipage}<div class="multipage">$multipage</div>{/if}
+<!--{else}-->
+<div class="messageborder">暂时没有评论信息。</div>
+<!--{/if}-->

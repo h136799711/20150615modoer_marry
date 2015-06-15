@@ -1,0 +1,128 @@
+<!--{eval 
+    $_HEAD['title'] = $subject[name] ? $subject[name].'的商铺' : '';
+}-->
+{template modoer_header}
+<script type="text/javascript">
+loadscript('item');
+function set_num(){
+	set_cookie('product_num','1');
+}
+</script>
+<div id="body">
+    <div class="link_path">
+        <em class="font_3">
+            <!--{loop $links $i $link}-->
+            {if $i}| {/if}<a href="$link[url]"{if $link[flag]=='product'} style="color:#ff6600;"{/if}>$link[title]</a>
+            <!--{/loop}-->
+        </em>
+        <a href="{url modoer/index}">首页</a><span>&gt;</span>{print implode('<span>&gt;</span>', $urlpath)}
+    </div>
+    <div id="left">
+        <div class="user">
+            <div class="user_photo">
+                <h2>$subject[name].$subject[subname]</h2>
+                <div class="photo"><a href="{url item/detail/id/$sid}"><img src="{URLROOT}/{if $subject[thumb]}$subject[thumb]{else}static/images/noimg.gif{/if}" width="100" height="100" /></a></div>
+                <p><a href="javascript:add_favorite($sid);">关注该店铺</a></p>
+            </div>
+            
+            <div class="user_data">
+                <p>
+                    <span>店主: </span>$subject[owner] <a href="javascript:send_message($ownerid[uid]);"><img src="{URLROOT}/{$_G[tplurl]}images/product/shop/web_mail.gif" alt="发站内信" /></a>
+                </p>
+                <p>
+                    <!--{eval $reviewcfg = $_G['loader']->variable('config','review');}-->
+                    <span>综合评分: </span><span class="fontColor1">{print get_star($subject[avgsort],$reviewcfg[scoretype])}</span>
+                    <img src="{URLROOT}/{$_G[tplurl]}images/product/shop/heart_{print get_star($subject[avgsort],$reviewcfg[scoretype])}.gif" alt="" />
+                </p>
+                <p>商品数量: $total</p>
+                <p>创店时间: {date $subject[addtime],'Y-m-d'}</p>
+                <p>所在地区: $_CITY[name] {print:modoer area(aid/$subject[aid])}</p>
+            </div>
+        
+            <div class="clear"></div>
+        </div>
+        
+        <div class="module_common">
+            <h2 class="common_title veins1">
+                <div class="ornament1"></div>
+                <div class="ornament2"></div>
+                <span class="ico1"><span class="ico2">店内搜索</span></span>
+            </h2>
+
+            <div class="web_search">
+                <form name="keyword" method="get" action="{URLROOT}/index.php">
+                    <input type="hidden" name="m" value="product" />
+			        <input type="hidden" name="act" value="shop" />
+			        <input type="hidden" name="sid" value="$sid" />
+			        <input type="hidden" name="catid" value="$catid" />
+                    <input class="text width4" type="text" name="keyword" value="$keyword" />
+                    <input class="btn" type="submit" value="" />
+                </form>
+            </div>
+        </div>
+        
+        <div class="module_common">
+            <h2 class="common_title veins1">
+                <div class="ornament1"></div>
+                <div class="ornament2"></div>
+                <span class="ico1"><span class="ico2">商品分类</span></span>
+            </h2>
+
+            <ul class="submenu">
+                <li><a class="none_ico" href="{url product/shop/sid/$sid}">全部商品</a></li>
+                {get:product val=category(sid/$sid)}
+                <li><a class="none_ico" href="{url product/shop/sid/$sid/catid/$val[catid]}">$val[name]</a></li>
+                {/get}
+            </ul>
+        </div>
+    </div>
+
+    <div id="right">
+        <div class="module_special">
+            <h2 class="common_title veins2">
+                <div class="ornament1"></div>
+                <div class="ornament2"></div>
+                <span class="ico1"><span class="ico2">热销商品</span></span>
+            </h2>
+            <div class="major">
+                <ul class="shoplist">
+                    {get:modoer val=table(table/dbpre_product/select/pid,subject,picture,thumb,price/where/sid=$sid AND status=1 AND is_on_sale=1/orderby/sales DESC/rows/4)}
+                    <li>
+                        <div class="pic"><a href="{url product/detail/pid/$val[pid]}" target="_blank"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" width="150" height="150" /></a></div>
+                        <h3><a href="{url product/detail/pid/$val[pid]}" target="_blank">$val[subject]</a></h3>
+                        <p>&yen;$val[price]</p>
+                    </li>
+                    {/get}
+                </ul>
+            </div>
+        </div>
+
+        <div class="module_special">
+            <h2 class="common_title veins2">
+                <div class="ornament1"></div>
+                <div class="ornament2"></div>
+                <span class="ico1"><span class="ico2">所有商品</span></span>
+            </h2>
+            <div class="major">
+                <!--{if $total}-->
+                <ul class="shoplist">
+                    <!--{dbres $list $val}-->
+                    <li>
+                        <div class="pic"><a href="{url product/detail/pid/$val[pid]}" target="_blank"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" width="150" height="150" /></a></div>
+                        <h3><a href="{url product/detail/pid/$val[pid]}" target="_blank">$val[subject]</a></h3>
+                        <p>&yen;$val[price]</p>
+                    </li>
+                    <!--{/dbres}-->
+                </ul>
+                <!--{else}-->
+                <div class="messageborder">
+        	        <span class="msg-ico">暂时没有相关产品信息。</span>
+    	        </div>
+                <!--{/if}-->
+            </div>
+            <!--{if $multipage}--><div class="multipage">$multipage</div><!--{/if}-->
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--{eval footer();}-->
