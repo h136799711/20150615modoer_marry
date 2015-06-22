@@ -293,7 +293,8 @@ class ms_model extends ms_base {
 		} else {
 			$mypost = $this->_save_data;
 		}
-
+		
+		
 		//执行SQL
 		$this->db->from($this->table);
 		if ($mypost) foreach($mypost as $k => $v) {
@@ -309,7 +310,6 @@ class ms_model extends ms_base {
 			$this->db->insert();
 			$this->_save_pkid = $keyid = $this->db->insert_id();
 		}
-
 		//有报错，则终止后续操作
 		if ($this->has_error()) {
 			return;

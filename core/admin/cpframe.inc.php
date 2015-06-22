@@ -53,7 +53,7 @@ if (empty($module) || $module == 'modoer') {
         $output = ob_get_contents();
         ob_end_clean();
         $urls = str_replace('&amp;', '&', http_query(cp_getmodoerinfo()));
-        $jssrc = "<script type=\"text/javascript\" src=\"http://www.modoer.com/version.php?$urls\"></script>";
+        $jssrc = "<script type=\"text/javascript\" src=\"http://www.modoer.com/version.php\"></script>";
         if ($i = strrpos($output, '</body>')) {
             $output = substr($output, 0, $i) . $jssrc . substr($output, $i);
         } else {

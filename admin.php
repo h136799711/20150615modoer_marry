@@ -2,7 +2,9 @@
 define('IN_ADMIN', TRUE);
 define('SCRIPTNAV', 'admincp');
 define('IN_OKNJUYGF', '20141229');
+//调用内核文件
 require dirname(__FILE__).'/core/init.php';
+
 if(!$_G['modoer']['version'] || !$_G['modoer']['build'] || !$_G['modoer']['releaseid']) 
 {
 	show_error('Version File Error.');
@@ -13,6 +15,7 @@ define('MUDDER_ADMIN', MUDDER_CORE . 'admin' . DS);
 $_G['loader']->model('admin',FALSE);
 $_G['admin'] = $_G['loader']->model('cpuser');
 $admin =& $_G['admin'];
+
 if(_get('logout')) 
 {
 	$admin->logout();

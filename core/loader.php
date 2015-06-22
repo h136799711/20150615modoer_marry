@@ -218,6 +218,8 @@ class ms_loader
         //log_write('variable', date('Y-m-d H:i:s',_G('timestamp'))."\t$keyname\t$module\n".$t);
         $module == NULL && $module = 'modoer';
         $key = ($module ? $module . '_' : '') . $keyname;
+        if(DEBUG) debug_log($module.'variable'.$key, 'load', MUDDER_CACHE . $filename);
+		
         if(!isset($_G[$key])) {
             $_G[$key] = $this->cache($keyname, $module, $show_error);
             if(!$_G[$key]) {

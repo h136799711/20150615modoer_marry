@@ -68,6 +68,7 @@ if($_G['attackevasive'] && (!defined('IN_ADMIN') || SCRIPTNAV != 'seccode')) {
 }
 
 $_G['loader'] = new ms_loader();
+//包含core/lib/cache.php文件
 $_G['loader']->helper('cache');
 
 //database
@@ -78,8 +79,9 @@ $_G['dbcache']->find('comm_dbcache_expire,comm_task_nexttime,comm_session_expire
 
 //input
 $_G['cookie'] = $_G['loader']->cookie();
-
+//从数据库config表中获取配置数据并缓存.
 $_G['cfg'] = $_G['loader']->variable('config');
+//从数据库modules表中获取配置数据并缓存.
 $_G['modules'] = $_G['loader']->variable('modules');
 
 $_C =& $_G['cookie'];
@@ -120,14 +122,14 @@ if($_CFG['ban_ip'] && check_ipaccess($_CFG['ban_ip'])) {
 
 //session
 $_G['session'] = $_G['loader']->model('session');
-
+//dump($_G['session']);
 //hook
 $_G['hook'] = $_G['loader']->lib('hook');
+//dump($_G['hook']);
 
 //url
 $_G['url'] = $_G['loader']->lib('url');
 if($_G['url']->is_404()) http_404();
-
 //input
 define('MAGIC_QUOTES_GPC', get_magic_quotes_gpc());
 if(MAGIC_QUOTES_GPC) {
@@ -178,26 +180,30 @@ if($_CITY = get_city())
 {
     init_city($_CITY['aid']);
 }
-
 if(!$_G['in_ajax'] && !defined('IN_ADMIN'))  {
     //rewrite_location 301
     if($_CFG['rewrite_location'] && !$_G['url']->rewirte_mod_compare())
     {
+//		dump(($_G['url']->get_url_exp()));
+//		dump(url($_G['url']->get_url_exp(), '', true));
         location(url($_G['url']->get_url_exp(), '', true), true);
     }
     //global url
     if($_G['url']->get_sldomain() && $_G['url']->global_url($_GET['m'], $_GET['act']))
     {
+    	
+//		dump(($_G['url']->get_url_exp()));
+//		dump(url($_G['url']->get_url_exp(), '', true));
         location(url($_G['url']->get_url_exp(), '', true), true);
     }
 }
 
 //sldomain hook
 if($_GET['unkown_sldomain']) {
-    $_G['hook']->hook('init_sldomain', $_GET['unkown_sldomain'], MF_HOOK_RETURN_BREAK);
+//  $_G['hook']->hook('init_sldomain', $_GET['unkown_sldomain'], MF_HOOK_RETURN_BREAK);
 }
 
-// mutipage
+// mutipage分页
 $_GET['page'] = (int) _get('page');
 $_GET['page'] = $_GET['page'] < 1 ? 1 : $_GET['page'];
 $_GET['offset'] = (int) _get('offset');
@@ -213,12 +219,13 @@ $_HEAD['css'] = '';
 $_HEAD['js'] = '';
 
 if(defined('IN_ADMIN') && !preg_match("/^[0-9A-Za-z_\.\/]+$/", $_G['web']['self'])) {
-    location($_CFG['siteurl']);
+//  location($_CFG['siteurl']);
 }
-
 // datacall
 $_G['datacall'] = $_G['loader']->model('datacall');
 //$_G['datacall']->plan_delete();
+
+//dump($_G['datacall']);
 
 //user login
 if(!defined('IN_ADMIN')) {
@@ -236,11 +243,10 @@ if(!defined('IN_ADMIN')) {
     //global
     $user =& $_G['user'];
 }
-
 //init end hook
 $_G['hook']->hook('init_end');
 
-//plan task
+//plan task ，计划任务
 if(!$_G['in_ajax']) {
     $cache_task_nexttime = $_G['dbcache']->fetch('comm_task_nexttime');
     if($cache_task_nexttime===false||$cache_task_nexttime<$_G['timestamp']) {

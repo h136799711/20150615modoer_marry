@@ -18,7 +18,6 @@ if (function_exists('memory_get_usage')) {
 }
 $sessions = $admin->get_online_sessions();
 if ($_G['cfg']['console_total']) {
-	cpmsg("123");
     $system = array();
     foreach ($_G['modules'] as $key => $val) {
         if (!$admin->check_access_module($val['flag'])) continue;

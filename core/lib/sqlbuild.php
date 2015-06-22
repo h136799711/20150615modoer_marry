@@ -10,6 +10,9 @@ define("MF_DB_J",'JOIN');
 define("MF_DB_LJ",'LEFT JOIN');
 define("MF_DB_RJ",'RIGHT JOIN');
 
+/**
+ * 用于sql语句组合
+ */
 class ms_sqlbuild
 {
 
@@ -68,10 +71,10 @@ class ms_sqlbuild
     function join($table1,$key1, $table2,$key2, $jointype = 'JOIN')
     {
         if(!preg_match("/^([a-z0-9]+)\.([a-z0-9_]+)$/i", $key1, $match1)) {
-            redirect('无效的关联表字段。'.$key1);
+            redirect('1.无效的关联表字段。'.$key1);
         }
         if(!preg_match("/^([a-z0-9]+)\.([a-z0-9_]+)$/i", $key2, $match2)) {
-            redirect('无效的关联表字段。'.$key2);
+            redirect('2.无效的关联表字段。'.$key2);
         }
 
         $table1  = $this->db->get_table($table1);
@@ -491,7 +494,11 @@ class ms_sqlbuild
 
         $split = $setsql = '';
         foreach($this->$set as $key => $val) {
-            $setsql .= $split.$key.'='.$val;
+        		/**
+				 * 加上`符号
+				 * by hebiduhebi@126.com 2015-06-17 
+				 */
+            $setsql .= $split.'`'.$key.'`'.'='.$val;
             $split = ',';
         }
 

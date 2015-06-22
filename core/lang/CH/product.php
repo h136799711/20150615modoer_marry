@@ -8,7 +8,8 @@ return array(
 
     'product_title' => '产品',
     'product_hook_comment_name' => '产品评论',
-
+	
+	
 	'product_redirect_productlist' => '返回产品列表页',
 	'product_redirect_newproduct' => '添加主题新产品',
 	'product_redirect_subjectproduct' => '添加新主题产品',

@@ -205,6 +205,7 @@ class ms_activerecord
 	function insert($replace = FALSE, $clear_var = TRUE)
 	{
 		$SQL = $this->sqlbuild->insert_sql($replace, 0);
+		
 		$arows = $this->db->exec($SQL);
 		$this->sqlbuild->_cache_sql();
 		if($clear_var) {

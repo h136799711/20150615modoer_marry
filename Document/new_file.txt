@@ -1,0 +1,34 @@
+0. 建立 套餐 表
+1. 后台添加菜单 － 添加套餐 ， 套餐管理 
+2. 添加套餐 － 套餐优惠价
+
+3. 婚庆管家用户可以查看购买套餐
+
+//==
+
+		
+		
+
+
+
+1. 载入core/init.php 文件 ，初始化程序
+
+2. init.php 中定义常量
+define('IN_MUDDER',     TRUE);
+define('DEBUG',         TRUE);
+define('DS',            DIRECTORY_SEPARATOR);
+
+define('MUDDER_CORE',   dirname(__FILE__) .  DS);
+define('MUDDER_ROOT',   dirname(MUDDER_CORE) . DS);
+define('MUDDER_DATA',   MUDDER_ROOT . 'data' . DS);
+define('MUDDER_CACHE',  MUDDER_DATA . 'cachefiles' . DS);
+define('MUDDER_MODULE', MUDDER_CORE . 'modules' . DS);
+define('MUDDER_PLUGIN', MUDDER_CORE . 'plugins' . DS);
+define('MUDDER_UPLOAD', MUDDER_ROOT . 'uploads' . DS);
+define('MUDDER_TEMPLATE', MUDDER_ROOT . 'templates' . DS);
+define('MUDDER_DOMAIN', $_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME']);
+并载入
+require MUDDER_DATA . 'config.php';
+require MUDDER_CORE . 'version.php';
+
+

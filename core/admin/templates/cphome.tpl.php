@@ -51,8 +51,7 @@
         </table>
     </div>
     <?endif;?>
-    
-    <?if(!$licinfo || $licinfo < 0 || !$licinfo['l'] || !$_G['siteinfo']['d']):?>
+    <?if(!$licinfo || $licinfo < 0 || !$licinfo['l'] || !$_G['siteinfo']['d']): ?>
     <div class="space">
         <div class="subtitle"><?=lang('admincp_cphome_cpuser_lic_enter')?></div>
         <form method="post" action="<?=cpurl('modoer','license','post')?>">
@@ -70,13 +69,12 @@
         </form>
     </div>
     <?endif;?>
-    
     <?if($_G['admin']->is_founder||!$_CFG['console_hide_system_notice']):?>
     <div class="space">
         <div class="subtitle">System Notice</div>
         <table class="maintable" border="0" cellspacing="0" cellpadding="0">
             <tr>
-                <td><iframe src="http://www.modoer.com/notice.php?<?=str_replace('&amp;','&',http_query(cp_getmodoerinfo()))?>" height="150" width="100%" frameborder="0" scrolling="no"></iframe></td>
+                <td><iframe src="http://www.modoer.com/notice.php" height="150" width="100%" frameborder="0" scrolling="no"></iframe></td>
             </tr>
         </table>
     </div>

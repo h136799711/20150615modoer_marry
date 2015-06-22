@@ -15,5 +15,15 @@ $modmenus = array(
 		'product|订单管理|product_order',
 		'product|销售统计|order_count',
     ),
+    /**
+	 * modify by hbd hebiduhebi@126.com
+	 * 2015-06-16
+	 */
+    array(
+        'title' => '套餐管理',
+        'product|添加套餐|package_list|add',
+		'product|套餐列表|package_list',
+		'product|套餐预约|package_order',
+    ),
 );
 ?>

@@ -80,4 +80,3 @@ function check_category_allow(sid,catid) {
         </center>
     </div>
 </div>
-
