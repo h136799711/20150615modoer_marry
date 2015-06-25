@@ -57,10 +57,10 @@ class msm_member_invite extends ms_model {
             $this->add_error('邀请人账号不存在');
             return false;
         }
-        if($this->inviter['loginip'] == $this->global['ip']) {
-            $this->add_error('不能邀请自己');
-            return false;
-        }
+//      if($this->inviter['loginip'] == $this->global['ip']) {
+//          $this->add_error('不能邀请自己');
+//          return false;
+//      }
         //邀请注册人数
         // $num = $this->count_num($inviter_uid);
         // if($this->modcfg['invite_reg_maxnum'] > 0 && $num > $this->modcfg['invite_reg_maxnum']) {
@@ -73,7 +73,7 @@ class msm_member_invite extends ms_model {
     function add($inviter_uid) {
         $this->num = $this->count_num($inviter_uid);
         $add_point = true;
-        $inviter = $this->global['user']->read($inviter_uid);
+        $inviter = $this->loader->model(':member')->read($inviter_uid);
         $post = array();
         $post['inviter_uid'] = $inviter_uid;
         $post['inviter'] = $inviter['username'];
@@ -93,13 +93,13 @@ class msm_member_invite extends ms_model {
         //被邀请人总是获得积分
         $P->update_point($this->global['user']->uid, 'invitee');
         //邀请人判断限额
-        if($add_point) {
-            $P->update_point($inviter_uid, 'inviter');
-            if($this->num + 1 > $this->modcfg['invite_reg_maxnum']) {
-                //人数满，提醒邀请人
-                $this->_notice_max($inviter_uid);
-            }
-        }
+//      if($add_point) {
+//          $P->update_point($inviter_uid, 'inviter');
+//          if($this->num + 1 > $this->modcfg['invite_reg_maxnum']) {
+//              //人数满，提醒邀请人
+//              $this->_notice_max($inviter_uid);
+//          }
+//      }
     }
 
     /*

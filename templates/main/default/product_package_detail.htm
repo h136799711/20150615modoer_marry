@@ -166,6 +166,7 @@
 	<form action="{url product/package/op/order}" method="post">
 		<input type="hidden" name="pkgid" value="{print $pkg['id']}" />
 		<input type="hidden" name="sid" value="{print $pkg['sid']}" />
+		<input type="hidden" name="pkgname" value="{print $pkg['name']}" />
 		<div>
 			<label >姓名</label>
 			<input type="text" placeholder="姓名" name="name" />

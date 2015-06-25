@@ -33,7 +33,7 @@ class msm_product_pkg_bespeak extends ms_model {
 	}
 	
 	function init_field() {
-		$this -> add_field('sid,pkgid,create_time,status,notes,name,phone');
+		$this -> add_field('sid,pkgid,pkgname,create_time,status,notes,name,phone');
 	}
 	
 	/**
@@ -118,7 +118,7 @@ class msm_product_pkg_bespeak extends ms_model {
 		
 		$this -> db -> from($this -> table);
 		$this -> db -> where('`id`', $id);
-		$this -> db -> select('`id`,`name`,`create_time`,`notes`,`phone`,`status`');
+		$this -> db -> select('`id`,`pkgname`,`pkgid`,`name`,`create_time`,`notes`,`phone`,`status`');
 		
 		if (!$result = $this -> db -> get_one())
 			return;
@@ -148,7 +148,6 @@ class msm_product_pkg_bespeak extends ms_model {
 	}
 	
 	
-
 	function find($sid,$p=1,$pname='') {
 		
 		$offset = 5;

@@ -124,18 +124,18 @@ if(check_submit('dosubmit')) {
 	//邀请注册
 	if($inviter_uid = _cookie('inviter_uid', 0, MF_INT_KEY)) {
 		$invite_model = $_G['loader']->model('member:invite');
-
+		
 		//邀请注册检查
 		if($invite_model->check_enable($inviter_uid)) {
 
 			//获取邀请者信息
-			$inviter = $IV->get_inviter();
+			$inviter = $invite_model->get_inviter();
 		} else {
 			//邀请注册错误提示
 			$invite_message = $invite_model->error();
 		}
 	}
-
+//	dump($inviter);
 	$subtitle = lang('member_reg_title');
 	require_once template('member_reg');
 }

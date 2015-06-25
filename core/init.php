@@ -5,7 +5,7 @@
 * @copyright (C)2001-2012 Moufersoft
 */
 define('IN_MUDDER',     TRUE);
-define('DEBUG',         TRUE);
+define('DEBUG',         FALSE);
 define('DS',            DIRECTORY_SEPARATOR);
 
 define('MUDDER_CORE',   dirname(__FILE__) .  DS);

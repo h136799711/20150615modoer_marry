@@ -4,10 +4,11 @@
  * @author hbd <346551990@qq.com>
  */
 (!defined('IN_ADMIN') || !defined('IN_MUDDER')) && exit('Access Denied');
-//
+
+// 
 $P = &$_G['loader'] -> model('product:package');
-//dump($P);
-//操作
+
+// 操作
 $op = _input('op', null, '_T');
 $_G['loader'] -> helper('form', 'product');
 $_G['loader'] -> helper('form', 'member');
@@ -15,12 +16,27 @@ $usergroup = &$_G['loader'] -> variable('usergroup', 'member');
 $forward = get_forward(cpurl($module, $act));
 
 switch($op) {
+	case 'delete_bespeak' :
+		$id = _get('id',1,MF_INT_KEY);
+		
+        $result = $_G['loader']->model('product:pkg_bespeak')->delete($id);
+//		dump($result);
+		header("Content-type:application-json");
+		if($result > 0){
+			echo json_encode(array('status' => true, 'info' => "删除成功!"));
+		}else{
+			echo json_encode(array('status' => false, 'info' => '操作失败!'));
+		}
+		exit();
+		break;
 	case 'bespeak' :
 		$p = _get('page',1,MF_INT_KEY);
-		$pname = _post('pname','');
-
+		$pname = _get('subject','');
 		$info = getProductBespeakList($p,$pname,true);
-		
+//		dump($info);
+		$total = count($info['list']);
+		$list = $info['list'];
+		$multipage = $info['page'];
 		$admin -> tplname = cptpl('package_bespeak', MOD_FLAG);
 		break;
 	case 'list_product' :
