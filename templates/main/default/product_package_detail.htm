@@ -75,8 +75,8 @@
 				</div>
 				
 				<div class="action-btn float_left">
-					{if $_G['user']->groupid == 16}<a id="add_cart_btn" class="order-btn" title="DIY套餐" href="#">DIY套餐</a>
-					<a id="add_cart_btn" class="order-btn" title="加入购物车" href="#">立即购买</a>{else}<a id="once_order_btn" class="order-btn" href="javascript:void(0)" title="点击此按钮，到下一步确认预约信息。">立刻预约</a> 
+					{if $_G['user']->groupid == 16}<a id="btn_diypkg" class="order-btn" title="DIY套餐" href="#">DIY套餐</a>
+					<a id="btn_addpkg2cart" class="order-btn" title="加入购物车" href="#">立即购买</a>{else}<a id="once_order_btn" class="order-btn" href="javascript:void(0)" title="点击此按钮，到下一步确认预约信息。">立刻预约</a> 
 					{/if}
 					
 				</div>
@@ -86,6 +86,7 @@
 		<div>本套餐包含以下宝贝：</div>
 		<div class="product_list">
 			<!--{loop $pkg['_products'] $vo}-->
+			<input type="hidden" name="pids" value="{print $vo['pid']}" />
 			<div class="product_item">
 				<img src="{print $vo['thumb']}" alt="thumb" />
 				{print $vo['subject']} 
@@ -99,6 +100,7 @@
 	                    <dd>$vo[stock] 件</dd>
 	                </dl>
 					{get:product attrs=get_buyattr(pid/$vo['pid'])}
+					
 					<div data-type="buyattr">
 						<dl class="clear">
 							<dt>{$attrs[name]}：</dt>
@@ -187,6 +189,64 @@
 </script>
 
 <script type="text/javascript">
+	
+	
+    
+    
+	function get_buyattr_exp() {
+        var exp = '';
+        if(window.itboye.buyattr.length > 0) {
+            for (var i = 0; i < window.itboye.buyattr.length; i++) {
+                var attr = window.itboye.buyattr[i];
+                var index = $('select[data-id="'+attr.id+'"]').val();
+                if(!is_numeric(index)) {
+                    alert('请先选择商品' + attr.name + '。');
+                    return false;
+                } else {
+                    exp += (exp?';':'')+attr.id+':'+index;
+                }
+            };
+        }
+        return exp;
+    }
+	
+	//加入到购物车中	
+    function add2cart(callback) {
+        var buyattr_exp = get_buyattr_exp();
+        if(window.itboye.buyattr.length> 0 && !buyattr_exp) {
+            return;
+        }
+        
+        
+        if(!buyattr_exp) buyattr_exp = '';
+        
+//      var quantity = parseInt($("#quantity_txt").val());
+       	
+        $.ajax({
+        		type:"post",
+	        	url:Url('product/cart/op/add_many'), 
+	        	data:{'pid':window.itboye.params, buyattr:buyattr_exp, in_ajax:1 },
+	        	dataType:"json",
+	        	success:function(result){
+	        		console.log(result);
+	        		if(result.status){
+					if(callback){
+	                    callback(result.info);
+					}else{
+	                    jslocation(Url('product/cart'));
+	                }
+					
+	        		}else{
+	        			alert(result.info);
+	            }
+	        			            
+	        	}
+        	
+        });//end ajax
+    }
+
+
+
 	function showDialog(){
 		dlgOpen("预约信息",$("#order_info").text(), 640, 480, "yuyue");
 	}
@@ -195,12 +255,38 @@
 	}
 	
 	$(function(){
+		window.itboye = {};
+		window.itboye.params = "";
+		window.itboye.buyattr = new Array();
+		$("input[name='pids']").each(function(ind,item){
+			
+			window.itboye.params = window.itboye.params + $(item).val()+",";
+			
+		});
+		
 		$("#once_order_btn").click(function(){
 			showDialog();
 		});
-		$("#btn_save_order").click(function(){
-			
+		$("#btn_diypkg").click(function(){
+			add2cart();
 		});
+		
+		$("#btn_addpkg2cart").click(function(){
+			var cids = window.itboye.params;
+			var ids = cids.replace(/,/g,'_');
+			ids = ids.replace(/(_$)/g,"");
+			var url = "{url product/member/ac/order}"+"&cids="+ids;
+			
+			jslocation(url);
+		});
+			
+	    //下单属性
+	    $('[name="buyattr"]').each(function() {
+	       window.itboye.buyattr.push($(this).data());
+	    });
+//		$("#btn_save_order").click(function(){
+//			
+//		});
 	})
 </script>
 

@@ -85,6 +85,39 @@ switch($op) {
         echo $cid;
         output();
         break;
+		
+    case 'add_many':
+        $pids = _post('pid',"", MF_TEXT);
+		$num = 1;
+        $buyattr = _post('buyattr','', MF_TEXT);
+        if(empty($pids)) {
+	        echo json_encode(array("status"=>false,"info"=>"未指定相关参数(pid)!"));
+			exit();
+        }
+		
+		if(!(strpos($buyattr, "-1") === FALSE)){
+	        echo json_encode(array("status"=>false,"info"=>"请选择商品规格!"));
+			exit();
+		}
+		
+		$pid_arr = explode(",",  $pids);
+		$cid_arr = array();
+		
+		foreach($pid_arr as $vo){
+//			dump($vo);
+			if(empty($vo)){
+				continue;
+			}
+	        if(!$cid = $cart_slg->add($vo, $num, $buyattr)) {
+	        		echo json_encode(array("status"=>false,"info"=>$cart_slg->error()));
+				exit();
+	        }
+			array_push($cid_arr,$cid);		
+		}
+		
+        echo json_encode(array("status"=>TRUE,"info"=>$cid_arr));
+        exit();
+        break;
     case 'delete':
         $cart_slg->delete(_post('cids', 0, MF_INT_KEY));
         if(defined('IN_AJAX')) {
