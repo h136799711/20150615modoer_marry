@@ -11,6 +11,7 @@ $_G['assistant_menu']['member'][] = '我传的图片,item/member/ac/m_picture';
 $_G['assistant_menu']['member'][] = '我的主题留言,item/member/ac/m_guestbook';
 $_G['assistant_menu']['member'][] = '我的主题关注,item/member/ac/favorite';
 
+$_G['assistant_menu']['manage'][] = '预约管理,product/package/op/bespeak';
 $_G['assistant_menu']['manage'][] = '主题管理,item/member/ac/g_subject';
 $_G['assistant_menu']['manage'][] = '风格管理,item/member/ac/style';
 $_G['assistant_menu']['manage'][] = '相册管理,item/member/ac/g_album';

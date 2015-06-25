@@ -1,0 +1,206 @@
+<!--{eval
+    $_HEAD['title'] = (isset($catid)?$category[$catid][name]:'') . $MOD[name];
+}-->
+{template modoer_header}
+
+<div id="body">
+
+	<div class="link_path">
+		<em>
+
+	            <span class="qrcode-ico"><a href="javascript:;" id="qrcode_image" rel="qrcode_box" >商品二维码</a></span>
+
+	            <div id="qrcode_box" style="display:none;"><img src="{print get_qrcode(url("product/pkg_detail/id/$id",'',1))}"></div>
+
+	            <script type="text/javascript">
+
+	            $("#qrcode_image").powerFloat({offsets:{x:0, y:8}});
+
+	            </script>
+
+	        </em>
+		<a href="{url modoer/index}">首页</a><span>&gt;</span>{print implode('<span>&gt;</span>', $urlpath)}
+	</div>
+
+	<div class="pkg_info product_detail">
+
+		<div class="title">
+			<h2>{print $pkg['name']}</h2>
+		</div>
+		
+		<div class="float_left product_box">
+			<div class="gallery">
+				<!--{eval 
+                    $picture = $pkg[picture]?$pkg[picture]:'static/images/noimg.gif';
+                    $thumb = $pkg[thumb]?$pkg[thumb]:'static/images/noimg.gif';
+                }-->
+				<div class="pic">
+					{if $pkg[picture]}
+					<a class="jqzoom" id="spec-n1" rel="gal1" href="{URLROOT}/$picture">
+						<img src="{URLROOT}/$picture" style="width:350px;height:250px;" />
+					</a>
+					{else}
+					<img src="{URLROOT}/$picture" style="max-width:380px;max-height:250px;" /> {/if}
+				</div>
+				<!--{eval 
+                    $pictures = is_serialized($pkg['pictures']) ? unserialize($pkg['pictures']) : array();
+                }-->
+				<!--{if $pictures}-->
+				<div id="spec-n5">
+					<div class="control" id="spec-left"></div>
+					<div id="spec-list">
+						<ul class="list-h">
+							{loop $pictures $pic}
+							<li>
+								<a href='javascript:void(0);' rel="{gallery: 'gal1', smallimage: '{URLROOT}/$pic',largeimage: '{URLROOT}/$pic'}">
+									<img src="{URLROOT}/$pic">
+								</a>
+							</li>{/loop}
+						</ul>
+					</div>
+					<div class="control" id="spec-right"></div>
+				</div>
+				<!--{/if}-->
+			</div>
+			<div class="float_left">
+				<div>
+					原价: &yen;{print number_format($pkg['ori_price'],1)}
+					
+				</div>
+				
+				<div>
+					<!--{if $val['price'] && $val['end_time'] > time() && $val['start_time'] < time() }-->
+                    促销价: &yen;{print number_format($pkg['price'],1)} 促销时间 {print date("Y-m-d H:i",$pkg['start_time'])} - {print date("Y-m-d H:i",$pkg['end_time'])}  
+					<!--{/if}-->                
+				</div>
+				
+				<div class="action-btn float_left">
+					{if $_G['user']->groupid == 16}<a id="add_cart_btn" class="order-btn" title="DIY套餐" href="#">DIY套餐</a>
+					<a id="add_cart_btn" class="order-btn" title="加入购物车" href="#">立即购买</a>{else}<a id="once_order_btn" class="order-btn" href="javascript:void(0)" title="点击此按钮，到下一步确认预约信息。">立刻预约</a> 
+					{/if}
+					
+				</div>
+			</div>
+		</div>
+
+		<div>本套餐包含以下宝贝：</div>
+		<div class="product_list">
+			<!--{loop $pkg['_products'] $vo}-->
+			<div class="product_item">
+				<img src="{print $vo['thumb']}" alt="thumb" />
+				{print $vo['subject']} 
+				{print $vo['price']} 元
+				
+				
+				<div class="buy_info">
+					
+	                <dl class="clear">
+	                    <dt>库存数量：</dt>
+	                    <dd>$vo[stock] 件</dd>
+	                </dl>
+					{get:product attrs=get_buyattr(pid/$vo['pid'])}
+					<div data-type="buyattr">
+						<dl class="clear">
+							<dt>{$attrs[name]}：</dt>
+							<dd>
+								<select name="buyattr" data-id="$attrs[id]" data-name="$attrs[name]">
+									<option value="-1">选择商品{$attrs[name]}</option>
+									{loop $attrs[value] $i $attr_val}
+									<option value="$i">$attr_val</option>
+									{/loop}
+								</select>
+							</dd>
+						</dl>
+					</div>
+					{/get}
+
+					<dl class="clear hide">
+						<dt>购买数量：</dt>
+						<dd>
+							<div class="computing">
+								<input id="params" type="hidden" data-pid="$detail[pid]" data-stock="$detail[stock]">
+								<input id="quantity_dec_btn" type="button" class="reduce" />
+								<input id="quantity_txt" type="text" class="num" value="1" />
+								<input id="quantity_add_btn" type="button" class="add" />
+							</div>
+						</dd>
+					</dl>
+					
+					{if $pkg[tags]}
+					<dl class="clear">
+						<dt>商品标签：</dt>
+						<dd>
+							{eval $i=0;} {loop $tags $tval}
+							<a href="{url product/search/tag/$tval}" target="_blank">$tval</a> {eval if(++$i>=3) break;} {/loop} {if count($tags)>3}
+							<a href="#" id="tag_more" rel="tag_more_box"><span class="arrwd-ico">更多&nbsp;</span></a> {/if}
+						</dd>
+					</dl>
+					{if count($tags)>3}
+					<ul id="tag_more_box" class="dropdown-menu none">
+						{eval $i=0;} {loop $tags $tval} {eval if($i++
+						<=3) continue;} <li><a href="{url product/search/tag/$tval}" target="_blank">$tval</a>
+							</li>
+							{/loop}
+					</ul>
+					<script type="text/javascript">
+						$("#tag_more").powerFloat({reverseSharp:true});
+					</script>
+					{/if} {/if} {if $_CFG[sharecode]}
+					<dl class="clear">
+						<dt>分&nbsp;&nbsp;享&nbsp;到：</dt>
+						<dd>
+							$_CFG[sharecode]
+						</dd>
+					</dl>
+					{/if}
+				</div>
+			</div>
+			<!--{/loop}-->
+		</div>
+
+	</div>
+
+</div>
+
+<script type="text/template" id="order_info">
+	<form action="{url product/package/op/order}" method="post">
+		<input type="hidden" name="pkgid" value="{print $pkg['id']}" />
+		<input type="hidden" name="sid" value="{print $pkg['sid']}" />
+		<div>
+			<label >姓名</label>
+			<input type="text" placeholder="姓名" name="name" />
+		</div>
+		<div>
+			<label>联系电话</label>
+			<input type="text" placeholder="联系电话" name="phone" />
+		</div>
+		<div>
+			<textarea name="notes" rows="5" placeholder="备注"></textarea>
+		</div>
+		<div>
+			<button type="submit" id="btn_save_order" >确定</button>
+			<button type="button" onclick="dlgClose('yuyue');">取消</button>
+		</div>
+	</form>
+	
+</script>
+
+<script type="text/javascript">
+	function showDialog(){
+		dlgOpen("预约信息",$("#order_info").text(), 640, 480, "yuyue");
+	}
+	
+	function ajaxSaveOrder(){
+	}
+	
+	$(function(){
+		$("#once_order_btn").click(function(){
+			showDialog();
+		});
+		$("#btn_save_order").click(function(){
+			
+		});
+	})
+</script>
+
+<!--{eval footer();}-->

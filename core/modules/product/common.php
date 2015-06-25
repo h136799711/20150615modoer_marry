@@ -1,5 +1,7 @@
 <?php
+//当前模块标识
 define('MOD_FLAG', 'product');
+//当前模块路径
 define('MOD_ROOT', MUDDER_MODULE . MOD_FLAG . DS);
 
 if(!$_CITY) $_CITY = get_default_city();
@@ -20,9 +22,9 @@ $MOD =& $_G['mod'];
 $MOD['cash_rate'] = $MOD['cash_rate'] > 0 ? $MOD['cash_rate'] : 10;
 
 if(!defined('IN_ADMIN')) {
-    $acts = array('ajax','index','list','member','detail','cart','search','shop','pay_notify','mobile');
+    $acts = array('package','pkg_detail','ajax','index','list','member','detail','cart','search','shop','pay_notify','mobile');
     if(!in_array($_GET['act'], $acts)) $_GET['act'] = 'index';
-
+//	dump(MOD_ROOT . $_GET['act'] . '.php');
     include MOD_ROOT . $_GET['act'] . '.php';
 }
 ?>

@@ -263,6 +263,28 @@ $("document ").ready(function(){
                 </td>
             </tr>
             
+             <tr>
+                <td align="right" class="altbg1">套餐封面：</td>
+                <td class="uploadimgs">  
+                    <?php 
+                        if($detail['thumb']) $thumb_key = str_replace('thumb_','',pathinfo($detail['thumb'], PATHINFO_FILENAME));
+                        $pictures = is_serialized($detail['pictures']) ? unserialize($detail['pictures']) : array();
+                    ?>
+                    <input type="hidden" name="thumb" value="<?=$thumb_key?>">
+                    <div id="topic_images_foo" style="margin-bottom:5px;">
+                        <button type="button" class="btn2" onclick="product_upimg('topic_content','<?=$MOD['upimages']?>');">上传图片</button>
+                    </div>
+                    <?php foreach($pictures as $key => $val):?>
+                    <div class="upimg<?=$key==$thumb_key?' imgthumb':''?>" id="upimg_<?=$key?>">
+                        <img src="<?=URLROOT?>/<?=$val?>" />
+                        <input type="hidden" name="pictures[<?=$key?>]" value="<?=$val?>" />
+                        <a href="javascript:void(0);" onclick="product_setthumb('<?=$key?>');return false;">设为封面</a>
+                        <a href="javascript:void(0);" onclick="product_delimg('<?=$key?>');return false;">删除</a>
+                    </div>
+                    <?php endforeach;?>
+                </td>
+            </tr>
+            
             <tr>
                 <td class="altbg1" align="right"><span class="font_1">*</span>关联产品：</td>
                 <td width="*">
@@ -277,6 +299,11 @@ $("document ").ready(function(){
                 			<?php } ?>
                 		</div>
                 </td>
+            </tr>	
+            <tr>
+                <td class="altbg1" align="right" valign="top">提成比例(0~1之间)：</td>
+                <td><input name="brokerage" style="width:120px;" value="<?=$vo['brokerage'] ?>" />
+                    <div class="font_2">0.1表示提成10%</div></td>
             </tr>
             <tr>
                 <td class="altbg1" align="right" valign="top">简单介绍：</td>

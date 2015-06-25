@@ -28,7 +28,6 @@ switch($op) {
                 $pid = key($mycate);
             }
         }
-
         if($pid > 0) {
 
     		$category = $S->variable('category');

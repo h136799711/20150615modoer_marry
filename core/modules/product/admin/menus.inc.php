@@ -23,7 +23,7 @@ $modmenus = array(
         'title' => '套餐管理',
         'product|添加套餐|package_list|add',
 		'product|套餐列表|package_list',
-		'product|套餐预约|package_order',
+		'product|套餐预约|package_list|bespeak',
     ),
 );
 ?>

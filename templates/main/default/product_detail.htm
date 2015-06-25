@@ -47,29 +47,7 @@
                     <dd><span class="price f24">$vipprice</span> 元（您是 <span class="font_2">{print:member group(groupid/$user->groupid)}</span> 尊享会员优惠<span class="font_2">{print $price-$vipprice}</span>元）</dd>
                 </dl>
                 {/if}
-                <dl class="clear">
-                    <dt>物流运费：</dt>
-                    <dd>
-                        {if !$detail[freight]}
-                        卖家承担运费
-                        {elseif $detail['freight']=='2'}
-                            {if $detail['freight_price_snail']>0}
-                            平邮：{print get_numeric($detail['freight_price_snail'])} 元&nbsp;
-                            {/if}
-                            {if $detail['freight_price_exp']>0}
-                            快递：{print get_numeric($detail['freight_price_exp'])} 元&nbsp;
-                            {/if}
-                            {if $detail['freight_price_ems']>0}
-                            EMS：{print get_numeric($detail['freight_price_ems'])} 元&nbsp;
-                            {/if}
-                        {else}
-                        <!--{get:product shipval=getshippinglist(sid/$subject[sid]/orderby/shipid)}-->
-                        {$shipval[shipname]}：{$shipval[price]} 元&nbsp;
-                        <!--{/get}-->
-                        {/if}
-                        {if $detail[is_cod]}<span class="font_2">支持货到付款</span>{/if}
-                    </dd>
-                </dl>
+                
                 {if $detail[giveintegral] && $MOD[pointgroup]}
                 <dl class="clear">
                     <dt>赠送积分：</dt>

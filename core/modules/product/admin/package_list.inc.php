@@ -1,7 +1,7 @@
 <?php
 /**
- * @author moufer<moufer@163.com>
- * @copyright www.modoer.com
+ * 获取预约套餐信息
+ * @author hbd <346551990@qq.com>
  */
 (!defined('IN_ADMIN') || !defined('IN_MUDDER')) && exit('Access Denied');
 //
@@ -15,11 +15,19 @@ $usergroup = &$_G['loader'] -> variable('usergroup', 'member');
 $forward = get_forward(cpurl($module, $act));
 
 switch($op) {
+	case 'bespeak' :
+		$p = _get('page',1,MF_INT_KEY);
+		$pname = _post('pname','');
+
+		$info = getProductBespeakList($p,$pname,true);
+		
+		$admin -> tplname = cptpl('package_bespeak', MOD_FLAG);
+		break;
 	case 'list_product' :
 		$p = _get('page',1,MF_INT_KEY);
 		$pname = _post('pname','');
 		if (IN_AJAX) {
-			$info = getProductList($p,$pname);
+			$info = getProductList($p,$pname,true);
 //			header("Content-type:application-json")
 			echo json_encode(array('status' => true, 'info' => $info));
 			exit();
@@ -51,7 +59,7 @@ switch($op) {
 		$pid = $pkg -> edit_save($id,$post);
 
 		$navs = array( array('name' => 'product_redirect_productpkglist', 'url' => cpurl($module, $act, 'list')), );
-
+		
 		redirect('global_op_succeed', $navs);
 		break;
 	case 'add' :
@@ -90,6 +98,8 @@ switch($op) {
 		$navs = array( array('name' => 'product_redirect_productpkglist', 'url' => cpurl($module, $act, 'list')), );
 
 		redirect('global_op_succeed', $navs);
+//		exit();
+		
 		break;
 
 	case 'succeed' :
@@ -112,13 +122,7 @@ switch($op) {
 		$P -> delete($_POST['ids']);
 		redirect('global_op_succeed', get_forward(cpurl($module, $act, 'list')));
 		break;
-	case 'checkup' :
-		$P -> checkup($_POST['pids']);
-		redirect('global_op_succeed', get_forward(cpurl($module, $act, 'list')));
-		break;
-	case 'checklist' :
-		$admin -> tplname = cptpl('product_check', MOD_FLAG);
-		break;
+	
 	default :
 		$products = getProductList(1);
 		$op = 'list';
@@ -133,7 +137,7 @@ switch($op) {
 		$P -> db -> join($P -> table, 'p.sid', 'dbpre_subject', 's.sid', 'LEFT JOIN ');
 
 		if ($total = $P -> db -> count()) {
-			$P -> db -> select('s.`sid`,s.`name` as subname,p.`sid`,p.`id`,p.`name`,p.`ori_price`,p.`price`,p.`update_time`,p.`pageview`,p.`finer`,p.`create_time`,p.`start_time`,p.`end_time`,p.`onshelf`,p.`tags`,p.`desc`,p.`city_id`');
+			$P -> db -> select('p.`pictures`,p.`picture`,p.`thumb`,p.`brokerage`,s.`sid`,s.`name` as subname,p.`sid`,p.`id`,p.`name`,p.`ori_price`,p.`price`,p.`update_time`,p.`pageview`,p.`finer`,p.`create_time`,p.`start_time`,p.`end_time`,p.`onshelf`,p.`tags`,p.`desc`,p.`city_id`');
 			$P -> db -> sql_roll_back('from,where');
 			!$_GET['orderby'] && $_GET['orderby'] = 'id';
 			!$_GET['ordersc'] && $_GET['ordersc'] = 'DESC';
@@ -148,8 +152,11 @@ switch($op) {
 		$admin -> tplname = cptpl('package_list', MOD_FLAG);
 }
 
-
-function getProductList($p=1,$pname='') {
+/**
+ * 获取套餐信息
+ * @author hbd <346551990@qq.com>
+ */
+function getProductList($p=1,$pname='',$nostock=false) {
 	global $_G;
 	
 	$offset = 5;
@@ -159,6 +166,11 @@ function getProductList($p=1,$pname='') {
 		$product -> db -> where_like("p.subject", '%'.$pname.'%');
 	}
 	$product -> db -> where('p.status', 1);
+	
+	if($nostock){
+		$product -> db -> where_more('p.stock', 1);
+	}
+	
 	$product -> db -> join($product -> table, 'p.sid', 'dbpre_subject', 's.sid');
 	if ($total = $product -> db -> count()) {
 		$product -> db -> select('p.*,s.name,s.subname');
@@ -169,6 +181,35 @@ function getProductList($p=1,$pname='') {
 		$list = $product -> db -> get_all();
 		
 		$multipage = multi($total, $offset, $p, cpurl("product", "package_list", 'list_product', $_GET));
+	}
+//	dump($multipage);
+	return  array('list'=>$list,'page'=>$multipage);
+}
+
+/**
+ * 获取预约套餐信息
+ * @author hbd <346551990@qq.com>
+ */
+function getProductBespeakList($p=1,$pname='') {
+	global $_G;
+	
+	$offset = 5;
+	
+	$bespeak = &$_G['loader'] -> model('product:pkg_bespeak');
+	if(!empty($pname)){
+		$bespeak -> db -> where_like("p.name", '%'.$pname.'%');
+	}
+	
+	$bespeak -> db->from($bespeak->table,"p");
+	if ($total = $bespeak -> db -> count()) {
+		$bespeak -> db -> select('p.*');
+		$bespeak -> db -> sql_roll_back('from,where');
+		
+		$bespeak -> db -> order_by('p.create_time' ,'DESC');
+		$bespeak -> db -> limit(get_start($p, $offset), $offset);
+		$list = $bespeak -> db -> get_all();
+		
+		$multipage = multi($total, $offset, $p, cpurl("product", "package_list", 'bespeak', $_GET));
 	}
 //	dump($multipage);
 	return  array('list'=>$list,'page'=>$multipage);

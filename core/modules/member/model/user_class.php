@@ -138,7 +138,7 @@ class msm_member_user extends ms_base {
 		//更新数据库
 		return $member_obj->modify_paypw($this->uid, $new);
 	}
-
+	
 	//修改邮箱账号
 	function change_email($email)
 	{

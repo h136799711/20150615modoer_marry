@@ -1172,14 +1172,14 @@ class msm_item_subject extends msm_item_itembase {
             $this->db->sql_roll_back('from,where');
             $this->db->set('uid', $uid);
             $this->db->set('expirydate', $expirydate);
-            $this->db->set('lasttime ', _G('timestamp'));
+            $this->db->set('lasttime', _G('timestamp'));
             $this->db->update();
         } else {
             $this->db->sql_roll_back('from');
             $this->db->set('sid', $sid);
             $this->db->set('uid', $uid);
             $this->db->set('expirydate', $expirydate);
-            $this->db->set('lasttime ', _G('timestamp'));
+            $this->db->set('lasttime', _G('timestamp'));
             $this->db->insert();
         }
         if($update_subject) {
