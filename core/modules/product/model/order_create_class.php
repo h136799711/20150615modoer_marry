@@ -53,7 +53,20 @@ class msm_product_order_create extends msm_product_order
 	    $post['buyername'] = _G('user')->username;
 	    $post['buyeremail'] = _G('user')->email;
 	    $post['remark'] = _post('remark', '', MF_TEXT); //留言
-
+		$post['truebuyer_id'] = 0;
+		$post['truebuyer_name'] = "";
+		
+	    if(_G('user')->groupid == 16){
+		    $post['truebuyer_id'] = _post('truebuyer_id', '', MF_TEXT);
+			
+		    $truebuyer = $this->loader->model('member:member')->read($post['truebuyer_id']);
+			if(is_array($truebuyer)){
+				$post['truebuyer_name'] = $truebuyer['username'];
+			}else{			
+		   	 	return $this->add_error('新人ID错误！');
+			}
+		}
+		
 	    //物流检测
 	    if(!$checkout_obj->express) {
 	    	return $this->add_error('卖家未设置物流信息，无法下单。');

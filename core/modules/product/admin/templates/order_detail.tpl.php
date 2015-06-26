@@ -44,6 +44,10 @@
                     <li><b>卖家名称：</b><?=$detail['sellername']?></li>
                     <li><b>支付方式：</b><?=$detail['paymentname']?($detail['paymentname']=='cod'?'<span class="font_1">货到付款</span>':lang('pay_name_'.$detail['paymentname'])):'N/A'?></li>
                     <li><b>下单时间：</b><?=date('Y-m-d H:i:s',$detail['addtime'])?></li>
+                    <?php if($detail['truebuyer_id'] > 0){ ?>
+                    <li class="red_common"><b >新人ID：</b><?=$detail['truebuyer_id']?></li>
+                    <li class="red_common"><b>新人登录账号：</b><?=$detail['truebuyer_name']?></li>
+                    <?php } ?>
                 </ul>
                 <div class="clear"></div>
             </div>
