@@ -12,6 +12,9 @@ $op = _get("op","");
 
 
 switch($op){
+	/**
+	 * 20150626修改
+	 */
 	case "delete_bespeak":
 		//删除预约
 		$id = _post("pid",0,intval);
@@ -104,6 +107,24 @@ switch($op){
 		
 		$_HEAD['keywords'] = $MOD['meta_keywords'];
 		$_HEAD['description'] = $MOD['meta_description'];
+		
+		$pkg_name = _post("pkg_name","",MF_TEXT);
+		
+		$num = _get('num', 0, 'intval');
+		$num ? $offset = $num : $offset = 5;
+		$start = get_start($_GET['page'], $offset);
+		$where = array();
+        $where['p.`name`'] = array('where_like',array("%".$pkg_name."%"));
+		$P = $_G['loader']->model("product:package");
+		
+		list($total, $list) = $P->find($where,$start,$offset);
+		if($total) $multipage = multi($total, $offset, $_GET['page'], url("product/package/num/$num/page/_PAGE_"));
+		
+//		dump($total);
+//		dump($offset);
+//		dump($list);
+//		dump($multipage);
+		
 		include template('product_package');
 		break;
 }

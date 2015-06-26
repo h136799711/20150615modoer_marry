@@ -4,107 +4,46 @@
 {template modoer_header}
 <div id="body">
 	<div class="product_box">
-		<!-- 隐藏 -->
-		<div class="left_box_index" >
-			<div class="product_title">
-				<h2>商品分类</h2>
-				<div class="menu_guide" style="height:423px;">
-    				<ul class="menu_guide_list" id="menu_guide">
-        				{get:product val=gcategory(pid/0)}
-                        <!--{eval if(!$val['subcats']) continue;}-->
-        				<li class="cate_guide">
-            				<a href="{url product/pkg_list/catid/$val[catid]}" class="guide_nav"><span>$val[name]</span></a>
-            				<div class="menu_guide_show">
-                				<ul>
-                    				{get:product _val=gcategory(pid/$val[catid])}
-                                    <!--{eval if(!$_val[modelid] && !$_val['subcats']) continue;}-->
-                    				<li>
-                                            <a href="{url product/pkg_list/catid/$_val[catid]}"><span style="font-size:14px;float:left;color:#808080;">$_val[name]</span></a>
-                                            {get:product val2=gcategory(pid/$_val[catid])}
-                                            <a href="{url product/pkg_list/catid/$val2[catid]}">$val2[name]</a>
-                                            {/get}
-                    				</li>
-                    				{/get}
-                				</ul>
-            				</div>
-        				</li>
-        				{/get}
-    				</ul>
-				</div>
-			</div>
+		<div>
+			<form method="post" action="{url product/package}">
+				<label>套餐名称：</label>
+				<input type="text" name="pkg_name" value="{print $pkg_name}"  />
+				<button type="submit">筛选</button>
+			</form>
 		</div>
-        <script type="text/javascript">
-        $('#menu_guide li.cate_guide').each(function() {
-            $(this).mouseover(function() {
-                $('#menu_guide li.cate_guide').each(function() {
-                    $(this).css('z-index', 0);
-                });
-                $(this).css('z-index', 10);
-                if($.browser.msie && $.browser.version.substr(0,1)=='6') {
-                    $(this).find('.menu_guide_show').show();
-                }
-            });
-            if($.browser.msie && $.browser.version.substr(0,1)=='6') {
-                $(this).mouseout(function(event) {
-                    $(this).find('.menu_guide_show').hide();
-                });
-            }
-        });
-        </script>
-		<div id="c_box">
-            
+		<!--{if $total}-->
+		<div class="new_pr_out mt" style="width: 100%;">
+			<h2>新套餐</h2>
+			<div class="new_pr" id="main0">
+				<ul class="show">
+					<!--{loop $list $val}-->
+					<li>
+						<a href="{url product/pkg_detail/id/$val['id']}" title="$val[name]">
+							<img src="{URLROOT}/{if $val['thumb']}$val['thumb']{else}static/images/noimg.gif{/if}" />
+						</a>
+						<span class="title">
+							<a href="{url product/pkg_detail/id/$val['id']}" title="$val[name]">$val[name]</a></span>
+						<em>&yen;<!--{if $val['price'] && $val['end_time'] > time() && $val['start_time'] < time() }-->
 
-        	<div class="new_pr_out mt" style="width: 100%;">
-				<h2>新套餐</h2>
-				<ul class="num" id="menu0">
-					<li onmouseover="setTab(0,0)" class="on">1</li>
-					<li onmouseover="setTab(0,1)">2</li>
-					<li onmouseover="setTab(0,2)">3</li>
-				</ul>
-				<div class="new_pr" id="main0">
-                    <!--{eval $newx=array(0,4,8);}-->
-                    <!--{loop $newx $start}-->
-                    <ul {if !$start}class="show"{/if}>
-                        <!--{get:modoer val=table(table/dbpre_product_package/select/id,name,picture,thumb,price,ori_price,start_time,end_time/where/onshelf=1 AND city_id IN (0,$_CITY[aid])/orderby/id DESC/start/$start/rows/4)}-->
-                        <li>
-                            <a href="{url product/pkg_detail/id/$val['id']}" title="$val[name]">
-                            <img src="{URLROOT}/{if $val['thumb']}$val['thumb']{else}static/images/noimg.gif{/if}" /></a>
-                            <span class="title"><a href="{url product/pkg_detail/id/$val['id']}" title="$val[name]">$val[name]</a></span>
-                            <em>&yen;<!--{if $val['price'] && $val['end_time'] > time() && $val['start_time'] < time() }-->
 	                         {print number_format($val['price'],1)}
+
                             	<!--{else}-->
+
                             	{print number_format($val['ori_price'],1)}
-                            <!--{/if}--></em> 
-                        </li>
-                        <!--{/get}-->
-                    </ul>
-                    <!--{/loop}-->
-				</div>
+
+                            <!--{/if}--></em>
+					</li>
+					<!--{/loop}-->
+				</ul>
 			</div>
 		</div>
-
-		<div id="right_box" style="display: none;">
-			<div class="product_title">
-				<h2>产品促销</h2>
-                <ul class="sales_pr" style="height:423px;">
-                    <!--{get:modoer val=table(table/dbpre_product_package FORCE INDEX(price)/select/id,name,picture,thumb,price,ori_price/where/price>0 AND start_time<$_G[timestamp] AND end_time>$_G[timestamp] AND city_id IN (0,$_CITY[aid]) AND onshelf=1 /orderby/create_time DESC/rows/3)}-->
-                    <li>
-                        <a href="{url product/detail/pid/$val[pid]}" title="$val[subject]">
-                        <div class="thumb">
-                            <img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" /></a>
-                            <em>&yen;{print $val[promote]}</em>
-                        </div>
-                        <span><a href="{url product/detail/pid/$val[pid]}" title="$val[subject]">$val[subject]</a></span>
-                    </li>
-                    {/get}
-                </ul>
-			</div>
-		</div>
-
+		<!--{/if}-->
+		
+		<!--{if $multipage}-->
+		<div class="multipage">$multipage</div>
+		<!--{/if}-->
+	
 	</div>
-	<div class="clear"></div>
-
-
-    
+	
 </div>
 <!--{eval footer();}-->

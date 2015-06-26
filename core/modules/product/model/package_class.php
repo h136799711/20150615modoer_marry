@@ -41,6 +41,36 @@ class msm_product_package extends ms_model {
 	}
 	
 	/**
+	 * 20150626修改
+	 * @author hbd <hebiduhebi@126.com>
+	 * 搜索
+	 */
+	function find($where, $start, $offset) {
+		
+		$this -> db -> from($this -> table, 'p');
+		
+		$this -> db -> where($where);
+		
+		$result = array(0, '');
+		
+		if (!$result[0] = $this -> db -> count())
+			return $result;
+		
+		$this -> db -> sql_roll_back('from,where');
+		
+		$this -> db -> select("p.`thumb`,p.`brokerage`,p.`gcatid`,p.`sid`,p.`name`,p.`price`,p.`ori_price`,p.`start_time`,p.`end_time`,p.`pids`,p.`onshelf`,p.`city_id`");
+		
+		$this -> db -> order_by(array('p.`create_time`'=>'desc'));
+		
+		$this -> db -> limit($start, $offset);
+		
+		$result[1] = $this -> db -> get_all();
+		
+		return $result;
+	}
+	
+	
+	/**
 	 * 后台列表更新
 	 */
 	function update($post) {
