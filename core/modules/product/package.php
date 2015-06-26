@@ -111,7 +111,7 @@ switch($op){
 		$pkg_name = _post("pkg_name","",MF_TEXT);
 		
 		$num = _get('num', 0, 'intval');
-		$num ? $offset = $num : $offset = 5;
+		$num ? $offset = $num : $offset = 10;
 		$start = get_start($_GET['page'], $offset);
 		$where = array();
         $where['p.`name`'] = array('where_like',array("%".$pkg_name."%"));
@@ -120,7 +120,6 @@ switch($op){
 		list($total, $list) = $P->find($where,$start,$offset);
 		if($total) $multipage = multi($total, $offset, $_GET['page'], url("product/package/num/$num/page/_PAGE_"));
 		
-//		dump($total);
 //		dump($offset);
 //		dump($list);
 //		dump($multipage);

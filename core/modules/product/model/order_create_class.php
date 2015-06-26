@@ -56,14 +56,25 @@ class msm_product_order_create extends msm_product_order
 		$post['truebuyer_id'] = 0;
 		$post['truebuyer_name'] = "";
 		
-	    if(_G('user')->groupid == 16){
-		    $post['truebuyer_id'] = _post('truebuyer_id', '', MF_TEXT);
+//	    if(_G('user')->groupid == 16){
+//		    $post['truebuyer_id'] = _post('truebuyer_id', '', MF_TEXT);
+//			
+//		    $truebuyer = $this->loader->model('member:member')->read($post['truebuyer_id'],MEMBER_READ_USERNAME);
+//			if(is_array($truebuyer)){
+//				$post['truebuyer_name'] = $truebuyer['username'];
+//			}else{			
+//		   	 	return $this->add_error('新人ID错误！');
+//			}
+//		}
+
+		if(_G('user')->groupid == 16){
+		    $post['truebuyer_name'] = _post('truebuyer_name', '', MF_TEXT);
 			
-		    $truebuyer = $this->loader->model('member:member')->read($post['truebuyer_id']);
+		    $truebuyer = $this->loader->model('member:member')->read($post['truebuyer_name'],MEMBER_READ_USERNAME);
 			if(is_array($truebuyer)){
-				$post['truebuyer_name'] = $truebuyer['username'];
+				$post['truebuyer_id'] = $truebuyer['uid'];
 			}else{			
-		   	 	return $this->add_error('新人ID错误！');
+		   	 	return $this->add_error('新人登录用户名错误！');
 			}
 		}
 		

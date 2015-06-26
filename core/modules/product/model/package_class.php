@@ -58,7 +58,7 @@ class msm_product_package extends ms_model {
 		
 		$this -> db -> sql_roll_back('from,where');
 		
-		$this -> db -> select("p.`thumb`,p.`brokerage`,p.`gcatid`,p.`sid`,p.`name`,p.`price`,p.`ori_price`,p.`start_time`,p.`end_time`,p.`pids`,p.`onshelf`,p.`city_id`");
+		$this -> db -> select("p.id,p.`thumb`,p.`brokerage`,p.`gcatid`,p.`sid`,p.`name`,p.`price`,p.`ori_price`,p.`start_time`,p.`end_time`,p.`pids`,p.`onshelf`,p.`city_id`");
 		
 		$this -> db -> order_by(array('p.`create_time`'=>'desc'));
 		
