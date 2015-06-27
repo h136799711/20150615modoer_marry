@@ -91,7 +91,7 @@ switch($op) {
 		$num = 1;
         $buyattr = _post('buyattr','', MF_TEXT);
         if(empty($pids)) {
-	        echo json_encode(array("status"=>false,"info"=>"未指定相关参数(pid)!"));
+	        echo json_encode(array("status"=>false,"info"=>"该套餐没有商品!"));
 			exit();
         }
 		
@@ -102,7 +102,8 @@ switch($op) {
 		
 		$pid_arr = explode(",",  $pids);
 		$cid_arr = array();
-		
+		//清空购物车
+		$cart_slg->clear();
 		foreach($pid_arr as $vo){
 //			dump($vo);
 			if(empty($vo)){

@@ -229,6 +229,7 @@
 	        	dataType:"json",
 	        	success:function(result){
 	        		console.log(result);
+	        		console.log(callback);
 	        		if(result.status){
 					if(callback){
 	                    callback(result.info);
@@ -272,12 +273,20 @@
 		});
 		
 		$("#btn_addpkg2cart").click(function(){
-			var cids = window.itboye.params;
-			var ids = cids.replace(/,/g,'_');
-			ids = ids.replace(/(_$)/g,"");
-			var url = "{url product/member/ac/order}"+"&cids="+ids;
+					
+			add2cart(function(cids){
+				console.log(cids);
+				var cids_str = "";
+				for(var i=0;i<cids.length;i++){
+					if(i > 0){
+						cids_str = "_"+cids_str;
+					}
+					cids_str = cids[i];
+				}
+				var url = "{url product/member/ac/order}"+"&cids="+cids_str;
+				jslocation(url);
+			});
 			
-			jslocation(url);
 		});
 			
 	    //下单属性

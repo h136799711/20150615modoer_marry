@@ -51,7 +51,7 @@
         </table>
     </div>
     <?endif;?>
-    <?if(!$licinfo || $licinfo < 0 || !$licinfo['l'] || !$_G['siteinfo']['d']): ?>
+    <? if(!$licinfo || $licinfo < 0 || !$licinfo['l'] || !$_G['siteinfo']['d']): ?>
     <div class="space">
         <div class="subtitle"><?=lang('admincp_cphome_cpuser_lic_enter')?></div>
         <form method="post" action="<?=cpurl('modoer','license','post')?>">
